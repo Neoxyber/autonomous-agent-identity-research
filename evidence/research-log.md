@@ -79,4 +79,26 @@ Decision:
 The first permission model uses three outcomes: ALLOW, DENY, and REQUIRE_HUMAN_APPROVAL.
 
 Next step:
-Define the human approval model.
+Define the human oversight model.
+
+## Entry 004
+
+Date: 2026-05-28
+
+Type: Research model
+
+Summary: Added the initial human oversight model for autonomous agent identity.
+
+Reason: The permission model needs a clear approach for actions that require human approval, human review, escalation, pause, intervention, and audit evidence.
+
+Files created:
+docs/human-oversight-model.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The model uses four outcomes: ALLOW, DENY, REQUIRE_HUMAN_APPROVAL, and REQUIRE_HUMAN_REVIEW. Human approval cannot override prohibited actions or allow revoked, expired, suspended, or compromised agents to act.
+
+Next step:
+Define the revocation model.
