@@ -102,3 +102,25 @@ The model uses four outcomes: ALLOW, DENY, REQUIRE_HUMAN_APPROVAL, and REQUIRE_H
 
 Next step:
 Define the revocation model.
+
+## Entry 005
+
+Date: 2026-05-28
+
+Type: Research model
+
+Summary: Added the initial revocation model for autonomous agent identity.
+
+Reason: The identity model needs a clear way to remove an agent from trust, pause unsafe activity, handle compromise, expire identities, rotate trust material, and support future emergency stop research.
+
+Files created:
+docs/revocation-model.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The model treats revocation as part of identity. A revoked, expired, suspended, or compromised agent should not be allowed to act.
+
+Next step:
+Define the decentralized verification model.
