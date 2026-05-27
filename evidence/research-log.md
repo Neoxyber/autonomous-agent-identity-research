@@ -124,3 +124,25 @@ The model treats revocation as part of identity. A revoked, expired, suspended, 
 
 Next step:
 Define the decentralized verification model.
+
+## Entry 006
+
+Date: 2026-05-28
+
+Type: Research model
+
+Summary: Added the initial decentralized verification model for autonomous agent identity.
+
+Reason: The identity system needs a clear way to support portable verification, offline and online checks, revocation evidence, trust material resolution, DID research, and future evidence anchoring without depending unnecessarily on one central runtime system.
+
+Files created:
+docs/decentralized-verification.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The model prioritizes portable verification first. DID support is treated as phased research, with did:web and did:key as early candidates. Blockchain is treated as optional research for evidence anchoring, not as a required foundation.
+
+Next step:
+Define the audit model.
