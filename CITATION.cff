@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: "Autonomous Agent Identity Research"
+message: "If you use this research repository, please cite it using the metadata in this file."
+type: software
+authors:
+  - family-names: "Naeem"
+    given-names: "Muhammad Zaid"
+    email: "zaidnaeem@aixybertech.com"
+    affiliation: "AIXYBER TECH LTD"
+repository-code: "https://github.com/Neoxyber/autonomous-agent-identity-research"
+abstract: "A research repository studying verifiable, revocable, permission-scoped, decentralized, and post-quantum-ready identity for autonomous AI agents."
+keywords:
+  - autonomous agents
+  - agent identity
+  - digital identity
+  - verifiable credentials
+  - decentralized identity
+  - post-quantum cryptography
+  - authorization
+  - revocation
+  - auditability
+license: "Apache-2.0"

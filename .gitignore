@@ -1,0 +1,104 @@
+# Python environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache and build output
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+site/
+
+# Test, type check, lint, and coverage output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+coverage/
+htmlcov/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.secret
+*.secrets
+secrets/
+private/
+credentials/
+credentials.json
+service-account*.json
+
+# Cryptographic private material
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.csr
+*.asc
+*.gpg
+*.kdbx
+
+# Local databases and state
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.bak
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+.cache/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor and IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node or frontend artifacts if static demos are added later
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Docker and local deployment overrides
+docker-compose.override.yml
+*.local.yml
+*.local.yaml
+
+# Generated media and heavy evidence outputs
+evidence/recordings/*.mp4
+evidence/recordings/*.mov
+evidence/recordings/*.mkv
+evidence/screenshots/*.png
+evidence/screenshots/*.jpg
+evidence/screenshots/*.jpeg
+evidence/screenshots/*.webp
+
+# Keep research evidence folders visible
+!evidence/
+!evidence/research-log.md
+!evidence/test-runs/
+!evidence/logs/
+!evidence/screenshots/
+!evidence/recordings/
+
+# Allow lightweight placeholders
+!.gitkeep
