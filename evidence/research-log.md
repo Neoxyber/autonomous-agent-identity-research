@@ -146,3 +146,25 @@ The model prioritizes portable verification first. DID support is treated as pha
 
 Next step:
 Define the audit model.
+
+## Entry 007
+
+Date: 2026-05-28
+
+Type: Research model
+
+Summary: Added the initial audit model for autonomous agent identity.
+
+Reason: The identity system needs a clear evidence model for action decisions, lifecycle changes, human oversight, revocation review, incident response, and future compliance mapping.
+
+Files created:
+docs/audit-model.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The audit model treats audit evidence as part of the trust system, not only as debugging output. It records decision evidence, lifecycle evidence, human oversight evidence, available status evidence, and tamper-evidence direction.
+
+Next step:
+Define the evaluation method.
