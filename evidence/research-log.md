@@ -36,3 +36,25 @@ The repository will be research-first. The implementation will be added later as
 
 Next step:
 Complete the first signed commit for the research foundation.
+
+## Entry 002
+
+Date: 2026-05-27
+
+Type: Research model
+
+Summary: Added the first identity layer model for autonomous agents.
+
+Reason: The project needs a clear identity model before later work on enforcement, revocation, audit, schemas, and reference implementation.
+
+Files created:
+docs/identity-layer.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The first identity layer model defines the agent passport, operator accountability, explicit permissions, explicit prohibitions, human approval requirements, lifecycle status, revocation reference, global verification, decentralized verification, post-quantum readiness, and audit evidence.
+
+Next step:
+Review the identity layer model, then commit it as the next signed commit.
