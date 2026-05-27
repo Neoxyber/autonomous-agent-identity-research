@@ -57,4 +57,26 @@ Decision:
 The first identity layer model defines the agent passport, operator accountability, explicit permissions, explicit prohibitions, human approval requirements, lifecycle status, revocation reference, global verification, decentralized verification, post-quantum readiness, and audit evidence.
 
 Next step:
-Review the identity layer model, then commit it as the next signed commit.
+Define the permission model.
+
+## Entry 003
+
+Date: 2026-05-27
+
+Type: Research model
+
+Summary: Added the initial permission model for autonomous agent identity.
+
+Reason: The identity layer needs a clear model for allowed actions, approval-required actions, prohibited actions, default-deny behaviour, and explainable decisions.
+
+Files created:
+docs/permission-model.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The first permission model uses three outcomes: ALLOW, DENY, and REQUIRE_HUMAN_APPROVAL.
+
+Next step:
+Define the human approval model.
