@@ -190,3 +190,25 @@ The model treats post-quantum readiness as a design requirement, not a marketing
 
 Next step:
 Define the evaluation method.
+
+## Entry 009
+
+Date: 2026-05-28
+
+Type: Research method
+
+Summary: Added the initial evaluation method for autonomous agent identity research.
+
+Reason: The project needs a clear way to test the research models, record pass and fail results, identify blocked areas, and decide what needs improvement before implementation expands.
+
+Files created:
+docs/evaluation-method.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The evaluation method uses PASS, FAIL, PARTIAL, BLOCKED, and NEEDS_RESEARCH result categories. Detailed test results will later be recorded in Empirical Testing Logs.
+
+Next step:
+Define the research limitations.
