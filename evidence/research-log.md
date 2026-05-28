@@ -212,3 +212,25 @@ The evaluation method uses PASS, FAIL, PARTIAL, BLOCKED, and NEEDS_RESEARCH resu
 
 Next step:
 Define the research limitations.
+
+## Entry 010
+
+Date: 2026-05-28
+
+Type: Research boundary
+
+Summary: Added the initial research limitations document.
+
+Reason: The project needs a clear statement of what the research does not yet prove, what has not been implemented, what does not claim legal compliance, and what still needs testing and review.
+
+Files created:
+docs/limitations.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The limitations document states that the repository is research-stage work and does not claim production readiness, legal compliance, final standardization, or production cryptographic security.
+
+Next step:
+Review the research model set before starting specifications.
