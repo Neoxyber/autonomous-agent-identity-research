@@ -168,3 +168,25 @@ The audit model treats audit evidence as part of the trust system, not only as d
 
 Next step:
 Define the evaluation method.
+
+## Entry 008
+
+Date: 2026-05-28
+
+Type: Security model
+
+Summary: Added the initial post-quantum readiness model for autonomous agent identity.
+
+Reason: The identity system needs a clear top-level security model for long-term verification, post-quantum signatures, hybrid transition, key rotation, algorithm migration, and cryptographic agility.
+
+Files created:
+docs/post-quantum-readiness.md
+
+Files updated:
+evidence/research-log.md
+
+Decision:
+The model treats post-quantum readiness as a design requirement, not a marketing claim. The first research direction uses ML-DSA as the primary passport signature candidate, SLH-DSA as an independent backup signature family, ML-KEM as a future key establishment candidate, and cryptographic agility as a mandatory design property.
+
+Next step:
+Define the evaluation method.
