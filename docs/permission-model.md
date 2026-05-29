@@ -96,7 +96,7 @@ A prohibited action should remain denied even if the agent has technical access 
 
 ## Decision outcomes
 
-The first model uses three decision outcomes:
+The first model uses four decision outcomes:
 
 1. ALLOW
 
@@ -104,7 +104,9 @@ The first model uses three decision outcomes:
 
 3. REQUIRE_HUMAN_APPROVAL
 
-Each denial or approval requirement should include a reason, such as invalid identity, expired passport, revoked agent, action outside scope, prohibited action, approval required, or approval expired.
+4. REQUIRE_HUMAN_REVIEW
+
+Each denial, approval requirement, or review requirement should include a reason, such as invalid identity, expired passport, revoked agent, action outside scope, prohibited action, approval required, approval expired, unknown action, unclear evidence, or review required.
 
 ## Relationship to the agent passport
 
@@ -128,9 +130,11 @@ A gateway or verifier should evaluate a request in this order:
 
 6. Check whether human approval is required.
 
-7. Record the decision.
+7. Check whether human review is required.
 
-8. Return ALLOW, DENY, or REQUIRE_HUMAN_APPROVAL.
+8. Record the decision.
+
+9. Return ALLOW, DENY, REQUIRE_HUMAN_APPROVAL, or REQUIRE_HUMAN_REVIEW.
 
 ## Current boundary
 

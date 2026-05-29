@@ -252,7 +252,7 @@ Approval evidence should record:
 
 ## Decision model
 
-The verifier should produce one of three decisions.
+The verifier should produce one of four decisions.
 
 ### ALLOW
 
@@ -266,11 +266,17 @@ The action is not permitted.
 
 This decision should be returned when the passport is invalid, expired, revoked, suspended, compromised, unverifiable, outside scope, explicitly prohibited, or otherwise not acceptable under policy.
 
-### REQUIRE HUMAN APPROVAL
+### REQUIRE_HUMAN_APPROVAL
 
 The action may be permitted only after human approval.
 
 This decision should be returned when the action is within a category that requires approval and approval has not yet been provided or verified.
+
+### REQUIRE_HUMAN_REVIEW
+
+The system cannot safely decide.
+
+This decision should be returned when the action, context, evidence, or risk is unclear and a human must review the case before any further decision.
 
 ## Default policy
 
@@ -394,7 +400,7 @@ A verifier should perform these checks before allowing an action.
 
 10. Check whether human approval is required.
 
-11. Return ALLOW, DENY, or REQUIRE HUMAN APPROVAL.
+11. Return ALLOW, DENY, REQUIRE_HUMAN_APPROVAL, or REQUIRE_HUMAN_REVIEW.
 
 12. Record audit evidence.
 
