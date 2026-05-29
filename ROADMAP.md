@@ -31,10 +31,11 @@ Define the complete identity model for autonomous agents.
 Expected outputs:
 docs/identity-layer.md
 docs/permission-model.md
-docs/human-approval-model.md
+docs/human-oversight-model.md
 docs/revocation-model.md
 docs/decentralized-verification.md
 docs/audit-model.md
+docs/post-quantum-readiness.md
 docs/evaluation-method.md
 docs/limitations.md
 
