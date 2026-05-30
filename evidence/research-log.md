@@ -357,3 +357,42 @@ Proof selection is now an explicit verifier step rather than an implicit proofs[
 
 Next step:
 Plan the signature verification abstraction without adding real cryptographic verification yet.
+
+## Entry 014
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added a signature verification abstraction without real cryptographic verification.
+
+Reason: The verifier needs a clear internal boundary for future signature verification before adding real cryptographic algorithms, post-quantum signatures, issuer trust, revocation checks, policy evaluation, or runtime gateway enforcement.
+
+Files created:
+tests/test_passport_verifier_signature_abstraction.py
+
+Files updated:
+src/aaid/passport_verifier.py
+evidence/research-log.md
+
+Result:
+The verifier now routes the signature verification placeholder through a private internal helper that receives the passport and selected proof. The helper currently performs no cryptographic verification and always records signature_verification_not_implemented as a failed check. The verifier remains fail-closed and continues to return DENY for schema-valid, proof-selected, and payload-hash-valid envelopes.
+
+Tests:
+97 tests passed.
+
+Not implemented in this milestone:
+real signature verification
+post-quantum signing
+issuer trust registry
+key selection
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+Signature verification is now represented as an explicit internal abstraction rather than inline placeholder logic. The abstraction is intentionally non-authoritative and cannot allow an envelope. Real verification must be added only after key selection, proof algorithm handling, trust-anchor rules, and failure behavior are tested.
+
+Next step:
+Plan key selection and proof algorithm matching before adding real signature verification.
