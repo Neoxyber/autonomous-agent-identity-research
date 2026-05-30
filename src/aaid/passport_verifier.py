@@ -17,6 +17,8 @@ matches, the verifier selects the public key referenced by the proof and
 validates basic, non-cryptographic key metadata, recording the outcome as a
 ``verification_key_selected`` check; finding no single suitable key fails closed
 to ``DENY`` before the signature step. After the key is selected, the verifier
+checks that the proof's declared canonicalization scheme is recognized,
+recording ``signature_canonicalization_supported``, then
 prepares the canonical passport payload bytes that a future signature verifier
 will use, recording ``signature_input_prepared``, and checks that the selected
 key's signed algorithm is supported, recording ``signature_algorithm_supported``;
@@ -191,6 +193,42 @@ def _select_verification_key(
     )
 
 
+_SUPPORTED_SIGNATURE_CANONICALIZATIONS = ("json-canonicalization-scheme",)
+
+
+def _signature_canonicalization_supported_check(
+    proof: Mapping,
+) -> VerificationCheck:
+    """Check that the proof's declared canonicalization scheme is recognized.
+
+    This validates declared canonicalization metadata only. It confirms that the
+    proof's ``canonicalization`` value is recognized for this verifier stage so
+    the signing input can later be prepared under a known scheme. It does not
+    implement, replace, or fully validate canonicalization, and it makes no claim
+    that the current canonicalization helper is a complete independent RFC 8785 /
+    JSON Canonicalization Scheme implementation; full-JCS compliance is left to a
+    later research and implementation step. An unrecognized scheme fails closed.
+    """
+    declared = proof.get("canonicalization")
+    if declared in _SUPPORTED_SIGNATURE_CANONICALIZATIONS:
+        return VerificationCheck(
+            name="signature_canonicalization_supported",
+            passed=True,
+            reason=(
+                f"selected proof canonicalization scheme {declared} is "
+                "recognized for this verifier stage"
+            ),
+        )
+    return VerificationCheck(
+        name="signature_canonicalization_supported",
+        passed=False,
+        reason=(
+            f"selected proof canonicalization scheme {declared!r} is not "
+            "recognized for this verifier stage"
+        ),
+    )
+
+
 _SUPPORTED_SIGNATURE_ALGORITHMS = ("ML-DSA-65",)
 
 
@@ -280,7 +318,9 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     referenced by the proof, recording ``verification_key_selected``. If no
     single public key matches the proof's ``kid`` with a matching algorithm,
     active status, and suitable purpose, the result fails closed to ``DENY``
-    before the signature step. Otherwise the verifier prepares the canonical
+    before the signature step. Otherwise the verifier checks that the proof's
+    declared canonicalization scheme is recognized
+    (``signature_canonicalization_supported``), then prepares the canonical
     passport payload bytes as the future signature input
     (``signature_input_prepared``) and checks that the selected key's signed
     algorithm is supported (``signature_algorithm_supported``); an unsupported
@@ -477,6 +517,16 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     checks.append(key_check)
     if not key_check.passed:
         return VerificationResult.failed(key_check.reason, checks=checks)
+
+    # Validate the proof's declared canonicalization scheme before preparing the
+    # signing input, so the input is prepared under a recognized scheme. This
+    # validates declared metadata only; it does not canonicalize.
+    canonicalization_check = _signature_canonicalization_supported_check(proof)
+    checks.append(canonicalization_check)
+    if not canonicalization_check.passed:
+        return VerificationResult.failed(
+            canonicalization_check.reason, checks=checks
+        )
 
     # Prepare the canonical passport payload bytes the future signature verifier
     # will use. The bytes are not consumed yet because real signature
