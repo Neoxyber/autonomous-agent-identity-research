@@ -56,6 +56,14 @@ Algorithm choices, parameter sets, proof formats, libraries, and deployment guid
 
 The system must remain cryptographically agile.
 
+## Canonicalization compatibility limit
+
+The declared canonicalization scheme names the JSON Canonicalization Scheme as the long-term target, but the current research helper is not a complete independent RFC 8785 implementation.
+
+The current canonicalization tests document the helper's deterministic behaviour for the current research passport profile only. They do not establish full RFC 8785 or JSON Canonicalization Scheme compliance.
+
+Real signature verification is blocked until this canonicalization compatibility is resolved. The decision is recorded in specs/canonicalization.md.
+
 ## DID and decentralized verification limits
 
 DID support is a research direction, not a first-version dependency.

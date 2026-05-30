@@ -24,6 +24,21 @@ The schema value is:
 
 Later implementation should test an RFC 8785 compatible library before relying on signatures.
 
+## Canonicalization compatibility decision
+
+The declared scheme `json-canonicalization-scheme` names the JSON Canonicalization Scheme as the long-term target. The current research helper is not a complete independent RFC 8785 implementation.
+
+The current canonicalization tests document the helper's deterministic behaviour for the current research passport profile only. They do not establish full RFC 8785 or JSON Canonicalization Scheme compliance.
+
+The decision for this stage is:
+
+1. The long-term target is a reviewed RFC 8785 compatible canonicalization, adopted before any trusted real signature verification.
+2. The current helper is acceptable only for local research tests and deterministic current-profile regression tests. It is not a basis for trusted signature verification.
+3. If a reviewed RFC 8785 compatible canonicalization is not adopted, the project must either constrain the passport profile to inputs the current helper handles deterministically, or rename the declared canonicalization scheme so it does not imply full RFC 8785 compliance.
+4. Real signature verification is blocked until this canonicalization compatibility is resolved. No real cryptographic verification is added before then.
+
+This decision prevents later work from treating the current helper as a full RFC 8785 implementation.
+
 ## Hash input
 
 `payload_hash` is the hash of the canonical `passport` object.
