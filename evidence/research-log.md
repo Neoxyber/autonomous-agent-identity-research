@@ -234,3 +234,45 @@ The limitations document states that the repository is research-stage work and d
 
 Next step:
 Review the research model set before starting specifications.
+
+## Entry 011
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added the first local verifier foundation for autonomous agent passports.
+
+Reason: The project needs a tested local verification path before adding payload hash verification, signature verification, revocation, policy evaluation, runtime gateway logic, or deployment work.
+
+Files created:
+src/aaid/passport_verifier.py
+tests/test_passport_verifier_skeleton.py
+tests/test_passport_verifier_schema_validation.py
+
+Files updated:
+src/aaid/__init__.py
+src/aaid/passport_verifier.py
+evidence/research-log.md
+
+Result:
+The implementation now has a verification result model, a local passport verifier skeleton, structural envelope checks, and schema validation using the committed agent passport schema. Malformed and schema-invalid envelopes fail closed to DENY. Schema-valid envelopes also fail closed to DENY because signature verification is intentionally not implemented yet.
+
+Tests:
+60 tests passed.
+
+Not implemented in this milestone:
+payload_hash verification
+signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+The verifier foundation remains fail-closed. Schema validation confirms envelope shape only; it does not prove payload integrity, signature validity, issuer trust, revocation status, or action permission.
+
+Next step:
+Add payload_hash verification into the verifier.
