@@ -6,9 +6,11 @@ outcome in a :class:`~aaid.verification.VerificationResult`.
 
 After the structural checks pass, the envelope is validated against the
 committed JSON Schema and the outcome is recorded as a ``schema_valid`` check.
-When schema validation passes, the verifier recomputes the canonical payload
-hash over the passport and compares it to the first proof's recorded hash,
-recording the outcome as a ``payload_hash_valid`` check. This step verifies
+When schema validation passes, the verifier selects the proof to check and
+records the choice as a ``proof_selected`` check; the first-version rule selects
+the first proof only. It then recomputes the canonical payload hash over the
+passport and compares it to the selected proof's recorded hash, recording the
+outcome as a ``payload_hash_valid`` check. This step verifies
 the payload hash only: it does not verify signatures or proofs, does not check
 revocation or issuer trust, and does not evaluate policy. Because signature
 verification does not exist yet, a structurally valid, schema valid envelope
@@ -45,6 +47,18 @@ def _envelope_validator() -> Draft202012Validator:
     return Draft202012Validator(schema)
 
 
+def _select_proof(proofs: Sequence) -> Mapping:
+    """Select which proof the verifier will check.
+
+    First-version rule: select only the first proof. Selection is made
+    explicit here so it can be tested and later replaced before real
+    signature verification exists. Structural checks and schema validation
+    have already guaranteed that proofs is a non-empty sequence of proof
+    objects when this runs.
+    """
+    return proofs[0]
+
+
 def verify_passport_envelope(envelope: object) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
@@ -57,17 +71,19 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     and a non-empty, non-string ``proofs`` sequence) is then validated against
     the committed JSON Schema and the outcome is recorded as ``schema_valid``.
     If schema validation fails, the result fails closed to ``DENY`` with the
-    failing ``schema_valid`` check. If it passes, the verifier recomputes the
-    canonical payload hash over ``envelope["passport"]`` using the first
-    proof's recorded hash algorithm and compares it to that proof's
-    ``payload_hash``; the outcome is recorded as ``payload_hash_valid``. The
-    hash algorithm is taken from the schema-validated proof, so it is always a
-    supported algorithm. A mismatch fails closed to ``DENY`` with the failing
-    ``payload_hash_valid`` check and stops before the signature step. When the
-    payload hash matches, the result records ``payload_hash_valid`` as passed
-    and then records ``signature_verification_not_implemented`` as failed.
-    Signature verification is out of scope here, so even a matching payload
-    hash still fails closed to ``DENY`` and never returns ``ALLOW``.
+    failing ``schema_valid`` check. If it passes, the verifier selects the proof
+    to check and records the choice as ``proof_selected``; the first-version
+    rule selects the first proof only. It then recomputes the canonical payload
+    hash over ``envelope["passport"]`` using the selected proof's recorded hash
+    algorithm and compares it to that proof's ``payload_hash``; the outcome is
+    recorded as ``payload_hash_valid``. The hash algorithm is taken from the
+    schema-validated proof, so it is always a supported algorithm. A mismatch
+    fails closed to ``DENY`` with the failing ``payload_hash_valid`` check and
+    stops before the signature step. When the payload hash matches, the result
+    records ``payload_hash_valid`` as passed and then records
+    ``signature_verification_not_implemented`` as failed. Signature
+    verification is out of scope here, so even a matching payload hash still
+    fails closed to ``DENY`` and never returns ``ALLOW``.
     """
     checks: list[VerificationCheck] = []
 
@@ -212,7 +228,18 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
         )
     )
 
-    proof = envelope["proofs"][0]
+    proof = _select_proof(proofs)
+    checks.append(
+        VerificationCheck(
+            name="proof_selected",
+            passed=True,
+            reason=(
+                "selected the first proof; the first-version verifier "
+                "verifies only the first proof"
+            ),
+        )
+    )
+
     expected_payload_hash = proof["payload_hash"]
     computed_payload_hash = canonicalization.hash_passport_payload(
         passport, proof["hash_alg"]
