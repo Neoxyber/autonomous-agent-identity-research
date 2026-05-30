@@ -598,3 +598,26 @@ The long-term target is reviewed RFC 8785-compatible canonicalization before tru
 
 Next step:
 Plan the canonicalization compatibility resolution path before adding real cryptographic verification.
+
+## Entry 020
+
+Date: 2026-05-30
+
+Type: Research decision
+
+Summary: Added canonicalization resolution path planning document.
+
+Files:
+Created `specs/canonicalization-resolution.md`; updated this evidence log.
+
+Result:
+The new planning document compares three paths before real signature verification: adopt a reviewed RFC 8785/JCS-compatible implementation, constrain the passport profile, or rename the declared canonicalization scheme. It recommends evaluating Option A as the preferred long-term path while recording that no dependency was adopted, no JCS compatibility is claimed, and real signature verification remains blocked.
+
+Tests:
+158 tests passed.
+
+Not implemented:
+full RFC 8785/JCS compliance, dependency adoption, schema rename, profile constraint enforcement, real signature verification, post-quantum signing, issuer trust, revocation, policy, gateway, or external integrations.
+
+Next step:
+Plan candidate RFC 8785/JCS implementation evaluation and compatibility tests before adding any dependency or real cryptographic verification.
