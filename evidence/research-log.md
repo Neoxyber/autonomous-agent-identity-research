@@ -434,3 +434,44 @@ Key selection is now an explicit verifier step. This selects and validates publi
 
 Next step:
 Plan signature input rules and unsupported signature algorithm failure behavior before adding real cryptographic verification.
+
+## Entry 016
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added signature input and algorithm support checks before signature verification.
+
+Reason: The verifier needs to define the future signature input and fail closed on unsupported signature algorithms before real cryptographic verification can be added safely.
+
+Files created:
+tests/test_passport_verifier_signature_input.py
+
+Files updated:
+src/aaid/passport_verifier.py
+evidence/research-log.md
+
+Result:
+The verifier now records signature_input_prepared after verification_key_selected and before signature_algorithm_supported. The future signature input is the canonical passport payload bytes, excluding the envelope, proofs, and signature material. The verifier also records signature_algorithm_supported using the selected public key's algorithm. ML-DSA-65 is the only supported algorithm in this milestone. Unsupported algorithms fail closed to DENY before the signature verification placeholder.
+
+Tests:
+127 tests passed.
+
+Not implemented in this milestone:
+real signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+Signature input preparation and algorithm support are now explicit verifier steps. The implementation remains non-authoritative: it prepares canonical bytes and checks algorithm support, but it does not decode signatures, load public keys, verify cryptographic signatures, establish issuer trust, check revocation, or authorize actions.
+
+Known follow-up:
+The current canonicalization helper is reused for signature input, but it is not yet a complete independent RFC 8785/JCS implementation. Before real signature verification is trusted, the project must reconcile the declared canonicalization scheme with a reviewed canonicalization implementation or add a dedicated canonicalization-support check.
+
+Next step:
+Plan canonicalization scheme validation before adding real cryptographic verification.
