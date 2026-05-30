@@ -1,0 +1,80 @@
+{
+  "passport": {
+    "passport_id": "urn:aaid:passport:018fd7c2-6f1e-7a4e-9b18-3d7a9d93c111",
+    "agent_id": "urn:aaid:agent:018fd7c2-7b22-7c2a-8d10-b3c46b7e0211",
+    "operator": {
+      "operator_id": "urn:aaid:operator:aixyber-tech-ltd",
+      "operator_type": "legal_entity",
+      "verification_status": "demo_verified",
+      "verification_method": "research_demo",
+      "verification_reference": "urn:aaid:operator-verification:demo"
+    },
+    "issuer_id": "urn:aaid:issuer:aixyber-research-issuer",
+    "subject": "Research Summarization Agent",
+    "purpose": "Summarize dummy public research text inside a controlled research demo.",
+    "risk_class": "standard",
+    "public_keys": [
+      {
+        "kid": "urn:aaid:key:018fd7c2-8c44-72ff-91ab-2e81e9fd4422",
+        "kty": "ML-DSA",
+        "alg": "ML-DSA-65",
+        "purpose": "sig",
+        "public_key_b64u": "VGhpcy1pcy1hLWRlbW8tcHVibGljLWtleQ",
+        "created_at": "2026-05-29T00:00:00Z",
+        "status": "active"
+      }
+    ],
+    "issued_at": "2026-05-29T00:00:00Z",
+    "expires_at": "2026-06-29T00:00:00Z",
+    "lifecycle_status": "active",
+    "permissions": {
+      "allowed_actions": [
+        {
+          "action": "summarize_public_text",
+          "resource_scope": "demo.public_text"
+        }
+      ],
+      "approval_required_actions": [
+        {
+          "action": "send_external_summary",
+          "resource_scope": "demo.external_message"
+        }
+      ],
+      "prohibited_actions": [
+        {
+          "action": "access_secrets",
+          "resource_scope": "demo.secret_store"
+        },
+        {
+          "action": "disable_audit_logging",
+          "resource_scope": "demo.audit"
+        }
+      ],
+      "default_decision": "DENY",
+      "policy_id": "urn:aaid:policy:sha256:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    },
+    "revocation": {
+      "method": "signed_status_reference",
+      "status_reference": "urn:aaid:revocation:018fd7c2-9d55-7a11-8a22-24b1e3f92310"
+    },
+    "audit": {
+      "audit_required": true,
+      "audit_stream_id": "urn:aaid:audit:018fd7c2-9120-7682-8c44-88c43d0b7331"
+    }
+  },
+  "proofs": [
+    {
+      "proof_id": "urn:aaid:proof:018fd7c2-a110-70ac-81d0-f934ed842010",
+      "proof_type": "detached-signature",
+      "proof_purpose": "post-quantum-signature",
+      "verification_method": "urn:aaid:key:018fd7c2-8c44-72ff-91ab-2e81e9fd4422",
+      "alg": "ML-DSA-65",
+      "kid": "urn:aaid:key:018fd7c2-8c44-72ff-91ab-2e81e9fd4422",
+      "canonicalization": "json-canonicalization-scheme",
+      "hash_alg": "SHA-256",
+      "payload_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "signature_b64u": "VGhpcy1pcy1hLWRlbW8tc2lnbmF0dXJl",
+      "created_at": "2026-05-29T00:00:00Z"
+    }
+  ]
+}
