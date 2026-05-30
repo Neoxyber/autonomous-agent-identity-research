@@ -559,3 +559,42 @@ Before real signature verification is trusted, the project still needs a final d
 
 Next step:
 Plan the canonicalization compatibility decision before adding real cryptographic verification.
+
+## Entry 019
+
+Date: 2026-05-30
+
+Type: Research decision
+
+Summary: Recorded the canonicalization compatibility decision before real signature verification.
+
+Reason: The project needs to prevent future signature verification work from treating the current research helper as a complete independent RFC 8785/JCS implementation.
+
+Files updated:
+specs/canonicalization.md
+docs/limitations.md
+evidence/research-log.md
+
+Result:
+The specification now records that json-canonicalization-scheme names the JSON Canonicalization Scheme as the long-term target, while the current helper remains limited to local research tests and deterministic current-profile regression tests. The limitations document now records the same compatibility limit. Real signature verification remains blocked until canonicalization compatibility is resolved.
+
+Tests:
+158 tests passed.
+
+Not implemented in this milestone:
+full RFC 8785/JCS canonicalization compliance
+canonicalization library replacement
+schema canonicalization rename
+real signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+The long-term target is reviewed RFC 8785-compatible canonicalization before trusted real signature verification. If that target is not adopted, the project must either constrain the passport profile to inputs the current helper handles deterministically or rename the declared canonicalization scheme so it does not imply full RFC 8785 compliance.
+
+Next step:
+Plan the canonicalization compatibility resolution path before adding real cryptographic verification.
