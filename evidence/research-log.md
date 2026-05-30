@@ -475,3 +475,45 @@ The current canonicalization helper is reused for signature input, but it is not
 
 Next step:
 Plan canonicalization scheme validation before adding real cryptographic verification.
+
+## Entry 017
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added canonicalization scheme validation before signature input preparation.
+
+Reason: The verifier needs to check the selected proof's declared canonicalization scheme before preparing future signature input, so unsupported or unrecognized canonicalization metadata fails closed before any signature verification work.
+
+Files created:
+tests/test_passport_verifier_canonicalization_scheme.py
+
+Files updated:
+src/aaid/passport_verifier.py
+evidence/research-log.md
+
+Result:
+The verifier now records signature_canonicalization_supported after verification_key_selected and before signature_input_prepared. The verifier recognizes json-canonicalization-scheme for this stage and fails closed to DENY if the selected proof declares an unrecognized canonicalization scheme. The check validates declared canonicalization metadata only and does not implement, replace, or fully validate canonicalization.
+
+Tests:
+141 tests passed.
+
+Not implemented in this milestone:
+full RFC 8785/JCS canonicalization compliance
+real signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+Canonicalization scheme recognition is now explicit in the verifier pipeline. This improves fail-closed behavior before signature input preparation while avoiding any claim that the current canonicalization helper is a complete independent RFC 8785/JCS implementation.
+
+Known follow-up:
+Before real signature verification is trusted, the project still needs reviewed canonicalization conformance work, including a decision about whether to adopt a full JCS-compatible implementation or constrain the declared canonicalization scheme to the current research helper.
+
+Next step:
+Plan canonicalization conformance testing before adding real cryptographic verification.
