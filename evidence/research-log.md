@@ -621,3 +621,26 @@ full RFC 8785/JCS compliance, dependency adoption, schema rename, profile constr
 
 Next step:
 Plan candidate RFC 8785/JCS implementation evaluation and compatibility tests before adding any dependency or real cryptographic verification.
+
+## Entry 021
+
+Date: 2026-05-30
+
+Type: Research planning
+
+Summary: Added canonicalization candidate evaluation plan.
+
+Files:
+Created `specs/canonicalization-candidate-evaluation.md`; updated this evidence log.
+
+Result:
+The new plan defines how canonicalization candidates will be evaluated before adoption. It covers candidate categories, acceptance criteria, required compatibility tests, evaluation process, non-goals, and the requirement that real signature verification remains blocked until a canonicalization path is evaluated, selected, and reviewed.
+
+Tests:
+158 tests passed.
+
+Not implemented:
+dependency adoption, package evaluation, full RFC 8785/JCS compliance, real signature verification, post-quantum signing, schema rename, profile constraint enforcement, issuer trust, revocation, policy, gateway, or external integrations.
+
+Next step:
+Design canonicalization compatibility tests before evaluating or adopting any candidate.
