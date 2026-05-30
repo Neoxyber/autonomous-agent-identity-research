@@ -4,17 +4,41 @@ This module provides a single entry point, :func:`verify_passport_envelope`,
 that checks the structural shape of an envelope-like object and records the
 outcome in a :class:`~aaid.verification.VerificationResult`.
 
-It is structural only. It does not validate the passport against the schema,
-does not verify the payload hash, does not verify signatures or proofs, does
-not perform any cryptography, and does not evaluate policy. Because signature
-verification does not exist yet, a structurally acceptable envelope still fails
-closed to ``DENY``; this verifier can never return ``ALLOW``. Each structural
-check is recorded as a named, immutable check so the decision can be explained
-and audited.
+After the structural checks pass, the envelope is validated against the
+committed JSON Schema and the outcome is recorded as a ``schema_valid`` check.
+This is schema validation only: it does not verify the payload hash, does not
+verify signatures or proofs, does not perform any cryptography, and does not
+evaluate policy. Because signature verification does not exist yet, a
+structurally and schema acceptable envelope still fails closed to ``DENY``;
+this verifier can never return ``ALLOW``. Each check is recorded as a named,
+immutable check so the decision can be explained and audited.
 """
 
+import json
 from collections.abc import Mapping, Sequence
+from functools import lru_cache
+from pathlib import Path
+
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import best_match
+
 from aaid.verification import VerificationCheck, VerificationResult
+
+_SCHEMA_PATH = (
+    Path(__file__).resolve().parents[2] / "specs" / "agent-passport.schema.json"
+)
+
+
+@lru_cache(maxsize=1)
+def _envelope_validator() -> Draft202012Validator:
+    """Load and cache the committed envelope schema validator.
+
+    This validates the JSON shape of the envelope only. It does not recompute
+    the payload hash, verify signatures, or check proofs.
+    """
+    with _SCHEMA_PATH.open(encoding="utf-8") as handle:
+        schema = json.load(handle)
+    return Draft202012Validator(schema)
 
 
 def verify_passport_envelope(envelope: object) -> VerificationResult:
@@ -26,10 +50,14 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     closed to ``DENY``.
 
     A structurally acceptable envelope (a mapping with a mapping ``passport``
-    and a non-empty, non-string ``proofs`` sequence) records all structural
-    checks as passed and then records ``signature_verification_not_implemented``
-    as failed. Signature verification is out of scope for this skeleton, so the
-    result still fails closed to ``DENY`` and never returns ``ALLOW``.
+    and a non-empty, non-string ``proofs`` sequence) is then validated against
+    the committed JSON Schema and the outcome is recorded as ``schema_valid``.
+    If schema validation fails, the result fails closed to ``DENY`` with the
+    failing ``schema_valid`` check. If it passes, the result records
+    ``schema_valid`` as passed and then records
+    ``signature_verification_not_implemented`` as failed. Signature
+    verification is out of scope here, so a schema-valid envelope still fails
+    closed to ``DENY`` and never returns ``ALLOW``.
     """
     checks: list[VerificationCheck] = []
 
@@ -148,6 +176,29 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
             name="proofs_non_empty",
             passed=True,
             reason="proofs contains at least one proof",
+        )
+    )
+
+    error = best_match(_envelope_validator().iter_errors(envelope))
+    if error is not None:
+        checks.append(
+            VerificationCheck(
+                name="schema_valid",
+                passed=False,
+                reason=(
+                    "envelope does not match the agent passport schema at "
+                    f"{error.json_path}: {error.message}"
+                ),
+            )
+        )
+        return VerificationResult.failed(
+            "envelope does not match the agent passport schema", checks=checks
+        )
+    checks.append(
+        VerificationCheck(
+            name="schema_valid",
+            passed=True,
+            reason="envelope matches the agent passport schema",
         )
     )
 
