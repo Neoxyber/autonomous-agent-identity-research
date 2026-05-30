@@ -59,6 +59,29 @@ def _select_proof(proofs: Sequence) -> Mapping:
     return proofs[0]
 
 
+def _signature_verification_not_implemented_check(
+    passport: Mapping, proof: Mapping
+) -> VerificationCheck:
+    """Produce the signature verification check for the selected proof.
+
+    This is the internal boundary where real signature verification will later
+    run. For now it performs no cryptographic work: it does not inspect keys,
+    compute hashes, or verify any signature. It accepts the passport and the
+    selected proof so the boundary is ready for a later implementation, and it
+    always records a failed check so the verifier fails closed. The arguments
+    are intentionally unused at this step.
+    """
+    del passport, proof
+    return VerificationCheck(
+        name="signature_verification_not_implemented",
+        passed=False,
+        reason=(
+            "structure is acceptable but signature verification is not "
+            "implemented, so the envelope cannot be allowed"
+        ),
+    )
+
+
 def verify_passport_envelope(envelope: object) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
@@ -268,14 +291,7 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     )
 
     checks.append(
-        VerificationCheck(
-            name="signature_verification_not_implemented",
-            passed=False,
-            reason=(
-                "structure is acceptable but signature verification is not "
-                "implemented, so the envelope cannot be allowed"
-            ),
-        )
+        _signature_verification_not_implemented_check(passport, proof)
     )
     return VerificationResult.failed(
         "structure is acceptable but signature verification is not "
