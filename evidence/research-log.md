@@ -318,3 +318,42 @@ payload_hash verification confirms that the first proof's recorded payload_hash 
 
 Next step:
 Plan the signature verification abstraction and proof selection rules before adding real signature verification.
+
+## Entry 013
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added explicit proof selection rules to the local passport verifier.
+
+Reason: The verifier needs a clear and testable proof-selection rule before adding signature verification, issuer trust, post-quantum signature support, revocation checks, policy evaluation, or runtime gateway enforcement.
+
+Files created:
+tests/test_passport_verifier_proof_selection.py
+
+Files updated:
+src/aaid/passport_verifier.py
+evidence/research-log.md
+
+Result:
+The verifier now records proof_selected after schema validation and before payload_hash verification. The first-version rule selects the first proof only. The selected proof is then used for payload_hash verification. Multi-proof behavior is now explicit and tested: a mismatched second proof does not affect the current first-proof rule, and a mismatched first proof fails even if a later proof contains the correct payload_hash.
+
+Tests:
+84 tests passed.
+
+Not implemented in this milestone:
+signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+full multi-proof signature policy
+external integrations
+
+Decision:
+Proof selection is now an explicit verifier step rather than an implicit proofs[0] access. The rule remains intentionally narrow for the first verifier version and must be revisited before real signature verification or hybrid classical/post-quantum proof handling is added.
+
+Next step:
+Plan the signature verification abstraction without adding real cryptographic verification yet.
