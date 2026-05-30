@@ -517,3 +517,45 @@ Before real signature verification is trusted, the project still needs reviewed 
 
 Next step:
 Plan canonicalization conformance testing before adding real cryptographic verification.
+
+## Entry 018
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added canonicalization conformance tests for the current research helper.
+
+Reason: Before real signature verification can be trusted, the project needs regression tests that define what the current canonicalization helper guarantees for the current agent passport profile.
+
+Files created:
+tests/test_passport_canonicalization_conformance.py
+
+Files updated:
+evidence/research-log.md
+
+Result:
+The test suite now records deterministic canonicalization behavior for the current research passport profile. It verifies byte output, repeated-call determinism, top-level and nested object key order independence, compact JSON output, UTF-8 byte output, payload hashing over the exact canonical bytes, exclusion of proof and signature material from the passport payload, signature input parity with canonicalization output, boolean serialization, array-order significance, and a frozen SHA-256 golden vector for the minimal example.
+
+Tests:
+158 tests passed.
+
+Not implemented in this milestone:
+full RFC 8785/JCS canonicalization compliance
+canonicalization library replacement
+real signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+The current helper is now covered by conformance and regression tests for the current research profile. These tests do not claim full independent RFC 8785/JCS compliance. They document the helper's current deterministic behavior and protect against silent canonical-form drift before future signature verification work.
+
+Known follow-up:
+Before real signature verification is trusted, the project still needs a final decision on full JCS compatibility, including whether to adopt a reviewed RFC 8785/JCS implementation, constrain the passport profile, or rename the declared canonicalization scheme to match the research helper.
+
+Next step:
+Plan the canonicalization compatibility decision before adding real cryptographic verification.
