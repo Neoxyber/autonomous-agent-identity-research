@@ -123,26 +123,6 @@ def test_schema_validation_step_never_returns_allow():
         assert result.valid is False
 
 
-def test_no_payload_hash_verification_in_this_step():
-    import aaid.passport_verifier as mod
-
-    assert not hasattr(mod, "hashlib")
-    assert not hasattr(mod, "hmac")
-
-    env = valid_envelope()
-    # A different but still schema-valid hash value: the verifier must not
-    # recompute or compare the payload hash, so schema validation still passes.
-    env["proofs"][0]["payload_hash"] = "b" * 64
-    result = verify_passport_envelope(env)
-    schema = check_named(result, "schema_valid")
-    assert schema is not None
-    assert schema.passed is True
-    signature = check_named(result, "signature_verification_not_implemented")
-    assert signature is not None
-    assert signature.passed is False
-    assert result.decision == DENY
-
-
 def test_no_signature_verification_in_this_step():
     env = valid_envelope()
     # A different but still schema-valid signature value: the verifier must not

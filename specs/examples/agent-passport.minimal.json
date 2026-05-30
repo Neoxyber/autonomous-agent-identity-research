@@ -72,7 +72,7 @@
       "kid": "urn:aaid:key:018fd7c2-8c44-72ff-91ab-2e81e9fd4422",
       "canonicalization": "json-canonicalization-scheme",
       "hash_alg": "SHA-256",
-      "payload_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "payload_hash": "c8548cbedf9be9a378d0b48ddc7f070c5597230cf9f9ada715f0802eb1c8089c",
       "signature_b64u": "VGhpcy1pcy1hLWRlbW8tc2lnbmF0dXJl",
       "created_at": "2026-05-29T00:00:00Z"
     }

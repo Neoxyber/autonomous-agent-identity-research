@@ -6,12 +6,15 @@ outcome in a :class:`~aaid.verification.VerificationResult`.
 
 After the structural checks pass, the envelope is validated against the
 committed JSON Schema and the outcome is recorded as a ``schema_valid`` check.
-This is schema validation only: it does not verify the payload hash, does not
-verify signatures or proofs, does not perform any cryptography, and does not
-evaluate policy. Because signature verification does not exist yet, a
-structurally and schema acceptable envelope still fails closed to ``DENY``;
-this verifier can never return ``ALLOW``. Each check is recorded as a named,
-immutable check so the decision can be explained and audited.
+When schema validation passes, the verifier recomputes the canonical payload
+hash over the passport and compares it to the first proof's recorded hash,
+recording the outcome as a ``payload_hash_valid`` check. This step verifies
+the payload hash only: it does not verify signatures or proofs, does not check
+revocation or issuer trust, and does not evaluate policy. Because signature
+verification does not exist yet, a structurally valid, schema valid envelope
+with a matching payload hash still fails closed to ``DENY``; this verifier can
+never return ``ALLOW``. Each check is recorded as a named, immutable check so
+the decision can be explained and audited.
 """
 
 import json
@@ -22,6 +25,7 @@ from pathlib import Path
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import best_match
 
+from aaid import canonicalization
 from aaid.verification import VerificationCheck, VerificationResult
 
 _SCHEMA_PATH = (
@@ -53,11 +57,17 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     and a non-empty, non-string ``proofs`` sequence) is then validated against
     the committed JSON Schema and the outcome is recorded as ``schema_valid``.
     If schema validation fails, the result fails closed to ``DENY`` with the
-    failing ``schema_valid`` check. If it passes, the result records
-    ``schema_valid`` as passed and then records
-    ``signature_verification_not_implemented`` as failed. Signature
-    verification is out of scope here, so a schema-valid envelope still fails
-    closed to ``DENY`` and never returns ``ALLOW``.
+    failing ``schema_valid`` check. If it passes, the verifier recomputes the
+    canonical payload hash over ``envelope["passport"]`` using the first
+    proof's recorded hash algorithm and compares it to that proof's
+    ``payload_hash``; the outcome is recorded as ``payload_hash_valid``. The
+    hash algorithm is taken from the schema-validated proof, so it is always a
+    supported algorithm. A mismatch fails closed to ``DENY`` with the failing
+    ``payload_hash_valid`` check and stops before the signature step. When the
+    payload hash matches, the result records ``payload_hash_valid`` as passed
+    and then records ``signature_verification_not_implemented`` as failed.
+    Signature verification is out of scope here, so even a matching payload
+    hash still fails closed to ``DENY`` and never returns ``ALLOW``.
     """
     checks: list[VerificationCheck] = []
 
@@ -199,6 +209,34 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
             name="schema_valid",
             passed=True,
             reason="envelope matches the agent passport schema",
+        )
+    )
+
+    proof = envelope["proofs"][0]
+    expected_payload_hash = proof["payload_hash"]
+    computed_payload_hash = canonicalization.hash_passport_payload(
+        passport, proof["hash_alg"]
+    )
+    if computed_payload_hash != expected_payload_hash:
+        checks.append(
+            VerificationCheck(
+                name="payload_hash_valid",
+                passed=False,
+                reason=(
+                    "payload hash does not match the canonical passport "
+                    f"payload for {proof['hash_alg']}"
+                ),
+            )
+        )
+        return VerificationResult.failed(
+            "payload hash does not match the canonical passport payload",
+            checks=checks,
+        )
+    checks.append(
+        VerificationCheck(
+            name="payload_hash_valid",
+            passed=True,
+            reason="payload hash matches the canonical passport payload",
         )
     )
 
