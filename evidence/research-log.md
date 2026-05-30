@@ -276,3 +276,45 @@ The verifier foundation remains fail-closed. Schema validation confirms envelope
 
 Next step:
 Add payload_hash verification into the verifier.
+
+## Entry 012
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added payload_hash verification into the local passport verifier.
+
+Reason: The verifier needs to bind detached proof metadata to the canonical passport payload before later signature verification, issuer trust, revocation, policy, or gateway work.
+
+Files created:
+tests/test_passport_verifier_payload_hash.py
+
+Files updated:
+src/aaid/passport_verifier.py
+specs/examples/agent-passport.minimal.json
+tests/test_passport_verifier_schema_validation.py
+evidence/research-log.md
+
+Result:
+The verifier now recomputes the canonical payload hash over the passport payload and compares it with the first proof's recorded payload_hash. Matching payload hashes are recorded as payload_hash_valid. Passport tampering, proof payload_hash tampering, unsupported hash algorithms, and schema-invalid inputs fail closed to DENY. The example passport now contains the real canonical SHA-256 digest for its passport payload.
+
+Tests:
+74 tests passed.
+
+Not implemented in this milestone:
+signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+multi-proof signature selection
+cross-implementation canonicalization validation
+external integrations
+
+Decision:
+payload_hash verification confirms that the first proof's recorded payload_hash matches the canonical passport payload. It does not prove signature validity, issuer trust, revocation status, action permission, or legal compliance. The verifier remains fail-closed and still returns DENY for schema-valid and payload-hash-valid envelopes because signature verification is intentionally not implemented yet.
+
+Next step:
+Plan the signature verification abstraction and proof selection rules before adding real signature verification.
