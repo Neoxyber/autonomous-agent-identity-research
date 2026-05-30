@@ -16,7 +16,12 @@ revocation or issuer trust, and does not evaluate policy. After the payload hash
 matches, the verifier selects the public key referenced by the proof and
 validates basic, non-cryptographic key metadata, recording the outcome as a
 ``verification_key_selected`` check; finding no single suitable key fails closed
-to ``DENY`` before the signature step. Because signature
+to ``DENY`` before the signature step. After the key is selected, the verifier
+prepares the canonical passport payload bytes that a future signature verifier
+will use, recording ``signature_input_prepared``, and checks that the selected
+key's signed algorithm is supported, recording ``signature_algorithm_supported``;
+an unsupported algorithm fails closed to ``DENY`` before the signature step.
+Because signature
 verification does not exist yet, a structurally valid, schema valid envelope
 with a matching payload hash still fails closed to ``DENY``; this verifier can
 never return ``ALLOW``. Each check is recorded as a named, immutable check so
@@ -186,6 +191,70 @@ def _select_verification_key(
     )
 
 
+_SUPPORTED_SIGNATURE_ALGORITHMS = ("ML-DSA-65",)
+
+
+def _prepare_signature_input(
+    passport: Mapping,
+) -> "tuple[VerificationCheck, bytes | None]":
+    """Prepare the canonical passport payload bytes for signature verification.
+
+    The future signature input is the canonical passport payload bytes only.
+    These are the deterministic, UTF-8 encoded canonical JSON bytes of the
+    ``passport`` object, produced by the shared canonicalization helper so the
+    signing input matches the payload-hash input exactly. The input excludes the
+    envelope wrapper, the ``proofs`` array, signature material, and any
+    display-formatted JSON. This prepares input only: it performs no
+    cryptographic work and does not verify signatures.
+
+    Returns a ``(check, signature_input)`` pair. The canonicalization helper
+    already returns UTF-8 bytes, so ``signature_input`` is those canonical
+    payload bytes.
+    """
+    signature_input = canonicalization.canonicalize_passport_payload(passport)
+    return (
+        VerificationCheck(
+            name="signature_input_prepared",
+            passed=True,
+            reason=(
+                "prepared the canonical passport payload bytes as the future "
+                "signature input"
+            ),
+        ),
+        signature_input,
+    )
+
+
+def _signature_algorithm_supported_check(key: Mapping) -> VerificationCheck:
+    """Check that the selected public key's algorithm is supported.
+
+    The decision uses the selected public key's signed ``alg`` metadata, not the
+    detached proof algorithm; the key-selection step has already required the
+    key algorithm to equal the proof algorithm. For this step the supported set
+    is a narrow internal allowlist, so an unsupported algorithm fails closed and
+    the verifier cannot proceed to signature verification. This performs no
+    cryptographic work.
+    """
+    key_alg = key.get("alg")
+    if key_alg in _SUPPORTED_SIGNATURE_ALGORITHMS:
+        return VerificationCheck(
+            name="signature_algorithm_supported",
+            passed=True,
+            reason=(
+                f"selected public key algorithm {key_alg} is supported for "
+                "signature verification"
+            ),
+        )
+    return VerificationCheck(
+        name="signature_algorithm_supported",
+        passed=False,
+        reason=(
+            f"selected public key algorithm {key_alg!r} is not supported for "
+            "signature verification"
+        ),
+    )
+
+
 def verify_passport_envelope(envelope: object) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
@@ -211,8 +280,12 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     referenced by the proof, recording ``verification_key_selected``. If no
     single public key matches the proof's ``kid`` with a matching algorithm,
     active status, and suitable purpose, the result fails closed to ``DENY``
-    before the signature step. Otherwise it records
-    ``signature_verification_not_implemented`` as failed. Signature
+    before the signature step. Otherwise the verifier prepares the canonical
+    passport payload bytes as the future signature input
+    (``signature_input_prepared``) and checks that the selected key's signed
+    algorithm is supported (``signature_algorithm_supported``); an unsupported
+    algorithm fails closed to ``DENY`` before the signature step. Otherwise it
+    records ``signature_verification_not_implemented`` as failed. Signature
     verification is out of scope here, so even a matching payload hash still
     fails closed to ``DENY`` and never returns ``ALLOW``.
     """
@@ -398,13 +471,25 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
         )
     )
 
-    # Key selection runs before signature verification. The selected key (the
-    # second tuple element) will be consumed when real signature verification is
-    # implemented; for now only the recorded check is needed to fail closed.
-    key_check, _ = _select_verification_key(passport, proof)
+    # Key selection runs before signature verification and yields the selected
+    # public key, which the algorithm-support check below relies on.
+    key_check, selected_key = _select_verification_key(passport, proof)
     checks.append(key_check)
     if not key_check.passed:
         return VerificationResult.failed(key_check.reason, checks=checks)
+
+    # Prepare the canonical passport payload bytes the future signature verifier
+    # will use. The bytes are not consumed yet because real signature
+    # verification is not implemented in this step.
+    input_check, _ = _prepare_signature_input(passport)
+    checks.append(input_check)
+
+    # The algorithm decision uses the selected key's signed metadata, not the
+    # detached proof algorithm.
+    algorithm_check = _signature_algorithm_supported_check(selected_key)
+    checks.append(algorithm_check)
+    if not algorithm_check.passed:
+        return VerificationResult.failed(algorithm_check.reason, checks=checks)
 
     checks.append(
         _signature_verification_not_implemented_check(passport, proof)
