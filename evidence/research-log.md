@@ -396,3 +396,41 @@ Signature verification is now represented as an explicit internal abstraction ra
 
 Next step:
 Plan key selection and proof algorithm matching before adding real signature verification.
+
+## Entry 015
+
+Date: 2026-05-30
+
+Type: Reference implementation
+
+Summary: Added public key selection checks before signature verification.
+
+Reason: The verifier needs to select the public key referenced by the selected proof and validate basic key metadata before real signature verification can be added safely.
+
+Files created:
+tests/test_passport_verifier_key_selection.py
+
+Files updated:
+src/aaid/passport_verifier.py
+evidence/research-log.md
+
+Result:
+The verifier now records verification_key_selected after payload_hash validation and before the signature verification placeholder. The selected proof's kid must match exactly one public key in the passport. The selected key must use the same algorithm as the proof, have active status, and have a suitable purpose. Missing keys, duplicate key identifiers, algorithm mismatches, retired keys, and compromised keys fail closed to DENY before the signature step.
+
+Tests:
+112 tests passed.
+
+Not implemented in this milestone:
+real signature verification
+post-quantum signing
+issuer trust registry
+revocation enforcement
+policy evaluation
+runtime gateway enforcement
+external integrations
+
+Decision:
+Key selection is now an explicit verifier step. This selects and validates public-key metadata only; it does not prove that the key or issuer is trusted and does not verify a signature. Real signature verification must still be added separately after signature input rules, algorithm handling, trust-anchor rules, and failure behavior are tested.
+
+Next step:
+Plan signature input rules and unsupported signature algorithm failure behavior before adding real cryptographic verification.
