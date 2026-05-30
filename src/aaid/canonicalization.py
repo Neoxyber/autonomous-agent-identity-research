@@ -8,9 +8,16 @@ JCS compliance. Before relying on signatures, test against a reviewed RFC 8785
 compatible library.
 """
 
+import hashlib
 import json
 from collections.abc import Mapping
 from typing import Any
+
+_SUPPORTED_HASH_ALGORITHMS = {
+    "SHA-256": "sha256",
+    "SHA-384": "sha384",
+    "SHA-512": "sha512",
+}
 
 
 def canonicalize_passport_payload(passport: Mapping[str, Any]) -> bytes:
@@ -28,3 +35,26 @@ def canonicalize_passport_payload(passport: Mapping[str, Any]) -> bytes:
         separators=(",", ":"),
         ensure_ascii=False,
     ).encode("utf-8")
+
+
+def hash_passport_payload(
+    passport: Mapping[str, Any], hash_alg: str = "SHA-256"
+) -> str:
+    """Return the lowercase hex digest of the canonical passport payload.
+
+    The digest is computed over the canonical bytes from
+    ``canonicalize_passport_payload`` using one of the allowed hash algorithms
+    (``SHA-256``, ``SHA-384``, ``SHA-512``). This is a payload hash only; it is
+    not a signature. Algorithm names are matched exactly, and unsupported
+    algorithms fail closed with ``ValueError``.
+    """
+    try:
+        hashlib_name = _SUPPORTED_HASH_ALGORITHMS[hash_alg]
+    except KeyError:
+        supported = ", ".join(sorted(_SUPPORTED_HASH_ALGORITHMS))
+        raise ValueError(
+            f"Unsupported hash algorithm: {hash_alg!r}. "
+            f"Supported algorithms: {supported}."
+        ) from None
+    canonical = canonicalize_passport_payload(passport)
+    return hashlib.new(hashlib_name, canonical).hexdigest()
