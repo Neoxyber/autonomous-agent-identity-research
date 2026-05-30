@@ -12,7 +12,11 @@ the first proof only. It then recomputes the canonical payload hash over the
 passport and compares it to the selected proof's recorded hash, recording the
 outcome as a ``payload_hash_valid`` check. This step verifies
 the payload hash only: it does not verify signatures or proofs, does not check
-revocation or issuer trust, and does not evaluate policy. Because signature
+revocation or issuer trust, and does not evaluate policy. After the payload hash
+matches, the verifier selects the public key referenced by the proof and
+validates basic, non-cryptographic key metadata, recording the outcome as a
+``verification_key_selected`` check; finding no single suitable key fails closed
+to ``DENY`` before the signature step. Because signature
 verification does not exist yet, a structurally valid, schema valid envelope
 with a matching payload hash still fails closed to ``DENY``; this verifier can
 never return ``ALLOW``. Each check is recorded as a named, immutable check so
@@ -82,6 +86,106 @@ def _signature_verification_not_implemented_check(
     )
 
 
+_ACCEPTED_KEY_PURPOSES = ("sig", "verify", "hybrid-sig")
+
+
+def _select_verification_key(
+    passport: Mapping, proof: Mapping
+) -> "tuple[VerificationCheck, Mapping | None]":
+    """Select the public key referenced by the selected proof.
+
+    This step inspects public-key metadata only. It finds the public key in
+    ``passport["public_keys"]`` whose ``kid`` matches the selected proof's
+    ``kid`` and confirms basic, non-cryptographic metadata: exactly one key
+    matches, the key algorithm matches the proof algorithm, the key is active,
+    and the key purpose is suitable for signature verification. It performs no
+    cryptographic work and does not verify signatures, issuer trust, revocation,
+    or policy.
+
+    Returns a ``(check, key)`` pair. On success the check passes and ``key`` is
+    the selected public key. On any failure the check fails and ``key`` is
+    ``None`` so the verifier can fail closed. Structural checks and schema
+    validation have already guaranteed that ``public_keys`` is a non-empty list
+    of key objects and that the proof carries a ``kid`` and ``alg`` when this
+    runs.
+    """
+    proof_kid = proof["kid"]
+    matches = [
+        key for key in passport["public_keys"] if key.get("kid") == proof_kid
+    ]
+
+    if not matches:
+        return (
+            VerificationCheck(
+                name="verification_key_selected",
+                passed=False,
+                reason=(
+                    "no public key matches the selected proof key identifier"
+                ),
+            ),
+            None,
+        )
+    if len(matches) > 1:
+        return (
+            VerificationCheck(
+                name="verification_key_selected",
+                passed=False,
+                reason=(
+                    "more than one public key matches the selected proof key "
+                    "identifier"
+                ),
+            ),
+            None,
+        )
+
+    key = matches[0]
+    if key.get("alg") != proof["alg"]:
+        return (
+            VerificationCheck(
+                name="verification_key_selected",
+                passed=False,
+                reason=(
+                    "selected public key algorithm does not match the proof "
+                    "algorithm"
+                ),
+            ),
+            None,
+        )
+    if key.get("status") != "active":
+        return (
+            VerificationCheck(
+                name="verification_key_selected",
+                passed=False,
+                reason="selected public key is not active",
+            ),
+            None,
+        )
+    if key.get("purpose") not in _ACCEPTED_KEY_PURPOSES:
+        return (
+            VerificationCheck(
+                name="verification_key_selected",
+                passed=False,
+                reason=(
+                    "selected public key purpose is not suitable for signature "
+                    "verification"
+                ),
+            ),
+            None,
+        )
+
+    return (
+        VerificationCheck(
+            name="verification_key_selected",
+            passed=True,
+            reason=(
+                "selected the public key referenced by the proof; key metadata "
+                "is acceptable for signature verification"
+            ),
+        ),
+        key,
+    )
+
+
 def verify_passport_envelope(envelope: object) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
@@ -103,7 +207,11 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     schema-validated proof, so it is always a supported algorithm. A mismatch
     fails closed to ``DENY`` with the failing ``payload_hash_valid`` check and
     stops before the signature step. When the payload hash matches, the result
-    records ``payload_hash_valid`` as passed and then records
+    records ``payload_hash_valid`` as passed and then selects the public key
+    referenced by the proof, recording ``verification_key_selected``. If no
+    single public key matches the proof's ``kid`` with a matching algorithm,
+    active status, and suitable purpose, the result fails closed to ``DENY``
+    before the signature step. Otherwise it records
     ``signature_verification_not_implemented`` as failed. Signature
     verification is out of scope here, so even a matching payload hash still
     fails closed to ``DENY`` and never returns ``ALLOW``.
@@ -289,6 +397,14 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
             reason="payload hash matches the canonical passport payload",
         )
     )
+
+    # Key selection runs before signature verification. The selected key (the
+    # second tuple element) will be consumed when real signature verification is
+    # implemented; for now only the recorded check is needed to fail closed.
+    key_check, _ = _select_verification_key(passport, proof)
+    checks.append(key_check)
+    if not key_check.passed:
+        return VerificationResult.failed(key_check.reason, checks=checks)
 
     checks.append(
         _signature_verification_not_implemented_check(passport, proof)
