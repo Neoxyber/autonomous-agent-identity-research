@@ -11,3 +11,26 @@ Detailed design decisions will be recorded separately in Research Decision Recor
 ## Archive note
 
 Entries 001 to 021 are preserved unchanged in evidence/research-log-archive-001.md. This active log continues the same entry numbering and format from Entry 022 onward.
+
+## Entry 022
+
+Date: 2026-05-30
+
+Type: Research planning
+
+Summary: Updated the research roadmap.
+
+Files:
+Updated `ROADMAP.md`; updated this evidence log.
+
+Result:
+The roadmap now defines the project as standards-aligned autonomous agent identity research and orders the next work around standards positioning, canonicalization closure, signature verification, issuer trust, revocation, permission evaluation, human oversight, audit evidence, post-quantum research, and a local dummy demo.
+
+Tests:
+158 tests passed.
+
+Not implemented:
+source code changes, schema changes, dependency adoption, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Align the README with the current research stage.
