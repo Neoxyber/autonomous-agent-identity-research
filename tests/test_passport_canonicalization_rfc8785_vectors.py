@@ -100,3 +100,30 @@ def test_current_helper_documents_utf16_key_ordering_boundary():
         b'{"\xee\x80\x80":"bmp-private-use",'
         b'"\xf0\x90\x80\x80":"non-bmp"}'
     )
+
+
+def test_current_helper_documents_number_serialization_boundary():
+    """Document a JCS number-serialization boundary for a large integer-valued float.
+
+    JCS (RFC 8785) serializes numbers with the ECMAScript Number::toString
+    algorithm, which writes a finite value below 1e21 in positional form. Python
+    json.dumps serializes floats with repr(), which switches to exponential
+    notation at 1e16. The value 1e16 is exactly representable as an IEEE-754
+    double, so both produce the same digits; only the notation differs.
+
+    The float 1e16 is used deliberately: the integer 10000000000000000 would be
+    emitted as positional digits by Python too and would hide the boundary, while
+    JCS treats every JSON number as a double.
+
+    This test records the current helper's behaviour and the JCS expected form for
+    one edge case. It does not claim JCS compatibility and does not change
+    canonicalization behaviour.
+    """
+
+    current_output = canonicalize_passport_payload({"n": 1e16})
+    jcs_expected_output = b'{"n":10000000000000000}'
+
+    # The current helper does not match JCS number serialization for this edge case.
+    assert current_output != jcs_expected_output
+    # The current helper emits exponential notation via Python float repr.
+    assert current_output == b'{"n":1e+16}'
