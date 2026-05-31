@@ -1,270 +1,245 @@
 # Roadmap
 
-This roadmap defines the staged research and implementation path for autonomous agent identity.
+This roadmap describes the staged research path for the autonomous agent identity project.
 
-Foundation rule:
+The project studies how autonomous agents can be given verifiable, accountable, permission-scoped, revocable, auditable, and post-quantum-ready identities.
 
-No passport, no meaningful agent action.
+The work is research-stage. It does not claim production readiness, legal compliance, standards compliance, or replacement of existing identity standards.
 
-An autonomous agent may reason, plan, and prepare action requests, but protected external action depends on valid identity, permission scope, revocation status, human oversight rules, and audit evidence.
+The roadmap connects the research models, reference implementation, tests, and evidence record into a clear order of work. It is intended to keep the project focused as the repository grows.
 
-## Current focus
+## Research direction
 
-The project is building the local verifier foundation. The first passport schema, validation tests, canonicalization helper, payload hash helper, and verification result model are in place.
+The project follows a standards-aligned research direction.
 
-Next implementation step:
+It treats the agent passport as a research envelope for studying autonomous agent identity. The passport is not presented as a new industry standard. Future work may map the model to established or emerging approaches such as verifiable credentials, decentralized identifiers, workload identity, delegated authority, agentic identity and access management, and post-quantum signature systems.
 
-- Add local passport verifier skeleton.
+The central research question is how these areas can work together in a fail-closed identity layer for autonomous agents.
 
-Near-term scope remains narrow. Signature verification, post-quantum signing, revocation infrastructure, policy evaluation, managed storage, deployment, blockchain anchoring, and external tool protocols are deferred until the local verifier foundation is structured and tested.
+The project focuses on the following properties:
 
-Working rule:
+1. An autonomous agent should have a visible and verifiable identity.
 
-- One topic.
-- One focused change.
-- One clean commit.
+2. The agent should be linked to a responsible operator.
 
-## Phase 1. Research foundation
+3. The agent should have explicit permissions and explicit prohibitions.
 
-Status: complete.
+4. The default decision should be denial.
 
-Purpose: establish a research-first repository with clear scope, contribution expectations, security reporting, evidence discipline, and reference handling.
+5. High-risk or uncertain actions should support human approval or human review.
 
-Completed scope: repository structure, scope, principles, problem statement, research questions, reference process, security policy, contribution policy, and research log.
+6. A revoked, expired, suspended, or compromised agent should not be allowed to act.
 
-## Phase 2. Identity and control model
+7. Important decisions should produce audit evidence.
 
-Status: complete for the current research foundation.
+8. Verification should not depend unnecessarily on one central service.
 
-Purpose: define the conceptual model for identity-bound autonomous agent action.
+9. The model should support long-term cryptographic change, including post-quantum readiness.
 
-Completed scope: identity layer, permission model, human oversight model, revocation model, decentralized verification model, audit model, post-quantum readiness model, evaluation method, and limitations.
+## Foundation rule
 
-## Phase 3. Agent passport specification
+No verified identity, no protected action.
 
-Status: complete for the first version.
+An autonomous agent may reason, plan, and prepare a request. Protected external action depends on identity verification, issuer trust, lifecycle status, revocation status, permission scope, human oversight requirements, and audit evidence.
 
-Purpose: define the first machine-readable identity contract for an autonomous agent passport.
+Tool access alone is not authority.
 
-Completed scope: passport schema using JSON Schema Draft 2020-12, minimal passport example, two-part passport/proofs envelope, internal AAID URNs, detached proof metadata, deterministic public key objects, four decision outcomes, and four risk classes.
+## Research method
 
-Deferred: DID support, verifiable credential binding, production trust framework, and legal compliance claims.
+The project records research claims through documents, tests, and evidence.
 
-## Phase 4. Schema validation
+Research results should distinguish between:
 
-Status: complete for the current schema.
+1. What has passed.
 
-Purpose: prove that the first passport schema and minimal example can be validated locally.
+2. What has failed.
 
-Completed scope: pinned development validation requirements, pytest, jsonschema, positive validation tests, and negative validation tests.
+3. What is partially supported.
 
-## Phase 5. Canonicalization and payload hash foundation
+4. What is blocked.
 
-Status: complete for the current scope.
+5. What needs more research.
 
-Purpose: make passport payload hashing deterministic before signature verification is introduced.
+Implementation should remain small and testable. Larger system features should be introduced only after the identity, verification, trust, revocation, policy, oversight, and audit boundaries are clear.
 
-Completed scope: canonicalization rules, canonicalization helper, passport payload hash helper, detached proofs excluded by API boundary, SHA-256/SHA-384/SHA-512 payload hash support, and fail-closed handling for unsupported hash algorithms.
+## Phase 0. Research foundation and project hygiene
 
-Deferred: full independent RFC 8785 implementation claim, signature verification, and signing implementation.
+This phase establishes the repository as a disciplined research project.
 
-## Phase 6. Local verifier foundation
+Current status: mostly complete.
 
-Status: in progress.
+This phase includes the project scope, principles, problem statement, research questions, evidence process, reference handling, and repository hygiene.
 
-Purpose: provide a local verification path that can reject malformed or unsupported passport envelopes before any protected action is considered.
+The evidence log records meaningful milestones. Longer empirical results should later be recorded in dedicated testing logs rather than expanding the active research log indefinitely.
 
-Completed scope: verification result model, immutable verification checks, immutable verification result, fail-closed decision validation, and shared decision constants.
+Exit condition: the project has a clear research foundation, passing tests, a clean working tree after milestones, and a roadmap that reflects the current direction.
 
-Next scope: envelope structure checks, passport presence checks, proof metadata presence checks, schema validation check, payload hash validation check, and clear result reporting through the verification result model.
+## Phase 1. Standards positioning
 
-Deferred: signature verification, post-quantum signing, issuer trust registry, revocation infrastructure, and policy evaluation.
+This phase explains how the research model relates to existing and emerging identity work.
 
-## Phase 7. Strict raw JSON parsing
+The goal is not to claim compliance. The goal is to avoid isolated invention and to make the research understandable to reviewers familiar with identity standards and agent security work.
 
-Status: planned.
+This phase should map the agent passport concepts to relevant areas such as verifiable credentials, decentralized identifiers, workload identity, delegated authority, agentic identity and access management, agent security risks, and post-quantum signature standards.
 
-Purpose: reject unsafe or ambiguous raw JSON before verification.
+The mapping should explain where the research aligns with existing work, where it deliberately remains experimental, and which questions remain unresolved.
 
-Planned scope: malformed JSON rejection, duplicate JSON key rejection, non-object envelope rejection, non-object passport payload rejection, and tests for parser failure modes.
+Exit condition: the README and a concise standards-positioning document describe the project as standards-aligned research without claiming certification, compliance, or production readiness.
 
-## Phase 8. Proof and signature verification path
+## Phase 2. Canonicalization closure
 
-Status: planned.
+This phase closes the canonicalization question so signature verification can proceed safely.
 
-Purpose: create a verification path without locking the project to one signing algorithm too early.
+The project uses a JSON passport envelope. The long-term target for deterministic JSON signing is RFC 8785 / JSON Canonicalization Scheme.
 
-Planned scope: algorithm agility, proof metadata validation, payload hash validation, signature verification abstraction, trusted issuer key lookup, key purpose validation, key status validation, and clear unsupported-algorithm failures.
+The current helper remains useful for local research regression tests, but trusted signature verification requires a reviewed canonicalization path and external conformance tests.
 
-## Phase 9. Policy decision engine
+This phase should avoid further broad planning around canonicalization. The work should move toward reviewed implementation choice, known-answer tests, invalid-input tests, and a stable minimal passport vector.
 
-Status: planned.
+Exit condition: the selected canonicalization path is recorded, external vectors pass, ambiguous inputs fail safely, and the minimal passport has a stable canonical representation.
 
-Purpose: separate identity verification from action permission.
+## Phase 3. Signature verification foundation
 
-Planned scope: default deny, prohibited action denial, revoked/expired/suspended/compromised agent denial, approval-required action handling, review-required action handling, and high-risk action oversight.
+This phase adds the first real signature verification path.
 
-Rule: tool access alone is not authority.
+Signature verification should be performed over canonical passport bytes. The implementation should use maintained cryptographic libraries and should remain algorithm-agile.
 
-## Phase 10. Revocation and lifecycle enforcement
+A valid signature should not by itself authorize action. It only proves that the passport payload has not been modified and that it was signed by a key that may later be evaluated through issuer trust and lifecycle rules.
 
-Status: planned.
+Exit condition: valid signatures verify, modified passports fail, unsupported algorithms fail closed, and the verifier still denies protected action until trust, revocation, and policy checks are implemented.
 
-Purpose: ensure an agent can lose authority after issuance.
+## Phase 4. Issuer trust and key lifecycle
 
-Planned scope: passport status, agent lifecycle status, issuer status, key status, operator status, delegation status, stale heartbeat handling, and signed revocation feeds later.
+This phase defines how a verifier decides whether an issuer and key are trusted.
 
-Rule: revocation is checked outside the agent.
+The research should cover issuer metadata, trust anchors, key identifiers, key purpose, key status, key rotation, and failure behavior for unknown or unsuitable keys.
 
-## Phase 11. Action gateway
+The system should not treat any syntactically valid key as trusted by default.
 
-Status: planned.
+Exit condition: trusted issuers and active keys can be recognized, unknown issuers fail closed, retired or rotated keys fail safely, and trust decisions are recorded as evidence.
 
-Purpose: make the gateway the only path to protected action.
+## Phase 5. Revocation and lifecycle enforcement
 
-Planned scope: action request, passport verification, policy evaluation, human oversight trigger, approved tool call, and audit/behaviour evidence.
+This phase ensures that an agent can lose authority after issuance.
 
-Rule: a powerful agent must not bypass policy through direct tool access.
+The model already defines lifecycle states such as active, suspended, revoked, expired, compromised, rotated, and pending verification. This phase turns those states into enforceable verifier behavior.
 
-## Phase 12. Audit and behaviour evidence
+The research should include online status checks, signed or cached revocation evidence, short-lived passports, and the limits of offline verification.
 
-Status: planned.
+Exit condition: revoked, suspended, expired, and compromised agents are denied; offline limitations are documented; and revocation decisions produce audit evidence.
 
-Purpose: record formal decisions and runtime behaviour after identity exists.
+## Phase 6. Permission and policy evaluation
 
-Planned scope: audit event schema, behaviour event model, passport-issued event, action-requested event, tool-call event, human-oversight event, revocation event, and privacy-minimized evidence.
+This phase separates verified identity from action authority.
 
-Rule: no passport, no trusted behaviour record.
+A verified passport does not mean the agent may perform every action. The requested action must be evaluated against allowed actions, prohibited actions, approval-required actions, lifecycle status, revocation status, and policy context.
 
-## Phase 13. Tamper-evident evidence chain
+The default decision remains denial.
 
-Status: planned.
+Exit condition: allowed actions can proceed only after all earlier gates pass, prohibited actions always deny, approval-required actions return the correct approval outcome, unclear actions return denial or review according to policy, and decision reasons are recorded.
 
-Purpose: make audit and behaviour evidence tamper-evident.
+## Phase 7. Human oversight
 
-Planned scope: canonical event, event hash, previous event hash, batch hash, signed batch, and optional external hash anchor later.
+This phase studies how human approval, review, escalation, pause, and intervention should work.
 
-Rules: use the term tamper-evident, not tamper-proof. Public anchors must not contain raw logs, prompts, secrets, private data, or full operational content.
+Human approval is not unlimited authority. It should be specific, attributable, time-bounded, and auditable. It should not override prohibited actions, revocation, expiry, suspension, compromise, or audit requirements.
 
-## Phase 14. Continuous identity heartbeat
+The research should also study emergency stop behavior and the conditions under which an agent should be paused or prevented from continuing a workflow.
 
-Status: planned.
+Exit condition: approval and review outcomes are tested, approval cannot override core safety boundaries, approval records expire, replay is prevented, and oversight decisions produce audit evidence.
 
-Purpose: keep identity and runtime state observable without destroying agent autonomy.
+## Phase 8. Audit evidence
 
-Planned scope: agent identifier, passport identifier, session identifier, runtime identifier, timestamp, current status, last decision identifier, and last event hash.
+This phase records identity, policy, lifecycle, and oversight decisions in a reviewable form.
 
-Rule: heartbeat monitors liveness and state; action authorization remains at the gateway.
+Audit evidence should explain what happened, why it happened, which evidence was available at the time, and which decision was made. It should support later review, incident response, research evaluation, and future governance mapping.
 
-## Phase 15. Runtime isolation and abuse control
+The audit model should minimize sensitive data and prefer identifiers, hashes, scopes, references, and decision reasons over raw operational content.
 
-Status: planned.
+Exit condition: allowed actions, denied actions, approval decisions, review decisions, revocation events, and lifecycle changes produce audit evidence; tampered audit evidence can be detected; and unnecessary sensitive data is avoided.
 
-Purpose: ensure a compromised or malicious agent cannot bypass identity controls or abuse registration.
+## Phase 9. Post-quantum research
 
-Planned scope: no direct protected tool credentials, no direct protected tool calls, no direct audit-log writes, no self-modification of passport or revocation state, external kill switch, limited filesystem/network access, operator registration, issuer trust, quotas, rate limits, and abuse monitoring.
+This phase studies long-term cryptographic readiness.
 
-## Phase 16. Operator verification readiness
+The project treats post-quantum readiness as a research and design requirement, not a readiness claim. The first research direction includes ML-DSA for signatures, SLH-DSA as an independent backup signature family, and ML-KEM later for key establishment when secure communication becomes in scope.
 
-Status: planned.
+The project should not implement cryptographic primitives from scratch.
 
-Purpose: support future binding between agents and verified people or legal entities.
+Exit condition: controlled experiments record key sizes, signature sizes, verification latency, passport size impact, failure behavior, key rotation, algorithm migration, and the limits of the current implementation.
 
-Planned scope: person operator readiness, legal entity operator readiness, company registry readiness, EU Digital Identity Wallet readiness, verifiable credential readiness, trusted issuer attestations, and privacy-minimized verification evidence.
+## Phase 10. Local research demo
 
-Rule: operator verification is a future trust-strengthening layer, not a first-version dependency.
+This phase demonstrates the model in a controlled local setting using dummy data only.
 
-## Phase 17. Delegation and agent-to-agent verification
+The demo should show a complete decision path: issue a dummy passport, verify it, check issuer trust, check revocation, evaluate permissions, require approval where appropriate, deny prohibited actions, deny after revocation, and record audit evidence.
 
-Status: planned.
+The demo should not use real users, real secrets, production systems, or production data.
 
-Purpose: support many agents, sub-agents, and agent-to-agent interactions without losing accountability.
+Exit condition: a reviewer can run the demo locally and see allowed, denied, approval-required, review-required, and revoked-agent outcomes with audit evidence.
 
-Planned scope: parent passport, child/delegated passport, scope narrowing, short expiry, delegation revocation, sender passport verification, receiver policy check, and inter-agent audit event.
+## Phase 11. Controlled deployment research
 
-Rule: a child agent must never receive broader authority than the parent authority.
+This phase may begin only after the local research demo is stable.
 
-## Phase 18. Cell-based trust and scale model
+The goal is to study whether the local model can be exposed safely in a controlled demo environment without weakening the research boundaries.
 
-Status: planned.
+This phase may consider local APIs, separated demo configuration, controlled hosting, external protocol boundaries, and secret-handling rules. It should not introduce production claims.
 
-Purpose: support many agents without one fragile central control point.
+Exit condition: deployment scope is documented, secrets remain outside the repository, local tests pass, and no production, legal, or standards-compliance claim is made.
 
-Planned scope: root trust policy, issuer cells, operator cells, agent passport cells, local verifiers, signed revocation feeds, local audit chains, and optional external anchors.
+## Deferred research topics
 
-Rule: compromised cells should be isolated without compromising all agents.
+The following topics are important, but should not drive near-term implementation before the core identity and verifier path is stable.
 
-## Phase 19. Tool identity and supply-chain binding
+1. Continuous identity heartbeat and runtime state monitoring.
 
-Status: planned.
+2. Runtime isolation and abuse control.
 
-Purpose: bind agent authority to trusted tools, code, model references, and runtime context.
+3. Operator verification and legal-entity binding.
 
-Planned scope: tool identity, tool manifest hash, tool risk class, agent build hash, model reference, dependency manifest hash, runtime identifier, deployment identifier, and attestation reference later.
+4. Delegation and agent-to-agent verification.
 
-## Phase 20. Post-quantum signing experiments
+5. Scope narrowing for child or delegated agents.
 
-Status: planned.
+6. Cell-based trust and scale models.
 
-Purpose: test post-quantum readiness after the verification pipeline is structurally correct.
+7. Tool identity and supply-chain binding.
 
-Planned scope: ML-DSA passport signing/verification experiments, SLH-DSA backup signature experiment, dual proof passports, signed revocation lists, signed audit/behaviour batches, signature size comparison, verification latency tests, and algorithm migration tests.
+8. Model, tool, dependency, and runtime attestation.
 
-Rule: ML-KEM is reserved for future key establishment work, not passport signing.
+9. External protocol boundaries.
 
-## Phase 21. Local autonomous agent lab
+10. Managed demo storage.
 
-Status: planned.
+11. Transparency logs and timestamp anchoring.
 
-Purpose: create a controlled dummy agent runtime.
+12. Multi-organization verification.
 
-Planned scope: public dummy text reading, dummy document summarization, dummy low-risk classification, external message request simulation, prohibited action attempt, approval-required action attempt, and revoked-action attempt.
+13. Controlled live researcher demo.
 
-Rule: the agent may reason and plan, but protected action depends on gateway approval.
+These topics should be introduced through small, reviewed research steps after the core verifier, trust, revocation, policy, oversight, and audit path is working.
 
-## Phase 22. Managed demo storage
+## Near-term focus
 
-Status: planned.
+The near-term work should stay narrow.
 
-Purpose: store controlled demo data.
+1. Align the README with the current research stage.
 
-Planned scope: agents, agent passports, agent sessions, revocation status, audit events, behaviour events, human oversight events, and signed batches.
+2. Add a concise standards-positioning map.
 
-Rules: use dummy data only. Managed storage should not contain private keys, service role keys, production data, or unnecessary personal data.
+3. Close canonicalization through external conformance tests.
 
-## Phase 23. Controlled live deployment
+4. Add signature verification behind a small abstraction.
 
-Status: planned.
+5. Add issuer trust and key lifecycle checks.
 
-Purpose: deploy a controlled live demo after local verification and gateway foundations work.
+6. Add revocation and lifecycle enforcement.
 
-Planned scope: local tests first, local API first, local UI first, secrets outside the repo, controlled deployment configuration, separated demo environment, and logs that do not expose secrets.
+7. Add permission and policy evaluation.
 
-## Phase 24. External protocol boundary
+8. Add audit evidence for each important decision.
 
-Status: planned.
+9. Build the local dummy demo.
 
-Purpose: define how external tool protocols are introduced safely.
-
-Planned scope: external tool protocols deferred until local verifier/gateway/isolation/audit boundaries exist, read-only access first, least-privilege tool access, manual review before protocol servers, and protocol servers treated as code dependencies.
-
-## Phase 25. Live researcher demo
-
-Status: planned.
-
-Purpose: show the system working in real time.
-
-Planned flow: create dummy operator, create dummy agent, issue passport, start session, show heartbeat, try allowed action, try prohibited action, request approval-required action, revoke passport, deny action after revocation, show audit/behaviour timeline, and show tamper-evident chain break.
-
-Expected result: researchers can see that agent autonomy is preserved for reasoning, while protected external action is identity-bound, permission-scoped, revocable, isolated, and auditable.
-
-## Near-term implementation order
-
-1. Add local passport verifier skeleton.
-2. Add schema validation into verifier.
-3. Add payload hash verification.
-4. Add strict raw JSON duplicate-key parser.
-5. Add trust anchor model.
-6. Add revocation check model.
-7. Add action request and policy evaluation.
-8. Add audit event schema.
+Each step should keep the repository clean, the tests passing, and the research claims limited to what has been implemented, tested, and recorded.
