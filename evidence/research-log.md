@@ -356,3 +356,26 @@ dependency adoption, candidate selection, candidate verification, canonicalizer 
 
 Next step:
 Continue broader isolated canonicalization vector testing before any adoption discussion.
+
+## Entry 037
+
+Date: 2026-05-31
+
+Type: Canonicalization candidate evaluation
+
+Summary: Recorded broader isolated REF-014 vector coverage.
+
+Files:
+Updated `docs/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md`; updated this evidence log.
+
+Result:
+The REF-014 evaluation results document now records a broader isolated vector suite for `rfc8785==0.1.4`. The suite was created and executed under `/tmp/aaid-canonicalization-eval-rfc8785` using the isolated temporary environment only. The script and captured output remained outside the repository. The broader run recorded 26 checks total: 19 `PASS` checks and 7 `NEEDS_RESEARCH` checks, with no `FAIL`, `PARTIAL`, or `BLOCKED` results. The passing checks covered exact-output vectors, property checks, and rejection checks. Deferred items remain open for negative-zero review, standalone exponent-number forms, oversized integer-domain behavior, duplicate-key parse-layer policy, cyberphone reference vectors, and broader RFC 8785/JCS conformance. This is candidate evidence only: the dependency is not adopted, the candidate is not selected, full RFC 8785/JCS conformance is not claimed, legal compatibility and safety are not claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, candidate verification, canonicalizer replacement, build provenance verification, legal compatibility review, full RFC 8785/JCS compatibility, full I-JSON validation, cyberphone reference-vector coverage, REF-015 comparison, malformed input coverage beyond the exercised rejection checks, full size/depth stress testing, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide whether to run official/reference-vector coverage, including cyberphone vectors, or compare REF-015 using the same isolated evaluation discipline.
