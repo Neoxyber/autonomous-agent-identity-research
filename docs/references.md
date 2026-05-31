@@ -37,7 +37,7 @@ Retired means the source is no longer used by this repository.
 | REF-011 | Proof of possession | OAuth DPoP | IETF | Pending review | Not recorded | Used for action request proof research |
 | REF-012 | Software supply chain integrity | SLSA | OpenSSF | Pending review | Not recorded | Used for future supply chain binding |
 | REF-013 | JSON canonicalization | RFC 8785 JSON Canonicalization Scheme | IETF | Pending review | Not recorded | Used for canonicalization compatibility research |
-| REF-014 | RFC 8785 candidate implementation | rfc8785 / trailofbits/rfc8785.py | Trail of Bits | Pending review | Not recorded | Used for candidate canonicalization implementation evaluation |
+| REF-014 | RFC 8785 candidate implementation | rfc8785 / trailofbits/rfc8785.py | Trail of Bits | Pending review | Not recorded | Source identity and declared license checked in `docs/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md`; adoption and functional conformance remain unverified |
 | REF-015 | RFC 8785 candidate implementation | jcs Python package / titusz jcs | titusz | Pending review | Not recorded | Used for candidate canonicalization implementation comparison |
 | REF-016 | JSON Canonicalization reference implementation and test vectors | cyberphone/json-canonicalization | Anders Rundgren / cyberphone | Pending review | Not recorded | Used for RFC 8785/JCS reference vectors and comparison |
 | REF-017 | Alternative canonical JSON implementation | canonicaljson | Matrix.org | Pending review | Not recorded | Used as excluded comparison because it targets Matrix canonical JSON rather than RFC 8785/JCS |
