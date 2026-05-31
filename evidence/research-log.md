@@ -195,3 +195,26 @@ canonicalization behavior changes, dependency adoption, full RFC 8785/JCS compat
 
 Next step:
 Begin candidate RFC 8785/JCS implementation evaluation before adopting any canonicalization dependency.
+
+## Entry 030
+
+Date: 2026-05-31
+
+Type: Reference management
+
+Summary: Added RFC 8785 reference entry.
+
+Files:
+Updated `docs/references.md`; updated this evidence log.
+
+Result:
+The central reference register now includes `REF-013` for RFC 8785 JSON Canonicalization Scheme. The reference is marked `Pending review`, consistent with the repository policy that new references remain under review until checked against the original publisher or official source. No implementation file was changed, and no RFC 8785/JCS compatibility claim was added.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+reference verification, canonicalization behavior changes, dependency adoption, full RFC 8785/JCS compatibility, full I-JSON validation, canonicalization package evaluation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Begin candidate RFC 8785/JCS implementation evaluation before adopting any canonicalization dependency.
