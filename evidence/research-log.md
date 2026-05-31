@@ -287,3 +287,26 @@ package installation, package execution, dependency adoption, candidate selectio
 
 Next step:
 Decide whether to run an isolated canonicalization candidate evaluation with explicit approval, or first create an evaluation results template.
+
+## Entry 034
+
+Date: 2026-05-31
+
+Type: Canonicalization evaluation planning
+
+Summary: Added canonicalization evaluation results template.
+
+Files:
+Created `docs/canonicalization-evaluation-results-template.md`; updated this evidence log.
+
+Result:
+The new template defines how future isolated canonicalization candidate evaluation results should be recorded. It standardizes candidate records, vector result tables, environment records, result status values, review checklist items, non-goals, and the next step. The template records no live candidate results and preserves the current boundary: no package is installed or executed, no dependency is adopted, no candidate is selected or verified, no canonicalizer is replaced, no full RFC 8785/JCS compatibility is claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+package installation, package execution, live candidate evaluation results, dependency adoption, candidate selection, candidate verification, canonicalizer replacement, full RFC 8785/JCS compatibility, full I-JSON validation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide whether to run an isolated canonicalization candidate evaluation with explicit approval.
