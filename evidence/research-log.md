@@ -34,3 +34,26 @@ source code changes, schema changes, dependency adoption, real signature verific
 
 Next step:
 Align the README with the current research stage.
+
+## Entry 023
+
+Date: 2026-05-30
+
+Type: Research documentation
+
+Summary: Aligned README with the current research stage.
+
+Files:
+Updated `README.md`; updated this evidence log.
+
+Result:
+The README now describes the repository as standards-aligned autonomous agent identity research and reflects the current state of the project, including the existing research models, schema, reference implementation foundation, fail-closed verifier pipeline, and tests. It avoids production-readiness, legal-compliance, standards-compliance, and replacement-of-standards claims.
+
+Tests:
+158 tests passed.
+
+Not implemented:
+source code changes, schema changes, dependency adoption, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Add a concise standards-positioning map.
