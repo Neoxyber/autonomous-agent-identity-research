@@ -218,3 +218,26 @@ reference verification, canonicalization behavior changes, dependency adoption, 
 
 Next step:
 Begin candidate RFC 8785/JCS implementation evaluation before adopting any canonicalization dependency.
+
+## Entry 031
+
+Date: 2026-05-31
+
+Type: Reference management
+
+Summary: Added canonicalization candidate references.
+
+Files:
+Updated `docs/references.md`; updated this evidence log.
+
+Result:
+The central reference register now includes pending-review references for candidate RFC 8785/JCS implementations and comparison sources. The additions include `rfc8785`, `jcs`, the `cyberphone/json-canonicalization` reference and vector source, and excluded or lower-priority comparison candidates. All new entries remain marked `Pending review`. No dependency was adopted, no package was evaluated in the repository, and no candidate was selected.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+reference verification, package installation, dependency adoption, canonicalization behavior changes, full RFC 8785/JCS compatibility, full I-JSON validation, canonicalization package evaluation results, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Create a candidate canonicalization evaluation matrix before running any isolated package evaluation.
