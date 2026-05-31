@@ -241,3 +241,26 @@ reference verification, package installation, dependency adoption, canonicalizat
 
 Next step:
 Create a candidate canonicalization evaluation matrix before running any isolated package evaluation.
+
+## Entry 032
+
+Date: 2026-05-31
+
+Type: Canonicalization evaluation planning
+
+Summary: Added canonicalization candidate matrix.
+
+Files:
+Created `docs/canonicalization-candidate-matrix.md`; updated this evidence log.
+
+Result:
+The new matrix compares pending-review canonicalization candidates and reference sources before isolated evaluation or dependency adoption. It records candidate roles, initial evaluation priority, reasons for inclusion, known risks, evaluation use, required evaluation checks, proposed evaluation order, non-goals, and the next step. The document preserves the current boundary: no dependency is adopted, no candidate is selected or verified, no full RFC 8785/JCS compatibility is claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+package installation, package execution, dependency adoption, candidate selection, candidate verification, canonicalizer replacement, full RFC 8785/JCS compatibility, full I-JSON validation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Create an isolated canonicalization candidate evaluation plan before running or installing candidate packages.
