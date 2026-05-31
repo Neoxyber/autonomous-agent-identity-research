@@ -57,3 +57,26 @@ source code changes, schema changes, dependency adoption, real signature verific
 
 Next step:
 Add a concise standards-positioning map.
+
+## Entry 024
+
+Date: 2026-05-30
+
+Type: Research positioning
+
+Summary: Added standards positioning map.
+
+Files:
+Created `docs/standards-positioning.md`; updated this evidence log.
+
+Result:
+The new document positions the agent passport as a standards-aligned research envelope rather than a replacement for existing identity standards. It maps project concepts to related external areas such as verifiable credentials, decentralized identifiers, workload identity, delegated authority, agentic identity and access management, agent security risks, and post-quantum signatures while preserving clear non-claims and open research questions.
+
+Tests:
+158 tests passed.
+
+Not implemented:
+source code changes, schema changes, dependency adoption, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Close canonicalization through external conformance tests.
