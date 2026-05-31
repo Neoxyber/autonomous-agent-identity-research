@@ -126,3 +126,26 @@ dependency adoption, full RFC 8785/JCS compatibility, duplicate-key rejection, f
 
 Next step:
 Study and test the duplicate-key parsing boundary before evaluating or adopting a canonicalization dependency.
+
+## Entry 027
+
+Date: 2026-05-31
+
+Type: Canonicalization parsing boundary
+
+Summary: Added duplicate-key JSON parsing boundary.
+
+Files:
+Created `src/aaid/json_parsing.py`; created `tests/test_passport_json_parsing.py`; updated this evidence log.
+
+Result:
+The new raw JSON parsing helper rejects duplicate JSON object member names before normal parsing collapses them into a Python mapping. The helper uses the Python standard library only and detects duplicate keys in top-level objects, nested objects, and objects inside arrays. This creates a tested parsing boundary before canonicalization input is trusted, while preserving current verifier and canonicalization behavior.
+
+Tests:
+168 tests passed.
+
+Not implemented:
+verifier integration, canonicalization behavior changes, dependency adoption, full RFC 8785/JCS compatibility, full I-JSON validation, canonicalization package evaluation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide where the duplicate-key parsing boundary should enter the verifier pipeline before evaluating or adopting a canonicalization dependency.
