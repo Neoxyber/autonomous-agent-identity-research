@@ -103,3 +103,26 @@ dependency adoption, full RFC 8785/JCS compatibility, duplicate-key rejection, f
 
 Next step:
 Add canonicalization failure-boundary tests before evaluating or adopting a canonicalization dependency.
+
+## Entry 026
+
+Date: 2026-05-31
+
+Type: Canonicalization failure boundary
+
+Summary: Rejected non-finite canonicalization numbers.
+
+Files:
+Updated `src/aaid/canonicalization.py`; updated `tests/test_passport_canonicalization_rfc8785_vectors.py`; updated this evidence log.
+
+Result:
+The canonicalization helper now rejects `NaN`, `Infinity`, and `-Infinity` by using the standard JSON serializer's fail-closed behavior for non-finite numbers. The tests add a parametrized boundary check for all three values. This closes one JCS-related failure boundary before dependency adoption while preserving the existing research-helper boundary and avoiding any full RFC 8785/JCS compatibility claim.
+
+Tests:
+162 tests passed.
+
+Not implemented:
+dependency adoption, full RFC 8785/JCS compatibility, duplicate-key rejection, full I-JSON validation, canonicalization package evaluation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Study and test the duplicate-key parsing boundary before evaluating or adopting a canonicalization dependency.
