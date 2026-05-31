@@ -333,3 +333,26 @@ dependency adoption, candidate selection, candidate verification, canonicalizer 
 
 Next step:
 Verify the candidate license and original source, then decide whether to run broader isolated vector coverage before any adoption discussion.
+
+## Entry 036
+
+Date: 2026-05-31
+
+Type: Reference verification
+
+Summary: Recorded REF-014 source and declared license check.
+
+Files:
+Updated `docs/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md`; updated `docs/references.md`; updated this evidence log.
+
+Result:
+The REF-014 evaluation results document now includes a compact source and declared license check based on official package and source pages. The note records that the `rfc8785` package and `trailofbits/rfc8785.py` source identity were checked, that version `0.1.4` and the project documentation location were observed, and that the declared license signals indicate Apache Software License / Apache-2.0. The central reference register keeps REF-014 as `Pending review` while noting that source identity and declared license were checked and that adoption and functional conformance remain unverified. This preserves the boundary: the dependency is not adopted, the candidate is not selected, full RFC 8785/JCS conformance is not claimed, legal compatibility is not claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, candidate verification, canonicalizer replacement, build provenance verification, legal compatibility review, full RFC 8785/JCS compatibility, full I-JSON validation, broad cyberphone vector evaluation, malformed input coverage, empty object and array coverage, size/depth stress testing, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Continue broader isolated canonicalization vector testing before any adoption discussion.
