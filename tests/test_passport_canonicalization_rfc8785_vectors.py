@@ -63,3 +63,40 @@ def test_canonicalize_rejects_non_finite_numbers(non_finite):
 
     with pytest.raises(ValueError):
         canonicalize_passport_payload({"value": non_finite})
+
+
+def test_current_helper_documents_utf16_key_ordering_boundary():
+    """Document a JCS key-ordering boundary for non-BMP object names.
+
+    JCS sorts object member names by UTF-16 code units. Python sort_keys=True
+    sorts strings by code point. Those orders can diverge for non-BMP keys.
+
+    For U+E000 (a BMP code point) and U+10000 (a non-BMP code point encoded in
+    UTF-16 as the surrogate pair D800 DC00):
+    - Python code-point order places U+E000 first, because 0xE000 < 0x10000.
+    - JCS UTF-16 code-unit order places U+10000 first, because its leading code
+      unit D800 sorts before E000.
+
+    This test records the current helper's behaviour and the JCS expected order
+    for one edge case. It does not claim JCS compatibility and does not change
+    canonicalization behaviour.
+    """
+
+    data = {
+        chr(0xE000): "bmp-private-use",  # U+E000, a BMP private-use code point
+        chr(0x10000): "non-bmp",  # U+10000, non-BMP (UTF-16 surrogate pair D800 DC00)
+    }
+
+    current_output = canonicalize_passport_payload(data)
+    jcs_utf16_order_output = (
+        b'{"\xf0\x90\x80\x80":"non-bmp",'
+        b'"\xee\x80\x80":"bmp-private-use"}'
+    )
+
+    # The current helper does not match JCS UTF-16 ordering for this edge case.
+    assert current_output != jcs_utf16_order_output
+    # The current helper sorts by Python code point: the BMP key comes first.
+    assert current_output == (
+        b'{"\xee\x80\x80":"bmp-private-use",'
+        b'"\xf0\x90\x80\x80":"non-bmp"}'
+    )
