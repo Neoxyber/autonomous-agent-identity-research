@@ -28,12 +28,17 @@ def canonicalize_passport_payload(passport: Mapping[str, Any]) -> bytes:
     and is not part of the signed payload, so it must not be passed in. Object
     member order does not affect the output; timestamp and identifier strings are
     passed through unchanged.
+
+    Non-finite numbers (``NaN``, ``Infinity``, ``-Infinity``) are rejected with
+    ``ValueError`` so canonicalization fails closed rather than emit
+    non-conformant JSON tokens.
     """
     return json.dumps(
         passport,
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,
+        allow_nan=False,
     ).encode("utf-8")
 
 

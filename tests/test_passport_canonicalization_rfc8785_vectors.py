@@ -11,6 +11,8 @@ UTF-16 sorting, and number-serialization boundary tests remain future work.
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
@@ -47,3 +49,17 @@ def test_rfc8785_section_3_2_3_sample_object_known_answer():
     )
 
     assert canonicalize_passport_payload(sample) == expected
+
+
+@pytest.mark.parametrize("non_finite", [float("nan"), float("inf"), float("-inf")])
+def test_canonicalize_rejects_non_finite_numbers(non_finite):
+    """Reject non-finite numbers so canonicalization fails closed.
+
+    Python's json module emits ``NaN``, ``Infinity``, and ``-Infinity`` tokens
+    by default, which are not valid JSON and not RFC 8785/JCS conformant. The
+    helper must reject them rather than produce signing input that no conformant
+    verifier can parse.
+    """
+
+    with pytest.raises(ValueError):
+        canonicalize_passport_payload({"value": non_finite})
