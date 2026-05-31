@@ -115,6 +115,36 @@ candidate is not selected, and real signature verification remains blocked.
 | Array order preservation | Structured input | Preserve array element order | Not asserted as a standalone check | NEEDS_RESEARCH | Incidentally exercised by the known-answer vector |
 | Size/depth bounded stress case | Bounded stress input | Handle bounded size and depth within defined limits | Not exercised in this run | NEEDS_RESEARCH | Deferred to broader evaluation |
 
+
+## Broader isolated vector coverage
+
+A broader isolated vector suite was run under
+`/tmp/aaid-canonicalization-eval-rfc8785` using `rfc8785==0.1.4`.
+The suite used inline vectors only and did not modify repository files. The
+captured output was written outside the repository to
+`/tmp/aaid-canonicalization-eval-rfc8785/observed-output-broader-vectors.txt`.
+
+Summary:
+
+| Group | PASS | NEEDS_RESEARCH | Notes |
+| --- | ---: | ---: | --- |
+| Exact-output checks | 10 | 0 | Known-answer vector, `1e16`, UTF-16 non-BMP key ordering, empty object, empty array, object ordering, nested ordering, array order, booleans/null, and zero integer |
+| Property checks | 5 | 0 | Control-character escaping, Unicode/non-ASCII output, bounded depth, bounded size, and repeated deterministic output |
+| Rejection checks | 4 | 0 | Non-finite numbers, non-string object key, `set`, and `decimal.Decimal` were rejected |
+| Deferred checks | 0 | 7 | Negative zero, standalone exponent-number forms, oversized integer-domain behavior, duplicate-key parse-layer policy, cyberphone reference vectors, and broader conformance remain open |
+
+Result:
+The broader isolated run recorded 19 `PASS` checks and 7 `NEEDS_RESEARCH`
+checks, with no `FAIL`, `PARTIAL`, or `BLOCKED` results. This is broader
+candidate evidence only. It does not adopt the dependency, does not select the
+candidate, does not verify full RFC 8785/JCS conformance, does not verify legal
+compatibility or safety, and does not unblock real signature verification.
+
+Open items:
+The deferred checks remain separate work. In particular, duplicate-key handling
+belongs to the JSON parse layer, cyberphone reference-vector coverage was not run
+in this step, and broader RFC 8785/JCS conformance remains unverified.
+
 ## Environment record
 
 - Temporary environment path: `/tmp/aaid-canonicalization-eval-rfc8785`
@@ -141,8 +171,9 @@ candidate is not selected, and real signature verification remains blocked.
 - [x] No verifier integration occurred.
 - [x] Duplicate-key handling was reviewed separately from canonicalization.
 - [x] Non-finite number handling was tested.
-- [ ] License and maintenance status were reviewed — license metadata was empty
-  and is not yet verified from the original source (Pending review).
+- [x] Source identity and declared license were checked against official
+  package and source pages; legal compatibility and build provenance remain
+  out of scope.
 - [x] Risks and unresolved questions were recorded.
 - [x] Adoption was not implied by test results.
 
@@ -164,7 +195,8 @@ This document does not cover:
 
 ## Next step
 
-The next step is to decide whether to verify the candidate's license and source
-from the publisher and to exercise the broader vector set noted above. Any
-adoption would be a separate step requiring its own review and explicit approval;
-this record does not adopt or select the candidate.
+The next step is to decide whether to run official/reference-vector coverage,
+including cyberphone vectors, and then compare REF-015 using the same isolated
+evaluation discipline. Any adoption would be a separate step requiring its own
+review and explicit approval; this record does not adopt or select the
+candidate.
