@@ -172,3 +172,26 @@ canonicalization behavior changes, dependency adoption, full RFC 8785/JCS compat
 
 Next step:
 Continue canonicalization closure by adding number-serialization boundary tests or by preparing a candidate implementation evaluation step.
+
+## Entry 029
+
+Date: 2026-05-31
+
+Type: Canonicalization compatibility boundary
+
+Summary: Documented number serialization boundary.
+
+Files:
+Updated `tests/test_passport_canonicalization_rfc8785_vectors.py`; updated this evidence log.
+
+Result:
+The new boundary test records a finite-number serialization edge case where the current helper's Python float serialization differs from RFC 8785/JCS ECMAScript number serialization. The test uses `1e16` as a deliberately selected float value: the current helper emits exponential notation, while the JCS expected form is positional digits. This documents another concrete compatibility limitation before dependency adoption. It does not change canonicalization behavior, does not claim full RFC 8785/JCS compatibility, and does not unblock real signature verification.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+canonicalization behavior changes, dependency adoption, full RFC 8785/JCS compatibility, full I-JSON validation, canonicalization package evaluation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Begin candidate RFC 8785/JCS implementation evaluation before adopting any canonicalization dependency.
