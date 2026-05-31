@@ -310,3 +310,26 @@ package installation, package execution, live candidate evaluation results, depe
 
 Next step:
 Decide whether to run an isolated canonicalization candidate evaluation with explicit approval.
+
+## Entry 035
+
+Date: 2026-05-31
+
+Type: Canonicalization candidate evaluation
+
+Summary: Recorded isolated REF-014 evaluation results.
+
+Files:
+Created `docs/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md`; updated this evidence log.
+
+Result:
+The new results document records an isolated evaluation of `REF-014` using `rfc8785==0.1.4` in a temporary environment outside the repository. The candidate passed the exercised small inline checks for the RFC 8785 known-answer vector, `1e16` number serialization, UTF-16 non-BMP key ordering, non-finite number rejection, and a synthetic minimal passport-like payload. Duplicate-key handling remains a separate parse-layer concern and is recorded as `NEEDS_RESEARCH`. The result is evidence only: it does not adopt the dependency, does not select or verify the candidate, does not claim full RFC 8785/JCS conformance, does not replace the canonicalizer, and does not unblock real signature verification.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, candidate verification, canonicalizer replacement, full RFC 8785/JCS compatibility, full I-JSON validation, broad cyberphone vector evaluation, malformed input coverage, empty object and array coverage, size/depth stress testing, license verification, maintenance verification, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Verify the candidate license and original source, then decide whether to run broader isolated vector coverage before any adoption discussion.
