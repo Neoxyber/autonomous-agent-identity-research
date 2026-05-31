@@ -149,3 +149,26 @@ verifier integration, canonicalization behavior changes, dependency adoption, fu
 
 Next step:
 Decide where the duplicate-key parsing boundary should enter the verifier pipeline before evaluating or adopting a canonicalization dependency.
+
+## Entry 028
+
+Date: 2026-05-31
+
+Type: Canonicalization compatibility boundary
+
+Summary: Documented UTF-16 canonicalization ordering boundary.
+
+Files:
+Updated `tests/test_passport_canonicalization_rfc8785_vectors.py`; updated this evidence log.
+
+Result:
+The new boundary test records a JCS key-ordering edge case where the current helper's Python code-point ordering differs from RFC 8785/JCS UTF-16 code-unit ordering for non-BMP object member names. This documents a concrete compatibility limitation before dependency adoption. It does not change canonicalization behavior, does not claim full RFC 8785/JCS compatibility, and does not unblock real signature verification.
+
+Tests:
+169 tests passed.
+
+Not implemented:
+canonicalization behavior changes, dependency adoption, full RFC 8785/JCS compatibility, full I-JSON validation, canonicalization package evaluation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Continue canonicalization closure by adding number-serialization boundary tests or by preparing a candidate implementation evaluation step.
