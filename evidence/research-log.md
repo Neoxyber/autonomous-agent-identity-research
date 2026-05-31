@@ -264,3 +264,26 @@ package installation, package execution, dependency adoption, candidate selectio
 
 Next step:
 Create an isolated canonicalization candidate evaluation plan before running or installing candidate packages.
+
+## Entry 033
+
+Date: 2026-05-31
+
+Type: Canonicalization evaluation planning
+
+Summary: Added isolated canonicalization evaluation plan.
+
+Files:
+Created `docs/canonicalization-isolated-evaluation-plan.md`; updated this evidence log.
+
+Result:
+The new plan defines how canonicalization candidates should be evaluated in an isolated environment before package execution, dependency adoption, or verifier changes. It records candidate scope, isolation requirements, evaluation inputs, evaluation outputs, result categories, proposed evaluation order, safety controls, non-goals, and the next step. The plan preserves the current boundary: no package is installed or executed, no dependency is adopted, no candidate is selected or verified, no canonicalizer is replaced, no full RFC 8785/JCS compatibility is claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+package installation, package execution, dependency adoption, candidate selection, candidate verification, canonicalizer replacement, full RFC 8785/JCS compatibility, full I-JSON validation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide whether to run an isolated canonicalization candidate evaluation with explicit approval, or first create an evaluation results template.
