@@ -80,3 +80,26 @@ source code changes, schema changes, dependency adoption, real signature verific
 
 Next step:
 Close canonicalization through external conformance tests.
+
+## Entry 025
+
+Date: 2026-05-31
+
+Type: Canonicalization conformance
+
+Summary: Added RFC 8785 target vector test.
+
+Files:
+Created `tests/test_passport_canonicalization_rfc8785_vectors.py`; updated this evidence log.
+
+Result:
+The new test adds an external RFC 8785/JCS known-answer vector as the first canonicalization conformance step. It records external conformance evidence before dependency adoption. This does not adopt a canonicalization dependency, does not claim full RFC 8785/JCS compatibility, and does not unblock real signature verification by itself.
+
+Tests:
+159 tests passed.
+
+Not implemented:
+dependency adoption, full RFC 8785/JCS compatibility, duplicate-key rejection, full I-JSON validation, canonicalization package evaluation, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Add canonicalization failure-boundary tests before evaluating or adopting a canonicalization dependency.
