@@ -36,6 +36,7 @@ Retired means the source is no longer used by this repository.
 | REF-010 | Workload identity | SPIFFE and SPIRE | SPIFFE | Pending review | Not recorded | Used for runtime identity research |
 | REF-011 | Proof of possession | OAuth DPoP | IETF | Pending review | Not recorded | Used for action request proof research |
 | REF-012 | Software supply chain integrity | SLSA | OpenSSF | Pending review | Not recorded | Used for future supply chain binding |
+| REF-013 | JSON canonicalization | RFC 8785 JSON Canonicalization Scheme | IETF | Pending review | Not recorded | Used for canonicalization compatibility research |
 
 ## Use policy
 
