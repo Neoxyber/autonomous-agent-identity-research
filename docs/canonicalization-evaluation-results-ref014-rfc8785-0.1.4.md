@@ -82,6 +82,21 @@ specific tested vector in the isolated environment.
   empty object/array, size/depth limits, full I-JSON constraints) before any
   adoption discussion.
 
+## Source and declared license check
+
+The source identity and declared license for REF-014 were checked from official
+package and source pages. The PyPI package page shows package `rfc8785` version
+`0.1.4`, released on 2024-09-27, with Trail of Bits as the owner/author signal,
+Python `>=3.8`, Development Status `4 - Beta`, and an Apache Software License
+classifier. The GitHub repository page for `trailofbits/rfc8785.py` shows the
+same project identity, the `v0.1.4` latest release, the project documentation
+location, and an Apache-2.0 license.
+
+This check covers source identity and declared license only. It does not verify
+build provenance, legal compatibility, candidate behavior, full RFC 8785/JCS
+conformance, adoption suitability, or safety. The dependency is not adopted, the
+candidate is not selected, and real signature verification remains blocked.
+
 ## Vector result table
 
 | Check | Input source | Expected behavior | Observed behavior | Result | Notes |
