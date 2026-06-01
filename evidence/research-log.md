@@ -425,3 +425,26 @@ dependency adoption, candidate selection, candidate verification, canonicalizer 
 
 Next step:
 Compare REF-014 and REF-015 evidence side by side and decide whether a separate bounded number-serialization reference-vector gate is needed before any adoption discussion.
+
+## Entry 040
+
+Date: 2026-06-01
+
+Type: Canonicalization candidate comparison
+
+Summary: Compared REF-014 and REF-015 canonicalization candidate evidence.
+
+Files:
+Added `docs/canonicalization-candidate-comparison-ref014-ref015.md`; updated this evidence log.
+
+Result:
+The comparison document now records a side-by-side review of the current isolated evidence for REF-014 `rfc8785==0.1.4` and REF-015 `jcs==0.2.1`. REF-014 remains stronger on independence grounds because it is not a cyberphone-lineage port. REF-015 remains useful as differential comparison evidence and as a cyberphone-lineage cross-check, but its agreement with REF-016 vectors is port-fidelity evidence rather than fully independent corroboration. Both candidates remain Pending review. No candidate is adopted or selected, no canonicalizer is replaced, full RFC 8785/JCS conformance is not claimed, legal compatibility is not claimed, and real signature verification remains blocked. The comparison identifies bounded number-serialization reference-vector coverage as the recommended next gate before any adoption discussion.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, canonicalizer replacement, build provenance verification, legal compatibility review, attribution completeness review, full RFC 8785/JCS compatibility, full I-JSON validation, bounded number-serialization reference-vector gate, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Plan the bounded number-serialization reference-vector gate, or explicitly defer it with rationale before any adoption discussion.
