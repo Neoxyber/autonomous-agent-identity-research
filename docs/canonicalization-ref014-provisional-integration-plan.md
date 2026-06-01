@@ -148,6 +148,29 @@ Before replacing the canonicalization helper, the project should decide:
 - whether unsafe integer and future numeric payload-domain failures are schema
   failures, parse failures, or canonicalization failures.
 
+## P3 verifier-boundary evidence collected
+
+A first verifier-boundary pass inspected the current parser, canonicalization
+helper, verifier, and related tests.
+
+Findings:
+The raw JSON duplicate-key helper exists separately in `src/aaid/json_parsing.py`
+and rejects duplicate object member names before JSON objects collapse into
+parsed mappings. The current verifier entry point `verify_passport_envelope()`
+accepts an already parsed envelope object, not raw JSON text. Schema validation
+runs before payload-hash comparison. Payload-hash verification and future
+signature-input preparation both use the shared canonicalization helper over the
+`passport` object only, excluding the envelope wrapper and `proofs`. Unsupported
+canonicalization fails closed before signature input preparation. Real signature
+verification remains unimplemented and fails closed.
+
+Status:
+Before any REF-014 adoption proposal, the project should decide whether to add a
+raw JSON verifier entry point that calls `parse_json_no_duplicate_keys()` before
+schema validation, or document that parsed mappings are accepted only with
+caller-side duplicate-key parsing guarantees. This section does not authorize
+verifier changes or runtime behavior changes.
+
 ## Required integration tests
 
 A future integration branch should add tests before or with any runtime change:
