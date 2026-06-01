@@ -253,6 +253,25 @@ This document does not implement:
 - cloud deployment;
 - external integrations.
 
+## Raw JSON verifier-boundary decision
+
+The research boundary should support two verifier entry points with different
+trust assumptions.
+
+`verify_passport_json(text: str)` should be the public boundary for untrusted raw
+JSON input. It should parse with `parse_json_no_duplicate_keys()` before schema
+validation, canonicalization, payload-hash comparison, or signature processing.
+Malformed JSON and duplicate object member names should fail closed and produce
+a reviewable verification result.
+
+`verify_passport_envelope(envelope: object)` may remain the parsed-object
+boundary for internal use and caller-trusted mappings. If the original source
+was raw JSON, callers must provide duplicate-key parsing guarantees before using
+this boundary.
+
+This decision does not implement the raw JSON verifier entry point. It records
+the API boundary that should guide the next implementation step.
+
 ## Next step
 
 Use this threat model to guide the next small research step. The likely next
