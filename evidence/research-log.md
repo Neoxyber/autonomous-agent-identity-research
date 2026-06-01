@@ -517,3 +517,26 @@ dependency adoption, candidate selection, canonicalizer replacement, package ins
 
 Next step:
 Draft a canonicalization candidate decision record for review. The decision record should recommend REF-014 for provisional integration planning only, keep REF-015 as comparison evidence, and list the remaining blockers before adoption.
+
+## Entry 044
+
+Date: 2026-06-01
+
+Type: Canonicalization decision-readiness clarification
+
+Summary: Clarified the canonicalization readiness next step.
+
+Files:
+Updated `docs/canonicalization-candidate-decision-readiness.md`; updated this evidence log.
+
+Result:
+The decision-readiness research assessment now avoids creating a separate near-duplicate candidate decision record at this stage. It records that the assessment itself is the current canonicalization decision-readiness record, identifies REF-014 as the leading candidate for provisional integration planning only, and keeps REF-015 as comparison evidence. The next step is now a REF-014 provisional integration plan covering required tests, provenance checks, legal/attribution checks, dependency-risk checks, and verifier-boundary changes before any adoption proposal. This preserves the boundary: no dependency is adopted, no candidate is selected for adoption, no canonicalizer is replaced, references remain Pending review, real signature verification remains blocked, and post-quantum signing work is not started.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate adoption decision record, canonicalizer replacement, package installation in the repository environment, package artifact provenance review, build provenance verification, legal compatibility review, attribution completeness review, maintenance and vulnerability-risk review, verifier raw-JSON entry-point integration, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, full RFC 8785/JCS conformance, full I-JSON conformance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Prepare a REF-014 provisional integration plan before any adoption proposal.
