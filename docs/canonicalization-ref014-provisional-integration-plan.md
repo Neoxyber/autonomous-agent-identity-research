@@ -57,6 +57,41 @@ version, source repository and release correspondence, package artifact hashes,
 source-to-artifact traceability, generated/build-file status, native-build
 status, transitive dependencies, and package-index expectations.
 
+## P0 provenance evidence collected
+
+A first isolated provenance pass was run under
+`/tmp/aaid-ref014-provenance-review`.
+
+Findings:
+
+- PyPI and GitHub release artifacts matched byte-for-byte for the evaluated
+  wheel and source distribution.
+- Wheel SHA-256:
+  `520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48`.
+- Source distribution SHA-256:
+  `e545841329fe0eee4f6a3b44e7034343100c12b4ec566dc06ca9735681deb4da`.
+- The wheel is `py3-none-any`, pure Python, and no native extensions were
+  observed.
+- Runtime dependency surface remains empty for normal installation; dependency
+  metadata observed only optional development, documentation, lint, and test
+  extras.
+- PyPI release metadata reported no index-hosted provenance field for the
+  release files.
+- GitHub release assets include Sigstore bundle files for the wheel, source
+  distribution, and source archives.
+- Sigstore bundle metadata referenced Rekor `hashedrekord` entries whose decoded
+  bodies contained the expected artifact SHA-256 values.
+- Certificate hints referenced
+  `trailofbits/rfc8785.py`, `refs/tags/v0.1.4`,
+  `https://token.actions.githubusercontent.com`, and the release workflow
+  `release.yml@refs/tags/v0.1.4`.
+
+Status:
+This is provenance evidence only. Cryptographic Sigstore verification, Rekor
+inclusion verification, certificate-chain verification, expected issuer policy,
+and expected workflow identity policy remain pending. Provenance must not be
+claimed as verified yet.
+
 ## Required legal and attribution review
 
 Before any adoption proposal, the project should record declared package
