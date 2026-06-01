@@ -678,3 +678,27 @@ dependency adoption, package installation in the repository environment, require
 
 Next step:
 Use the threat model to decide the raw JSON verifier boundary before any implementation change. The next research decision should determine whether the public verifier API accepts raw JSON text, parsed mappings, or both with explicit trust guarantees.
+
+## Entry 051
+
+Date: 2026-06-01
+
+Type: Verifier-boundary research decision
+
+Summary: Recorded raw JSON verifier-boundary decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md`; updated this evidence log.
+
+Result:
+The threat model now records that untrusted raw JSON should enter through `verify_passport_json(text: str)` and be parsed with `parse_json_no_duplicate_keys()` before schema validation, canonicalization, payload-hash comparison, or signature processing. The parsed-object boundary, `verify_passport_envelope(envelope: object)`, may remain for internal or caller-trusted mappings when duplicate-key parsing guarantees are provided. This records the API boundary only and does not change verifier behavior.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+raw JSON verifier entry point, duplicate-key parsing integration into the public verifier boundary, verifier behavior changes, dependency adoption, canonicalizer replacement, real signature verification, issuer trust, revocation checking, permission and policy evaluation, human oversight, audit evidence implementation, post-quantum signing, cloud deployment, or external integrations.
+
+Next step:
+Implement or plan the raw JSON verifier entry point as the next small verifier-boundary step.
+
