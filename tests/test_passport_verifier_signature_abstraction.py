@@ -159,7 +159,7 @@ def test_no_public_signing_or_verification_callable_beyond_api():
             f"unexpected signing-like public callable: {name}"
         )
     verify_like = [n for n in public_callables if "verify" in n.lower()]
-    assert verify_like == ["verify_passport_envelope"]
+    assert verify_like == ["verify_passport_envelope", "verify_passport_json"]
 
 
 # 11. passport_verifier.py imports no crypto or network modules.

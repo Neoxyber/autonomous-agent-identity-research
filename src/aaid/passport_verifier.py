@@ -1,8 +1,10 @@
 """Structural-only local verifier for the agent passport envelope.
 
-This module provides a single entry point, :func:`verify_passport_envelope`,
-that checks the structural shape of an envelope-like object and records the
-outcome in a :class:`~aaid.verification.VerificationResult`.
+This module provides two verifier entry points. :func:`verify_passport_json`
+is the raw JSON boundary for untrusted input and rejects duplicate object
+member names before later verification steps. :func:`verify_passport_envelope`
+checks the structural shape of an already parsed envelope-like object and
+records the outcome in a :class:`~aaid.verification.VerificationResult`.
 
 After the structural checks pass, the envelope is validated against the
 committed JSON Schema and the outcome is recorded as a ``schema_valid`` check.
@@ -39,6 +41,7 @@ from jsonschema import Draft202012Validator
 from jsonschema.exceptions import best_match
 
 from aaid import canonicalization
+from aaid.json_parsing import parse_json_no_duplicate_keys
 from aaid.verification import VerificationCheck, VerificationResult
 
 _SCHEMA_PATH = (
@@ -290,6 +293,44 @@ def _signature_algorithm_supported_check(key: Mapping) -> VerificationCheck:
             f"selected public key algorithm {key_alg!r} is not supported for "
             "signature verification"
         ),
+    )
+
+
+
+def verify_passport_json(text: str) -> VerificationResult:
+    """Verify an untrusted raw JSON passport envelope.
+
+    Raw JSON input is parsed with duplicate object member rejection before schema
+    validation, canonicalization, payload-hash comparison, or signature input
+    preparation. Malformed JSON and duplicate member names fail closed.
+    """
+    try:
+        envelope = parse_json_no_duplicate_keys(text)
+    except ValueError:
+        check = VerificationCheck(
+            name="raw_json_parsed",
+            passed=False,
+            reason=(
+                "malformed JSON or duplicate object member names were rejected "
+                "at the raw JSON boundary"
+            ),
+        )
+        return VerificationResult.failed(
+            "raw JSON could not be parsed safely",
+            checks=[check],
+        )
+
+    raw_check = VerificationCheck(
+        name="raw_json_parsed",
+        passed=True,
+        reason="raw JSON parsed with duplicate object member rejection",
+    )
+    result = verify_passport_envelope(envelope)
+    return VerificationResult(
+        valid=result.valid,
+        decision=result.decision,
+        reason=result.reason,
+        checks=(raw_check, *result.checks),
     )
 
 

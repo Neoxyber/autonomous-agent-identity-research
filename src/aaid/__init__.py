@@ -4,7 +4,7 @@ from aaid.canonicalization import (
     canonicalize_passport_payload,
     hash_passport_payload,
 )
-from aaid.passport_verifier import verify_passport_envelope
+from aaid.passport_verifier import verify_passport_envelope, verify_passport_json
 from aaid.verification import (
     ALLOW,
     DENY,
@@ -18,6 +18,7 @@ __all__ = [
     "canonicalize_passport_payload",
     "hash_passport_payload",
     "verify_passport_envelope",
+    "verify_passport_json",
     "VerificationCheck",
     "VerificationResult",
     "ALLOW",
