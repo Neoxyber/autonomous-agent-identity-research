@@ -655,3 +655,26 @@ dependency adoption, package installation in the repository environment, require
 
 Next step:
 Prepare a threat model and trust-boundary research document before any adoption proposal or implementation change. The document should position the project as interoperable research for autonomous-agent identity and control, not as a replacement for existing identity, credential, supply-chain, or post-quantum standards.
+
+## Entry 050
+
+Date: 2026-06-01
+
+Type: Threat model and trust boundaries
+
+Summary: Added agent passport threat model and trust-boundary research document.
+
+Files:
+Added `docs/agent-passport-threat-model-and-trust-boundaries.md`; updated this evidence log.
+
+Result:
+The project now records a focused threat model and trust-boundary document for the agent passport research model. The document positions the passport as an interoperable research envelope for autonomous-agent identity and control, not as a replacement for verifiable credentials, decentralized identifiers, workload identity, OAuth/OIDC, Sigstore, SLSA, SCITT, MCP, post-quantum standards, or other existing ecosystems. It records the core security question, future proof goals, what a passport does not prove by itself, assets, trust boundaries, attacker model, current fail-closed behavior, known gaps, interoperability posture, 2026 and 2027 research implications, reviewer questions, reviewer-critical open risks, non-goals, and the next boundary decision. The document makes clear that a valid passport is not unlimited authority and that issuer trust, lifecycle, revocation, permission policy, human oversight, and audit evidence remain future gates.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, package installation in the repository environment, requirements changes, canonicalizer replacement, verifier behavior changes, raw JSON verifier entry point, duplicate-key parsing integration into the verifier entry point, real signature verification, issuer trust registry, trust anchor model, key rotation enforcement, expiration enforcement, lifecycle enforcement, revocation checking, permission and policy evaluation, human approval or review enforcement, audit evidence implementation, cryptographic provenance verification for dependencies, legal compatibility determination, post-quantum signing, cloud deployment, or external integrations.
+
+Next step:
+Use the threat model to decide the raw JSON verifier boundary before any implementation change. The next research decision should determine whether the public verifier API accepts raw JSON text, parsed mappings, or both with explicit trust guarantees.
