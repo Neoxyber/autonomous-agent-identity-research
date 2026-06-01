@@ -702,3 +702,26 @@ raw JSON verifier entry point, duplicate-key parsing integration into the public
 Next step:
 Implement or plan the raw JSON verifier entry point as the next small verifier-boundary step.
 
+## Entry 052
+
+Date: 2026-06-01
+
+Type: Verifier-boundary implementation
+
+Summary: Added raw JSON verifier entry point.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, `src/aaid/__init__.py`, `tests/test_passport_verifier_signature_abstraction.py`, and added `tests/test_passport_verifier_raw_json.py`; updated this evidence log.
+
+Result:
+The verifier now exposes `verify_passport_json(text: str)` as the raw JSON boundary for untrusted input. It parses with `parse_json_no_duplicate_keys()` before schema validation, canonicalization, payload-hash comparison, or signature processing. Malformed JSON and duplicate object member names fail closed with a `raw_json_parsed` check. Successful raw JSON parsing prepends a passed `raw_json_parsed` check and delegates to the existing parsed-object verifier. The existing `verify_passport_envelope(envelope: object)` behavior remains available and unchanged.
+
+Tests:
+181 tests passed.
+
+Not implemented:
+dependency adoption, requirements changes, canonicalizer replacement, real signature verification, issuer trust, revocation checking, permission and policy evaluation, human oversight, audit evidence implementation, post-quantum signing, cloud deployment, or external integrations.
+
+Next step:
+Review whether the next small verifier step should address expiration, lifecycle, or another fail-closed trust boundary before any canonicalizer adoption or signature implementation.
+
