@@ -609,3 +609,26 @@ dependency adoption, package installation in the repository environment, require
 
 Next step:
 Continue REF-014 dependency and maintenance-risk review, then review verifier-boundary integration requirements before any adoption proposal.
+
+## Entry 048
+
+Date: 2026-06-01
+
+Type: REF-014 maintenance-risk evidence
+
+Summary: Recorded first REF-014 maintenance-risk evidence pass.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md`; updated this evidence log.
+
+Result:
+The REF-014 provisional integration plan now records P2 maintenance-risk evidence. The reviewed REF-014 package `rfc8785==0.1.4` declares `Requires-Python >=3.8`, has no normal runtime dependencies, and is marked `Development Status :: 4 - Beta`. The GitHub repository was observed as not archived, not disabled, and not a fork. Tags and releases were observed from `v0.0.1` through `v0.1.4`; the evaluated release was published on 2024-09-27. Repository metadata showed recent activity in May 2026. The open issue query found no open issues excluding pull requests and one open pull request related to mypy settings. This is maintenance-risk evidence only. It does not establish long-term maintenance suitability, vulnerability posture, adoption readiness, or production readiness.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, package installation in the repository environment, requirements changes, canonicalizer replacement, verifier behavior changes, legal compatibility determination, attribution completeness determination, legal review, cryptographic Sigstore verification, Rekor inclusion verification, certificate-chain verification, expected issuer policy, expected workflow identity policy, long-term maintenance suitability determination, vulnerability posture determination, verifier raw-JSON entry-point integration, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, golden vector migration, full RFC 8785/JCS conformance, full I-JSON conformance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Review verifier-boundary integration requirements before any adoption proposal, while keeping provenance, legal compatibility, attribution completeness, and long-term maintenance suitability pending.
