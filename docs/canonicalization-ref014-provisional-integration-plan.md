@@ -63,34 +63,23 @@ A first isolated provenance pass was run under
 `/tmp/aaid-ref014-provenance-review`.
 
 Findings:
-
-- PyPI and GitHub release artifacts matched byte-for-byte for the evaluated
-  wheel and source distribution.
-- Wheel SHA-256:
-  `520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48`.
-- Source distribution SHA-256:
-  `e545841329fe0eee4f6a3b44e7034343100c12b4ec566dc06ca9735681deb4da`.
-- The wheel is `py3-none-any`, pure Python, and no native extensions were
-  observed.
-- Runtime dependency surface remains empty for normal installation; dependency
-  metadata observed only optional development, documentation, lint, and test
-  extras.
-- PyPI release metadata reported no index-hosted provenance field for the
-  release files.
-- GitHub release assets include Sigstore bundle files for the wheel, source
-  distribution, and source archives.
-- Sigstore bundle metadata referenced Rekor `hashedrekord` entries whose decoded
-  bodies contained the expected artifact SHA-256 values.
-- Certificate hints referenced
-  `trailofbits/rfc8785.py`, `refs/tags/v0.1.4`,
-  `https://token.actions.githubusercontent.com`, and the release workflow
-  `release.yml@refs/tags/v0.1.4`.
+PyPI and GitHub release artifacts matched byte-for-byte for the evaluated wheel
+and source distribution. The wheel SHA-256 was
+`520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48`; the source
+distribution SHA-256 was
+`e545841329fe0eee4f6a3b44e7034343100c12b4ec566dc06ca9735681deb4da`. The wheel
+was `py3-none-any`, pure Python, with no native extensions observed. Normal
+runtime dependency surface remained empty. PyPI release metadata reported no
+index-hosted provenance field. GitHub release assets included Sigstore bundles;
+bundle metadata referenced Rekor `hashedrekord` entries containing the expected
+artifact hashes and certificate hints for `trailofbits/rfc8785.py`,
+`refs/tags/v0.1.4`, `https://token.actions.githubusercontent.com`, and
+`release.yml@refs/tags/v0.1.4`.
 
 Status:
 This is provenance evidence only. Cryptographic Sigstore verification, Rekor
 inclusion verification, certificate-chain verification, expected issuer policy,
-and expected workflow identity policy remain pending. Provenance must not be
-claimed as verified yet.
+and expected workflow identity policy remain pending.
 
 ## Required legal and attribution review
 
@@ -109,6 +98,27 @@ supported Python versions, maintenance and release activity, vulnerability
 signals, maintainer/source trust considerations, unsupported-domain behavior,
 update/rollback expectations, and whether the dependency can be isolated behind
 a small internal boundary.
+
+## P1 legal and dependency-risk evidence collected
+
+A first isolated legal/attribution and dependency-risk pass inspected the wheel
+and source distribution staged under `/tmp/aaid-ref014-provenance-review`.
+
+Findings:
+The wheel includes `rfc8785-0.1.4.dist-info/LICENSE`; the source distribution
+includes `LICENSE`, `PKG-INFO`, `README.md`, and `pyproject.toml`. The included
+license text is Apache License, Version 2.0. Package metadata includes the
+Apache Software License classifier, `pyproject.toml` declares
+`license = { file = "LICENSE" }`, and author metadata identifies Trail of Bits.
+The README/PKG-INFO states that parts are adapted from Andrew Rundgren's
+reference implementation, also described as Apache License, Version 2.0.
+`pyproject.toml` declares `dependencies = []`; observed `Requires-Dist` entries
+are optional extras for development, documentation, lint, and tests.
+
+Status:
+This is legal/attribution and dependency-risk evidence only. Legal compatibility
+and attribution completeness remain pending review. No adoption, package
+installation, requirements change, or runtime behavior change is authorized.
 
 ## Required verifier-boundary decisions
 
