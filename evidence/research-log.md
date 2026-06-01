@@ -494,3 +494,26 @@ dependency adoption, candidate selection, canonicalizer replacement, full RFC 87
 
 Next step:
 Decide whether the parse-layer and payload-domain evidence is sufficient to draft a canonicalization candidate decision record, or whether verifier API integration should first require raw JSON parsing through the duplicate-key rejecting helper.
+
+## Entry 043
+
+Date: 2026-06-01
+
+Type: Canonicalization candidate research assessment
+
+Summary: Assessed canonicalization candidate decision readiness.
+
+Files:
+Added `docs/canonicalization-candidate-decision-readiness.md`; updated this evidence log.
+
+Result:
+The decision-readiness research assessment summarizes the current RFC 8785 / JSON Canonicalization Scheme candidate evidence. It records that the repository has enough evidence to draft a candidate decision record for review, but not enough to adopt a dependency, replace the canonicalizer, or unblock real signature verification. The assessment identifies REF-014 `rfc8785==0.1.4` as the stronger candidate for provisional integration planning because it is independent from the REF-016 cyberphone vector lineage, matched staged REF-016 vectors, matched the bounded number oracle for asserted in-domain rows, failed closed outside its safe-integer domain, and has a clearer source and declared-license signal than REF-015. REF-015 `jcs==0.2.1` remains useful as comparison evidence and as a cyberphone-lineage cross-check, but its REF-016 agreement is less independent and its unsafe-integer behavior remains an input-domain research concern. The assessment preserves the research boundary: no dependency is adopted, no candidate is selected, no canonicalizer is replaced, references remain Pending review, full RFC 8785/JCS conformance is not claimed, legal compatibility is not claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, canonicalizer replacement, package installation in the repository environment, package artifact provenance review, build provenance verification, legal compatibility review, attribution completeness review, maintenance and vulnerability-risk review, verifier raw-JSON entry-point integration, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, full RFC 8785/JCS conformance, full I-JSON conformance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Draft a canonicalization candidate decision record for review. The decision record should recommend REF-014 for provisional integration planning only, keep REF-015 as comparison evidence, and list the remaining blockers before adoption.
