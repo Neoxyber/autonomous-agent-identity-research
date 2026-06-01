@@ -128,17 +128,19 @@ suitability, or post-quantum signature readiness.
 
 ## Current research recommendation
 
-Draft a candidate decision record next. The record should recommend REF-014 for
-provisional integration planning only, keep REF-015 as comparison evidence, and
-list the remaining blockers before adoption.
+Use this assessment as the current canonicalization decision-readiness record.
+REF-014 is the leading candidate for provisional integration planning only.
+REF-015 remains comparison evidence.
 
-The next record should not update requirements, replace the canonicalizer, alter
-the verifier, remove Pending review status from references, start real signature
-verification, or begin post-quantum signing work.
+A separate adoption decision record should wait until the remaining provenance,
+legal, dependency-risk, and verifier-boundary blockers are resolved.
+
+This assessment does not authorize requirements changes, canonicalizer
+replacement, verifier changes, Pending review status changes, real signature
+verification, or post-quantum signing work.
 
 ## Next step
 
-Prepare a canonicalization candidate decision record for review. The decision
-record should preserve the research boundary and make clear that REF-014 is only
-recommended for provisional integration planning until provenance, legal,
-dependency-risk, and verifier-boundary blockers are resolved.
+Prepare a REF-014 provisional integration plan. The plan should define required
+tests, provenance checks, legal/attribution checks, dependency-risk checks, and
+verifier-boundary changes before any adoption proposal.
