@@ -540,3 +540,26 @@ dependency adoption, candidate adoption decision record, canonicalizer replaceme
 
 Next step:
 Prepare a REF-014 provisional integration plan before any adoption proposal.
+
+## Entry 045
+
+Date: 2026-06-01
+
+Type: Canonicalization provisional integration planning
+
+Summary: Planned REF-014 provisional integration requirements.
+
+Files:
+Added `docs/canonicalization-ref014-provisional-integration-plan.md`; updated this evidence log.
+
+Result:
+The REF-014 provisional integration research plan records the required planning work before any proposal to adopt REF-014 `rfc8785==0.1.4` as the repository canonicalization implementation. The plan is explicitly not an adoption plan: it does not authorize package installation, requirements changes, canonicalizer replacement, verifier changes, or real signature verification. It records the current repository boundary, including the local research canonicalization helper, the duplicate-key raw JSON parser helper, schema validation before payload-hash comparison, signature-input preparation through the shared helper, and fail-closed real signature verification. The plan identifies required provenance review, legal and attribution review, dependency-risk review, verifier-boundary decisions, integration tests, golden vector migration review, and adoption blockers. It treats REF-014 safe-integer blocking as security-relevant input-domain enforcement and keeps post-quantum work limited to future algorithm-agility considerations. No dependency is adopted, no runtime behavior changes, references remain Pending review, legal compatibility is not claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, package installation in the repository environment, requirements changes, canonicalizer replacement, verifier behavior changes, package artifact provenance review, build provenance verification, legal compatibility review, attribution completeness review, maintenance and vulnerability-risk review, verifier raw-JSON entry-point integration, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, golden vector migration, full RFC 8785/JCS conformance, full I-JSON conformance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Perform REF-014 provenance, legal/attribution, dependency-risk, and verifier-boundary review before any adoption proposal or runtime integration branch.
