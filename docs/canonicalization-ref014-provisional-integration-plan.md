@@ -120,6 +120,21 @@ This is legal/attribution and dependency-risk evidence only. Legal compatibility
 and attribution completeness remain pending review. No adoption, package
 installation, requirements change, or runtime behavior change is authorized.
 
+## P2 maintenance-risk evidence collected
+
+A first maintenance-risk pass observed that REF-014 `rfc8785==0.1.4` declares
+`Requires-Python >=3.8`, has no normal runtime dependencies, and is marked
+`Development Status :: 4 - Beta`. The GitHub repository was not archived,
+disabled, or a fork. Tags and releases were observed from `v0.0.1` through
+`v0.1.4`; the evaluated release was published on 2024-09-27. Repository metadata
+showed recent activity in May 2026. The open issue query found no open issues
+excluding pull requests and one open pull request related to mypy settings.
+
+Status:
+This is maintenance-risk evidence only. It does not establish long-term
+maintenance suitability, vulnerability posture, adoption readiness, or production
+readiness.
+
 ## Required verifier-boundary decisions
 
 Before replacing the canonicalization helper, the project should decide:
