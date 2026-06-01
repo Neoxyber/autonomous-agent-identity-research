@@ -379,3 +379,26 @@ dependency adoption, candidate selection, candidate verification, canonicalizer 
 
 Next step:
 Decide whether to run official/reference-vector coverage, including cyberphone vectors, or compare REF-015 using the same isolated evaluation discipline.
+
+## Entry 038
+
+Date: 2026-05-31
+
+Type: Canonicalization reference-vector evaluation
+
+Summary: Recorded REF-016 reference-vector comparison for REF-014.
+
+Files:
+Updated `docs/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md`; updated this evidence log.
+
+Result:
+The REF-014 evaluation results document now records a comparison against staged REF-016 `cyberphone/json-canonicalization` reference vectors. The REF-016 files were staged outside the repository under `/tmp/aaid-canonicalization-eval-rfc8785/ref016-vectors` and pinned to commit `19d51d7fe467d4706a3ff08adf8a748f29fc21e0`. The comparison used `rfc8785==0.1.4` in the isolated temporary environment only. Six staged vectors were compared: `arrays`, `french`, `structures`, `unicode`, `values`, and `weird`. Observed canonical bytes matched both the staged `output/*.json` bytes and normalized `outhex/*.txt` expected hex for all six vectors. The run recorded 6 `PASS` vectors and no `FAIL`, `NEEDS_RESEARCH`, or `BLOCKED` results. No cyberphone implementation code was executed. This is reference-vector evidence only: the dependency is not adopted, the candidate is not selected, full RFC 8785/JCS conformance is not claimed, legal compatibility and safety are not claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, candidate verification, canonicalizer replacement, build provenance verification, legal compatibility review, full RFC 8785/JCS compatibility, full I-JSON validation, broad ES6 number-vector coverage, REF-015 comparison, duplicate-key parse-layer policy, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide whether to compare REF-015 using the same isolated evaluation discipline, or run a separate bounded number-serialization reference-vector gate.
