@@ -471,3 +471,26 @@ dependency adoption, candidate selection, canonicalizer replacement, build prove
 
 Next step:
 Decide whether to write a canonicalization candidate decision record, or run another explicitly bounded gate for duplicate-key parse-layer policy and payload-domain validation before any adoption discussion.
+
+## Entry 042
+
+Date: 2026-06-01
+
+Type: Canonicalization parse and payload-domain review
+
+Summary: Recorded parse-layer and payload-domain boundary gate.
+
+Files:
+Added `docs/canonicalization-parse-and-payload-domain-gate.md`; updated this evidence log.
+
+Result:
+The parse and payload-domain gate document records the current repository boundary for duplicate-key parsing and numeric payload-domain exposure before any canonicalization candidate adoption decision. The repository already includes `src/aaid/json_parsing.py`, which parses raw JSON text using an `object_pairs_hook` and fails closed on duplicate object member names, including nested objects and objects inside arrays. Focused tests in `tests/test_passport_json_parsing.py` cover valid parsing, top-level duplicate rejection, nested duplicate rejection, duplicate keys inside array objects, sibling object key reuse, and malformed JSON. Schema inspection found no `number` or `integer` typed fields in the current passport schema, reducing current exposure to ambiguous JSON number-domain behavior. The current canonicalization helper also uses `allow_nan=False`, so non-finite numbers fail closed. This is parse-layer and payload-domain evidence only: it does not adopt or select a canonicalization candidate, does not replace the canonicalizer, does not claim full RFC 8785/JCS or full I-JSON conformance, does not claim legal compatibility, and does not unblock real signature verification.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, canonicalizer replacement, full RFC 8785/JCS compatibility, full I-JSON conformance, verifier raw-JSON entry point integration, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, build provenance verification, legal compatibility review, attribution completeness review, package artifact provenance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide whether the parse-layer and payload-domain evidence is sufficient to draft a canonicalization candidate decision record, or whether verifier API integration should first require raw JSON parsing through the duplicate-key rejecting helper.
