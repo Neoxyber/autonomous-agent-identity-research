@@ -632,3 +632,26 @@ dependency adoption, package installation in the repository environment, require
 
 Next step:
 Review verifier-boundary integration requirements before any adoption proposal, while keeping provenance, legal compatibility, attribution completeness, and long-term maintenance suitability pending.
+
+## Entry 049
+
+Date: 2026-06-01
+
+Type: Verifier-boundary evidence
+
+Summary: Recorded first verifier-boundary evidence pass.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md`; updated this evidence log.
+
+Result:
+The REF-014 provisional integration plan now records P3 verifier-boundary evidence. The current raw JSON duplicate-key helper exists separately in `src/aaid/json_parsing.py` and rejects duplicate object member names before JSON objects collapse into parsed mappings. The current verifier entry point `verify_passport_envelope()` accepts an already parsed envelope object, not raw JSON text. Schema validation runs before payload-hash comparison. Payload-hash verification and future signature-input preparation both use the shared canonicalization helper over the `passport` object only, excluding the envelope wrapper and `proofs`. Unsupported canonicalization fails closed before signature input preparation. Real signature verification remains unimplemented and fails closed. Before any REF-014 adoption proposal, the project should decide whether to add a raw JSON verifier entry point that calls `parse_json_no_duplicate_keys()` before schema validation, or document that parsed mappings are accepted only with caller-side duplicate-key parsing guarantees. No verifier changes or runtime behavior changes were authorized.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, package installation in the repository environment, requirements changes, canonicalizer replacement, verifier behavior changes, raw JSON verifier entry point, duplicate-key parsing integration into the verifier entry point, legal compatibility determination, attribution completeness determination, legal review, cryptographic Sigstore verification, Rekor inclusion verification, certificate-chain verification, expected issuer policy, expected workflow identity policy, long-term maintenance suitability determination, vulnerability posture determination, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, golden vector migration, full RFC 8785/JCS conformance, full I-JSON conformance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Prepare a threat model and trust-boundary research document before any adoption proposal or implementation change. The document should position the project as interoperable research for autonomous-agent identity and control, not as a replacement for existing identity, credential, supply-chain, or post-quantum standards.
