@@ -563,3 +563,26 @@ dependency adoption, package installation in the repository environment, require
 
 Next step:
 Perform REF-014 provenance, legal/attribution, dependency-risk, and verifier-boundary review before any adoption proposal or runtime integration branch.
+
+## Entry 046
+
+Date: 2026-06-01
+
+Type: REF-014 provenance evidence
+
+Summary: Recorded first REF-014 provenance evidence pass.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md`; updated this evidence log.
+
+Result:
+The REF-014 provisional integration plan now records P0 provenance evidence collected under `/tmp/aaid-ref014-provenance-review`. The PyPI and GitHub release artifacts matched byte-for-byte for the evaluated wheel and source distribution. The wheel SHA-256 was `520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48`; the source distribution SHA-256 was `e545841329fe0eee4f6a3b44e7034343100c12b4ec566dc06ca9735681deb4da`. The wheel was observed as `py3-none-any`, pure Python, with no native extensions and no normal runtime dependency surface beyond optional development, documentation, lint, and test extras. PyPI release metadata reported no index-hosted provenance field. GitHub release assets included Sigstore bundle files for the wheel, source distribution, and source archives. The Sigstore bundle metadata referenced Rekor `hashedrekord` entries whose decoded bodies contained the expected artifact SHA-256 values, and certificate hints referenced `trailofbits/rfc8785.py`, `refs/tags/v0.1.4`, `https://token.actions.githubusercontent.com`, and the release workflow `release.yml@refs/tags/v0.1.4`. This is provenance evidence only: cryptographic Sigstore verification, Rekor inclusion verification, certificate-chain verification, expected issuer policy, and expected workflow identity policy remain pending. Provenance is not claimed as verified.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, package installation in the repository environment, requirements changes, canonicalizer replacement, verifier behavior changes, cryptographic Sigstore verification, Rekor inclusion verification, certificate-chain verification, expected issuer policy, expected workflow identity policy, legal compatibility review, attribution completeness review, maintenance and vulnerability-risk review, verifier raw-JSON entry-point integration, schema-level numeric-domain policy for future numeric fields, unsafe integer rejection policy, golden vector migration, full RFC 8785/JCS conformance, full I-JSON conformance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Perform REF-014 legal/attribution review and dependency-risk review, while keeping provenance verification pending until Sigstore/Rekor/certificate/issuer/workflow checks are explicitly verified.
