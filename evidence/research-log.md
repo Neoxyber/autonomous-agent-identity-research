@@ -448,3 +448,26 @@ dependency adoption, candidate selection, canonicalizer replacement, build prove
 
 Next step:
 Plan the bounded number-serialization reference-vector gate, or explicitly defer it with rationale before any adoption discussion.
+
+## Entry 041
+
+Date: 2026-06-01
+
+Type: Canonicalization number-serialization evaluation
+
+Summary: Recorded bounded number-serialization gate for REF-014 and REF-015.
+
+Files:
+Added `docs/canonicalization-number-serialization-gate-ref014-ref015.md`; updated this evidence log.
+
+Result:
+The number-serialization gate document records a bounded RFC 8785 / ECMA-262 number-token comparison for REF-014 `rfc8785==0.1.4` and REF-015 `jcs==0.2.1`. The oracle table was generated deterministically under `/tmp/aaid-canonicalization-eval-numbers`, validated as strict JSON, and hashed before execution. The oracle SHA-256 was `c0b08f3e3a6c5004cb302228938382973e8606abc5d1bc7d9b698ce8a08e95eb`. The captured output SHA-256 was `7d478f0ab8fcca491c68167ef3d1f8fb8459f2166c301840f549135a81b4cde5`. The run evaluated 14 bounded vectors across 2 candidates, producing 28 candidate results: 25 `PASS`, 2 `BLOCKED`, 1 `NEEDS_RESEARCH`, and 0 `FAIL`. Both candidates matched the asserted RFC 8785 / ECMA-262 number tokens for negative zero, decimal/exponent formatting, threshold values, `1e16`, and `2**53 - 1`. REF-014 blocked `2**53` and `2**53 + 1` with safe-integer domain enforcement. REF-015 emitted `9007199254740992` for `2**53` and observed `9007199254740992` for `2**53 + 1`, leaving the unsafe-integer input-layer behavior as `NEEDS_RESEARCH`. No candidate is adopted or selected, no canonicalizer is replaced, full RFC 8785/JCS conformance is not claimed, legal compatibility is not claimed, and real signature verification remains blocked.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, canonicalizer replacement, build provenance verification, legal compatibility review, attribution completeness review, full RFC 8785/JCS compatibility, full I-JSON validation policy, duplicate-key parse-layer policy, package artifact provenance, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Decide whether to write a canonicalization candidate decision record, or run another explicitly bounded gate for duplicate-key parse-layer policy and payload-domain validation before any adoption discussion.
