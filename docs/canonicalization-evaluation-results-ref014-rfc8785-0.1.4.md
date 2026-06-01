@@ -142,8 +142,42 @@ compatibility or safety, and does not unblock real signature verification.
 
 Open items:
 The deferred checks remain separate work. In particular, duplicate-key handling
-belongs to the JSON parse layer, cyberphone reference-vector coverage was not run
-in this step, and broader RFC 8785/JCS conformance remains unverified.
+belongs to the JSON parse layer, REF-016 coverage was limited to the staged
+small reference vectors, and broader RFC 8785/JCS conformance remains
+unverified.
+
+
+## REF-016 reference-vector comparison
+
+REF-016 `cyberphone/json-canonicalization` reference vectors were staged outside
+the repository under `/tmp/aaid-canonicalization-eval-rfc8785/ref016-vectors`
+and pinned to commit `19d51d7fe467d4706a3ff08adf8a748f29fc21e0`. The comparison
+used `rfc8785==0.1.4` in the isolated temporary environment only.
+
+The comparison script parsed each staged input with the Python standard library
+`json` module, ran `rfc8785.dumps`, and compared the observed bytes against both
+the staged `output/*.json` bytes and normalized `outhex/*.txt` expected hex. No
+cyberphone implementation code was executed.
+
+| Vector | Byte output | Hex output | Result |
+| --- | --- | --- | --- |
+| `arrays` | Match | Match | PASS |
+| `french` | Match | Match | PASS |
+| `structures` | Match | Match | PASS |
+| `unicode` | Match | Match | PASS |
+| `values` | Match | Match | PASS |
+| `weird` | Match | Match | PASS |
+
+Result:
+The REF-016 comparison recorded 6 `PASS` vectors and no `FAIL`,
+`NEEDS_RESEARCH`, or `BLOCKED` results. The captured output remained outside the
+repository at
+`/tmp/aaid-canonicalization-eval-rfc8785/observed-output-ref016-comparison.txt`.
+
+This is reference-vector evidence only. It does not adopt the dependency, does
+not select the candidate, does not verify full RFC 8785/JCS conformance, does
+not verify legal compatibility or safety, and does not unblock real signature
+verification.
 
 ## Environment record
 
@@ -195,8 +229,8 @@ This document does not cover:
 
 ## Next step
 
-The next step is to decide whether to run official/reference-vector coverage,
-including cyberphone vectors, and then compare REF-015 using the same isolated
-evaluation discipline. Any adoption would be a separate step requiring its own
+The next step is to decide whether to compare REF-015 using the same isolated
+evaluation discipline, or to run a separate bounded number-serialization
+reference-vector gate. Any adoption would be a separate step requiring its own
 review and explicit approval; this record does not adopt or select the
 candidate.
