@@ -402,3 +402,26 @@ dependency adoption, candidate selection, candidate verification, canonicalizer 
 
 Next step:
 Decide whether to compare REF-015 using the same isolated evaluation discipline, or run a separate bounded number-serialization reference-vector gate.
+
+## Entry 039
+
+Date: 2026-06-01
+
+Type: Canonicalization candidate evaluation
+
+Summary: Recorded REF-015 isolated evaluation results.
+
+Files:
+Added `docs/canonicalization-evaluation-results-ref015-jcs-0.2.1.md`; updated `docs/references.md`; updated this evidence log.
+
+Result:
+The REF-015 evaluation results document records isolated staging and evaluation of `jcs==0.2.1` under `/tmp/aaid-canonicalization-eval-jcs`. REF-015 was evaluated as a comparison candidate only. The run used the temporary environment, did not modify repository source, tests, requirements, or lockfiles, and did not adopt or select the dependency. The evaluation recorded 31 checks total: 25 `PASS` checks and 6 `NEEDS_RESEARCH` checks, with no `FAIL` or `BLOCKED` results. Exact-output, property, rejection, and staged REF-016 vector checks passed. Deferred items remain open for negative-zero behavior, standalone exponent-number forms, oversized integer-domain behavior, duplicate-key parse-layer policy, and broader RFC 8785/JCS conformance. The REF-016 agreement is port-fidelity evidence because REF-015 shares cyberphone lineage with the REF-016 vectors, not fully independent corroboration. Source identity and declared license signals were checked, but the pinned source tree did not contain a standalone root license file; legal compatibility and attribution completeness remain unverified. The central reference register now points REF-015 to the isolated evaluation results while keeping adoption and full conformance unverified.
+
+Tests:
+170 tests passed.
+
+Not implemented:
+dependency adoption, candidate selection, candidate verification, canonicalizer replacement, build provenance verification, legal compatibility review, attribution completeness review, full RFC 8785/JCS compatibility, full I-JSON validation, broad ES6 number-vector coverage, bounded number-serialization reference gate, side-by-side REF-014 versus REF-015 decision record, real signature verification, post-quantum signing, issuer trust, revocation enforcement, policy evaluation, audit implementation, gateway logic, cloud deployment, or external integrations.
+
+Next step:
+Compare REF-014 and REF-015 evidence side by side and decide whether a separate bounded number-serialization reference-vector gate is needed before any adoption discussion.
