@@ -817,3 +817,26 @@ issuer trust, revocation checking, network lookup, permission and policy evaluat
 Next step:
 Resume the issuer-trust verifier-boundary implementation using `urn:aaid:issuer:aixybertech-issuer` as the configured example issuer.
 
+## Entry 057
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation
+
+Summary: Added caller-provided issuer trust check.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, `tests/_support.py`, added `tests/test_passport_verifier_issuer_trust.py`, updated existing verifier tests for explicit issuer-trust injection, updated `docs/agent-passport-threat-model-and-trust-boundaries.md`, and updated this evidence log.
+
+Result:
+The verifier now supports caller-provided issuer trust configuration through keyword-only `trusted_issuers` on `verify_passport_envelope(..., now=None, trusted_issuers=None)` and `verify_passport_json(..., now=None, trusted_issuers=None)`. The raw JSON verifier forwards `trusted_issuers` after duplicate-key-safe parsing. The new `issuer_trusted` check runs after `lifecycle_status_allows_verification` and before `proof_selected`. It fails closed when issuer trust is not configured, when the trust configuration is a string, bytes, bytearray, or mapping, or when the passport `issuer_id` is not explicitly configured as trusted. It passes only when the issuer identifier is explicitly present in the caller-provided trusted issuer collection. This boundary performs no registry lookup, network lookup, revocation checking, signature verification, policy evaluation, audit storage, or external issuer verification. The verifier still cannot return `ALLOW` because real signature verification remains intentionally not implemented.
+
+Tests:
+244 tests passed.
+
+Not implemented:
+revocation checking, freshness evidence, issuer registry or external trust-anchor model, network lookup, permission and policy evaluation, human oversight, audit evidence implementation, real signature verification, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Plan the revocation and freshness verifier boundary before policy evaluation, canonicalizer adoption, or signature verification.
+

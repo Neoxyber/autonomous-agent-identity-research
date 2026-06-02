@@ -157,7 +157,7 @@ The current repository still lacks:
 
 - adopted RFC 8785/JCS canonicalizer;
 - real signature verification;
-- issuer trust registry or trust anchor model;
+- issuer trust registry or external trust anchor model;
 - key rotation enforcement;
 - revocation checking;
 - permission and policy evaluation;
@@ -299,16 +299,17 @@ registry, trust anchor, or status authority is allowed to provide that result.
 Without that trust basis, a verifier could accept status evidence from the wrong
 source or treat an unknown authority as meaningful.
 
-The planned future issuer-trust check is `issuer_trusted`. It should fail closed
-when the issuer is unknown, inactive, unsuitable, or not configured as trusted.
+The `issuer_trusted` check is now implemented as a caller-provided explicit
+issuer-trust boundary. It fails closed when issuer trust is not configured,
+when the configuration is a string or mapping, or when the passport issuer is
+not explicitly configured as trusted. It performs no registry lookup, network
+lookup, revocation checking, signature verification, policy evaluation, audit
+storage, dependency adoption, or canonicalizer replacement.
+
 Later revocation checks may include `revocation_status_checked`,
 `revocation_status_fresh`, and `passport_not_revoked`.
 
-This decision records ordering only. It does not implement issuer trust,
-revocation checking, network lookup, policy evaluation, audit storage,
-signatures, dependency adoption, or canonicalizer replacement.
-
 ## Next step
 
-Plan the smallest issuer-trust verifier boundary before revocation, policy
-evaluation, canonicalizer adoption, or signature verification.
+Plan the revocation and freshness verifier boundary before policy evaluation,
+canonicalizer adoption, or signature verification.
