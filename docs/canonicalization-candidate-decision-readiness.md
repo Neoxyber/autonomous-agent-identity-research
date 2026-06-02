@@ -122,7 +122,7 @@ requires:
 
 ## Research limitations
 
-This assessment does not establish full RFC 8785/JCS conformance, legal
+This assessment does not establish full RFC 8785/JCS conformance, license
 compatibility, production readiness, package provenance, long-term maintenance
 suitability, or post-quantum signature readiness.
 
@@ -141,6 +141,6 @@ verification, or post-quantum signing work.
 
 ## Next step
 
-Prepare a REF-014 provisional integration plan. The plan should define required
-tests, provenance checks, license/attribution checks, dependency-risk checks, and
-verifier-boundary changes before any adoption proposal.
+Review the existing REF-014 provisional integration plan and remaining adoption
+blockers before any dependency adoption, canonicalizer replacement, golden-vector
+migration, or signature-verification planning.

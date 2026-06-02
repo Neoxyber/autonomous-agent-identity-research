@@ -86,19 +86,7 @@ The mapping should explain where the research aligns with existing work, where i
 
 Exit condition: the README and a concise standards-positioning document describe the project as standards-aligned research without claiming certification, compliance, or production readiness.
 
-## Phase 2. Canonicalization closure
-
-This phase closes the canonicalization question so signature verification can proceed safely.
-
-The project uses a JSON passport envelope. The long-term target for deterministic JSON signing is RFC 8785 / JSON Canonicalization Scheme.
-
-The current helper remains useful for local research regression tests, but trusted signature verification requires a reviewed canonicalization path and external conformance tests.
-
-This phase should avoid further broad planning around canonicalization. The work should move toward reviewed implementation choice, known-answer tests, invalid-input tests, and a stable minimal passport vector.
-
-Exit condition: the selected canonicalization path is recorded, external vectors pass, ambiguous inputs fail safely, and the minimal passport has a stable canonical representation.
-
-## Phase 3. Verifier trust boundaries
+## Phase 2. Verifier trust boundaries
 
 This phase hardens verifier trust boundaries before real signature verification.
 
@@ -113,7 +101,7 @@ Exit condition: issuer trust, active-key selection, selected-key validity,
 verification-method binding, revocation freshness, and single-proof enforcement
 fail closed and are recorded as verifier checks.
 
-## Phase 4. Canonicalization closure
+## Phase 3. Canonicalization closure
 
 This phase settles canonicalization before real signature verification.
 
@@ -126,7 +114,7 @@ Exit condition: the selected canonicalization path is recorded, external vectors
 pass for the accepted input domain, ambiguous inputs fail safely, and the
 minimal passport has a stable canonical representation.
 
-## Phase 5. Signature verification foundation
+## Phase 4. Signature verification foundation
 
 This phase adds the first real signature verification path only after verifier
 trust boundaries and canonicalization are settled.
@@ -143,7 +131,7 @@ Exit condition: valid signatures verify, modified passports fail, unsupported
 algorithms fail closed, and the verifier still denies protected action until
 permission, approval, and audit policy checks are implemented.
 
-## Phase 6. Permission and policy evaluation
+## Phase 5. Permission and policy evaluation
 
 This phase separates verified identity from action authority.
 
@@ -153,7 +141,7 @@ The default decision remains denial.
 
 Exit condition: allowed actions can proceed only after all earlier gates pass, prohibited actions always deny, approval-required actions return the correct approval outcome, unclear actions return denial or review according to policy, and decision reasons are recorded.
 
-## Phase 7. Human oversight
+## Phase 6. Human oversight
 
 This phase studies how human approval, review, escalation, pause, and intervention should work.
 
@@ -163,7 +151,7 @@ The research should also study emergency stop behavior and the conditions under 
 
 Exit condition: approval and review outcomes are tested, approval cannot override core safety boundaries, approval records expire, replay is prevented, and oversight decisions produce audit evidence.
 
-## Phase 8. Audit evidence
+## Phase 7. Audit evidence
 
 This phase records identity, policy, lifecycle, and oversight decisions in a reviewable form.
 
@@ -173,7 +161,7 @@ The audit model should minimize sensitive data and prefer identifiers, hashes, s
 
 Exit condition: allowed actions, denied actions, approval decisions, review decisions, revocation events, and lifecycle changes produce audit evidence; tampered audit evidence can be detected; and unnecessary sensitive data is avoided.
 
-## Phase 9. Post-quantum research
+## Phase 8. Post-quantum research
 
 This phase studies long-term cryptographic readiness.
 
@@ -183,7 +171,7 @@ The project should not implement cryptographic primitives from scratch.
 
 Exit condition: controlled experiments record key sizes, signature sizes, verification latency, passport size impact, failure behavior, key rotation, algorithm migration, and the limits of the current implementation.
 
-## Phase 10. Local research demo
+## Phase 9. Local research demo
 
 This phase demonstrates the model in a controlled local setting using dummy data only.
 
@@ -193,7 +181,7 @@ The demo should not use real users, real secrets, production systems, or product
 
 Exit condition: a reviewer can run the demo locally and see allowed, denied, approval-required, review-required, and revoked-agent outcomes with audit evidence.
 
-## Phase 11. Controlled deployment research
+## Phase 10. Controlled deployment research
 
 This phase may begin only after the local research demo is stable.
 

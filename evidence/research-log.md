@@ -1093,3 +1093,26 @@ dependency adoption, package installation, requirements changes, lockfile change
 Next step:
 Review the isolated canonicalization candidate evaluation path and adoption blockers before any implementation or signature-verification planning.
 
+## Entry 069
+
+Date: 2026-06-02
+
+Type: Documentation alignment
+
+Summary: Removed duplicate canonicalization roadmap phase.
+
+Files:
+Updated `ROADMAP.md`, `docs/canonicalization-candidate-decision-readiness.md`, and this evidence log.
+
+Result:
+Removed the duplicate `Canonicalization closure` phase from the roadmap and kept the ordering aligned with the verifier-boundary-first path: verifier trust boundaries, canonicalization closure, then signature-verification foundation. Refreshed the canonicalization candidate readiness next step so it points to reviewing the existing REF-014 provisional integration plan and remaining adoption blockers rather than preparing a plan that already exists. This was a documentation alignment only.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review the existing REF-014 provisional integration plan and remaining adoption blockers before any adoption or signature-verification planning.
+
