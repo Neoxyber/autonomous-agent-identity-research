@@ -8,7 +8,7 @@ SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 import aaid.passport_verifier as passport_verifier_module
-from _support import TRUSTED_ISSUERS, VALID_NOW
+from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.canonicalization import (
     canonicalize_passport_payload,
@@ -82,7 +82,7 @@ def envelope_with_second_proof():
 
 # 1. Minimal example reaches signature_input_prepared passed=True.
 def test_minimal_example_reaches_signature_input_prepared_passed():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, KEY_CHECK).passed is True
     input_check = check_named(result, INPUT_CHECK)
     assert input_check is not None
@@ -91,7 +91,7 @@ def test_minimal_example_reaches_signature_input_prepared_passed():
 
 # 2. signature_input_prepared sits between key selection and algorithm support.
 def test_signature_input_prepared_between_key_selected_and_algorithm():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     key_index = check_index(result, KEY_CHECK)
     input_index = check_index(result, INPUT_CHECK)
     alg_index = check_index(result, ALG_CHECK)
@@ -103,7 +103,7 @@ def test_signature_input_prepared_between_key_selected_and_algorithm():
 
 # 3. signature_algorithm_supported sits between input prep and signature step.
 def test_signature_algorithm_supported_between_input_and_signature():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     input_index = check_index(result, INPUT_CHECK)
     alg_index = check_index(result, ALG_CHECK)
     signature_index = check_index(result, SIGNATURE_CHECK)
@@ -156,7 +156,7 @@ def test_second_proof_does_not_change_prepared_input():
 # 7. Unsupported selected key alg fails signature_algorithm_supported, DENY.
 def test_unsupported_key_alg_fails_closed():
     result = verify_passport_envelope(
-        envelope_with_unsupported_alg(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        envelope_with_unsupported_alg(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(result, KEY_CHECK).passed is True
     assert check_named(result, INPUT_CHECK).passed is True
@@ -171,7 +171,7 @@ def test_unsupported_key_alg_fails_closed():
 # 8. Unsupported algorithm failure short-circuits before the signature step.
 def test_unsupported_algorithm_short_circuits_before_signature():
     result = verify_passport_envelope(
-        envelope_with_unsupported_alg(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        envelope_with_unsupported_alg(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(result, ALG_CHECK).passed is False
     assert check_named(result, SIGNATURE_CHECK) is None
@@ -181,7 +181,7 @@ def test_unsupported_algorithm_short_circuits_before_signature():
 def test_key_selection_failure_short_circuits_before_signature_input():
     envelope = load_envelope()
     envelope["proofs"][0]["kid"] = "urn:aaid:key:no-such-key-input-0001"
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, KEY_CHECK).passed is False
     assert check_named(result, INPUT_CHECK) is None
     assert check_named(result, ALG_CHECK) is None
@@ -191,7 +191,7 @@ def test_key_selection_failure_short_circuits_before_signature_input():
 def test_payload_hash_failure_short_circuits_before_signature_input():
     envelope = load_envelope()
     envelope["proofs"][0]["payload_hash"] = "0" * 64
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, PAYLOAD_CHECK).passed is False
     assert check_named(result, INPUT_CHECK) is None
 
@@ -227,13 +227,13 @@ def test_signature_input_step_never_returns_allow():
     # Reach the named step for the valid, trusted example so this sweep actually
     # exercises signature_input_prepared rather than stopping at issuer_trusted.
     reached = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(reached, INPUT_CHECK) is not None
 
     for case in cases:
         result = verify_passport_envelope(
-            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
         )
         assert isinstance(result, VerificationResult)
         assert result.decision != ALLOW
@@ -242,7 +242,7 @@ def test_signature_input_step_never_returns_allow():
 
 # 14. Signature verification is still not implemented.
 def test_signature_verification_still_not_implemented():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     signature = check_named(result, SIGNATURE_CHECK)
     assert signature is not None
     assert signature.passed is False

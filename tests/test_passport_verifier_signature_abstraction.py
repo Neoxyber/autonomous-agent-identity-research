@@ -7,7 +7,7 @@ SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 import aaid.passport_verifier as passport_verifier_module
-from _support import TRUSTED_ISSUERS, VALID_NOW
+from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.verification import VerificationCheck, VerificationResult
 
@@ -55,7 +55,7 @@ def envelope_with_changed_signature():
 
 # 1. Valid envelope reaches the signature step.
 def test_valid_envelope_reaches_signature_verification_not_implemented():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, "schema_valid").passed is True
     assert check_named(result, "proof_selected").passed is True
     assert check_named(result, "payload_hash_valid").passed is True
@@ -64,7 +64,7 @@ def test_valid_envelope_reaches_signature_verification_not_implemented():
 
 # 2. Signature check is recorded after payload_hash_valid.
 def test_signature_check_recorded_after_payload_hash_valid():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     payload_index = check_index(result, "payload_hash_valid")
     signature_index = check_index(result, SIGNATURE_CHECK)
     assert payload_index != -1
@@ -74,7 +74,7 @@ def test_signature_check_recorded_after_payload_hash_valid():
 
 # 3. Signature check is failed, not passed.
 def test_signature_check_is_failed_not_passed():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     signature = check_named(result, SIGNATURE_CHECK)
     assert signature is not None
     assert signature.passed is False
@@ -82,7 +82,7 @@ def test_signature_check_is_failed_not_passed():
 
 # 4. Final result is invalid and DENY.
 def test_valid_envelope_final_result_is_invalid_and_denied():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert result.valid is False
     assert result.decision == DENY
 
@@ -103,13 +103,13 @@ def test_signature_abstraction_step_never_returns_allow():
     # exercises signature_verification_not_implemented rather than stopping at
     # issuer_trusted.
     reached = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(reached, SIGNATURE_CHECK) is not None
 
     for case in cases:
         result = verify_passport_envelope(
-            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
         )
         assert isinstance(result, VerificationResult)
         assert result.decision != ALLOW
@@ -119,7 +119,7 @@ def test_signature_abstraction_step_never_returns_allow():
 # 6. Payload hash failure short-circuits before signature verification.
 def test_payload_hash_failure_short_circuits_before_signature():
     result = verify_passport_envelope(
-        envelope_with_broken_payload_hash(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        envelope_with_broken_payload_hash(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(result, "payload_hash_valid").passed is False
     assert check_named(result, SIGNATURE_CHECK) is None
@@ -150,7 +150,7 @@ def test_structural_failure_short_circuits_before_signature():
 # 9. Changing signature_b64u does not make the verifier allow the envelope.
 def test_changing_signature_b64u_does_not_allow():
     result = verify_passport_envelope(
-        envelope_with_changed_signature(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        envelope_with_changed_signature(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert result.decision == DENY
     assert result.valid is False

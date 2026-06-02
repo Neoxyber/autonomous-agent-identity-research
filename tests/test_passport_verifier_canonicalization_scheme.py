@@ -7,7 +7,7 @@ SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 import aaid.passport_verifier as passport_verifier_module
-from _support import TRUSTED_ISSUERS, VALID_NOW
+from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.verification import VerificationResult
 
@@ -57,7 +57,7 @@ def force_unsupported_canonicalization(monkeypatch):
 
 # 1. Minimal example reaches signature_canonicalization_supported passed=True.
 def test_minimal_example_reaches_canonicalization_supported_passed():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, KEY_CHECK).passed is True
     canon = check_named(result, CANON_CHECK)
     assert canon is not None
@@ -66,7 +66,7 @@ def test_minimal_example_reaches_canonicalization_supported_passed():
 
 # 2. signature_canonicalization_supported sits between key selection and input.
 def test_canonicalization_supported_between_key_selected_and_input():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     key_index = check_index(result, KEY_CHECK)
     canon_index = check_index(result, CANON_CHECK)
     input_index = check_index(result, INPUT_CHECK)
@@ -88,7 +88,7 @@ def test_unsupported_canonicalization_value_fails_check_directly():
 # 3b. An unsupported declared scheme makes the verifier fail closed to DENY.
 def test_unsupported_canonicalization_returns_deny(monkeypatch):
     force_unsupported_canonicalization(monkeypatch)
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     canon = check_named(result, CANON_CHECK)
     assert canon is not None
     assert canon.passed is False
@@ -99,7 +99,7 @@ def test_unsupported_canonicalization_returns_deny(monkeypatch):
 # 4. Unsupported canonicalization short-circuits before signature_input_prepared.
 def test_unsupported_canonicalization_short_circuits_before_input(monkeypatch):
     force_unsupported_canonicalization(monkeypatch)
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, CANON_CHECK).passed is False
     assert check_named(result, INPUT_CHECK) is None
 
@@ -107,7 +107,7 @@ def test_unsupported_canonicalization_short_circuits_before_input(monkeypatch):
 # 5. Unsupported canonicalization short-circuits before signature_algorithm_supported.
 def test_unsupported_canonicalization_short_circuits_before_algorithm(monkeypatch):
     force_unsupported_canonicalization(monkeypatch)
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, CANON_CHECK).passed is False
     assert check_named(result, ALG_CHECK) is None
 
@@ -115,7 +115,7 @@ def test_unsupported_canonicalization_short_circuits_before_algorithm(monkeypatc
 # 6. Unsupported canonicalization short-circuits before the signature step.
 def test_unsupported_canonicalization_short_circuits_before_signature(monkeypatch):
     force_unsupported_canonicalization(monkeypatch)
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, CANON_CHECK).passed is False
     assert check_named(result, SIGNATURE_CHECK) is None
 
@@ -124,7 +124,7 @@ def test_unsupported_canonicalization_short_circuits_before_signature(monkeypatc
 def test_key_selection_failure_short_circuits_before_canonicalization():
     envelope = load_envelope()
     envelope["proofs"][0]["kid"] = "urn:aaid:key:no-such-key-canon-0001"
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, KEY_CHECK).passed is False
     assert check_named(result, CANON_CHECK) is None
 
@@ -133,7 +133,7 @@ def test_key_selection_failure_short_circuits_before_canonicalization():
 def test_payload_hash_failure_short_circuits_before_canonicalization():
     envelope = load_envelope()
     envelope["proofs"][0]["payload_hash"] = "0" * 64
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert check_named(result, PAYLOAD_CHECK).passed is False
     assert check_named(result, CANON_CHECK) is None
 
@@ -167,13 +167,13 @@ def test_canonicalization_scheme_step_never_returns_allow():
     # exercises signature_canonicalization_supported rather than stopping at
     # issuer_trusted.
     reached = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(reached, CANON_CHECK) is not None
 
     for case in cases:
         result = verify_passport_envelope(
-            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
         )
         assert isinstance(result, VerificationResult)
         assert result.decision != ALLOW
@@ -182,7 +182,7 @@ def test_canonicalization_scheme_step_never_returns_allow():
 
 # 12. Signature verification is still not implemented.
 def test_signature_verification_still_not_implemented():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     signature = check_named(result, SIGNATURE_CHECK)
     assert signature is not None
     assert signature.passed is False

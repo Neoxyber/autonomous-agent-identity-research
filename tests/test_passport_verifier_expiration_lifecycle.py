@@ -11,7 +11,7 @@ sys.path.insert(0, str(TESTS))
 
 import pytest
 
-from _support import TRUSTED_ISSUERS, VALID_NOW
+from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope, verify_passport_json
 from aaid.verification import VerificationResult
 
@@ -172,7 +172,7 @@ def test_active_lifecycle_passes_lifecycle_check():
 
 def test_time_and_lifecycle_run_after_schema_valid_and_before_proof_selected():
     result = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     schema_index = check_index(result, "schema_valid")
     time_index = check_index(result, TIME_CHECK)

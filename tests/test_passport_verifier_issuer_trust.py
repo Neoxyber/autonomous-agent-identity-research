@@ -10,7 +10,7 @@ sys.path.insert(0, str(TESTS))
 
 import pytest
 
-from _support import TRUSTED_ISSUERS, VALID_NOW
+from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope, verify_passport_json
 from aaid.verification import VerificationResult
 
@@ -47,7 +47,7 @@ def check_index(result, name):
 
 def test_trusted_issuer_passes_and_reaches_proof_selected():
     result = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     issuer = check_named(result, ISSUER_CHECK)
     assert issuer is not None
@@ -61,7 +61,7 @@ def test_trusted_issuer_valid_now_still_denies_and_never_allows():
     # A trusted issuer must not open an ALLOW path: signature verification is
     # still not implemented, so the verifier fails closed.
     result = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert result.decision != ALLOW
     assert result.decision == DENY
@@ -163,11 +163,28 @@ def test_mapping_trust_config_fails_closed():
     assert check_named(result, "proof_selected") is None
 
 
+@pytest.mark.parametrize("bad", [123, 1.5, True])
+def test_non_iterable_trust_config_fails_closed_without_raising(bad):
+    # A non-collection trust configuration (for example an int, float, or bool)
+    # must fail closed at issuer_trusted rather than raising a TypeError on the
+    # membership test.
+    result = verify_passport_envelope(
+        load_envelope(), now=VALID_NOW, trusted_issuers=bad
+    )
+    issuer = check_named(result, ISSUER_CHECK)
+    assert issuer is not None
+    assert issuer.passed is False
+    assert "collection of issuer identifiers" in issuer.reason.lower()
+    assert result.decision == DENY
+    assert result.valid is False
+    assert check_named(result, "proof_selected") is None
+
+
 # --- Ordering: after lifecycle, before proof selection ---
 
 def test_issuer_trusted_runs_after_lifecycle_and_before_proof_selected():
     result = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     schema_index = check_index(result, "schema_valid")
     time_index = check_index(result, "passport_time_valid")
@@ -190,7 +207,7 @@ def test_lifecycle_failure_short_circuits_before_issuer_trusted():
     envelope = load_envelope()
     envelope["passport"]["lifecycle_status"] = "revoked"
     result = verify_passport_envelope(
-        envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(result, "lifecycle_status_allows_verification").passed is False
     assert check_named(result, ISSUER_CHECK) is None
@@ -207,6 +224,9 @@ def test_issuer_trust_step_never_returns_allow():
         frozenset({OTHER_ISSUER}),
         EXAMPLE_ISSUER,  # string misconfiguration
         {EXAMPLE_ISSUER: {"note": "demo"}},  # mapping misconfiguration
+        123,  # non-iterable misconfiguration
+        1.5,  # non-iterable misconfiguration
+        True,  # non-iterable misconfiguration
     ]
     for trusted in cases:
         result = verify_passport_envelope(
@@ -222,7 +242,7 @@ def test_issuer_trust_step_never_returns_allow():
 
 def test_verify_passport_json_forwards_trusted_issuers_pass():
     result = verify_passport_json(
-        load_text(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_text(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert check_named(result, "raw_json_parsed").passed is True
     assert check_named(result, ISSUER_CHECK).passed is True
@@ -250,10 +270,10 @@ def test_verify_passport_json_wrong_issuer_fails_closed():
 
 def test_raw_and_direct_results_match_with_same_trust_config():
     direct = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     raw = verify_passport_json(
-        load_text(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        load_text(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
     )
     assert raw.checks[0].name == "raw_json_parsed"
     assert raw.checks[1:] == direct.checks

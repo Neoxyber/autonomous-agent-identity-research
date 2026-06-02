@@ -13,9 +13,13 @@ records the choice as a ``proof_selected`` check; the first-version rule selects
 the first proof only. It then recomputes the canonical payload hash over the
 passport and compares it to the selected proof's recorded hash, recording the
 outcome as a ``payload_hash_valid`` check. This step verifies
-the payload hash only: it does not verify signatures or proofs, does not check
-revocation, and does not evaluate policy. Issuer trust is checked earlier as a
-separate boundary. After the payload hash
+the payload hash only: it does not verify signatures or proofs and does not
+evaluate policy. Issuer trust and caller-provided revocation status are checked
+earlier as separate boundaries; the revocation boundary binds caller-supplied
+in-memory status evidence to the passport and issuer and checks a freshness
+window, but performs no network lookup, no registry lookup, no signed status
+list parsing, and no cryptographic verification of the status. After the payload
+hash
 matches, the verifier selects the public key referenced by the proof and
 validates basic, non-cryptographic key metadata, recording the outcome as a
 ``verification_key_selected`` check; finding no single suitable key fails closed
@@ -35,7 +39,7 @@ the decision can be explained and audited.
 
 import json
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
@@ -192,11 +196,12 @@ def _issuer_trusted_check(
     of that collection.
 
     It fails closed when issuer trust is not configured (``None``), when the
-    configuration is a bare string or a mapping rather than a collection of
-    identifiers, and when the issuer is not explicitly configured as trusted
-    (an empty collection trusts no issuer). It performs no cryptographic work
-    and does not verify signatures, key possession, revocation, or an external
-    issuer identity; a passing check does not by itself allow the passport.
+    configuration is a bare string, a mapping, or any other non-collection value
+    rather than a collection of identifiers, and when the issuer is not
+    explicitly configured as trusted (an empty collection trusts no issuer). It
+    performs no cryptographic work and does not verify signatures, key
+    possession, revocation, or an external issuer identity; a passing check does
+    not by itself allow the passport.
     """
     if trusted_issuers is None:
         return VerificationCheck(
@@ -225,6 +230,19 @@ def _issuer_trusted_check(
                 "identifiers, not a mapping"
             ),
         )
+    # A non-collection value (for example an int, float, or bool) is not a usable
+    # trust configuration. Require a Collection before the membership test so
+    # such input fails closed instead of raising a TypeError on ``in``. Strings,
+    # bytes, and mappings are collections but are rejected above.
+    if not isinstance(trusted_issuers, Collection):
+        return VerificationCheck(
+            name="issuer_trusted",
+            passed=False,
+            reason=(
+                "trusted issuer configuration must be a collection of issuer "
+                "identifiers"
+            ),
+        )
     if passport.get("issuer_id") in trusted_issuers:
         return VerificationCheck(
             name="issuer_trusted",
@@ -235,6 +253,223 @@ def _issuer_trusted_check(
         name="issuer_trusted",
         passed=False,
         reason="issuer_id is not configured as trusted",
+    )
+
+
+def _revocation_status_checked_check(
+    passport: Mapping,
+    revocation_status: object,
+    trusted_issuers: object,
+) -> VerificationCheck:
+    """Check that caller-provided revocation status is bound to this passport.
+
+    Revocation status is supplied by the caller as in-memory evidence. This
+    boundary performs no network lookup, no registry lookup, no signed status
+    list parsing, and no cryptographic verification of the status; it only checks
+    exact identity binding by string equality. The status must be a mapping that
+    carries string ``status_reference``, ``passport_id``, and ``status_authority``
+    fields, and each must match the passport exactly: ``status_reference`` equals
+    ``passport["revocation"]["status_reference"]``, ``passport_id`` equals
+    ``passport["passport_id"]``, and ``status_authority`` equals
+    ``passport["issuer_id"]``. The ``status_authority`` must also be a member of
+    the caller-provided ``trusted_issuers`` configuration. No normalization,
+    prefix matching, substring matching, or case folding is performed, so
+    matching only ``status_reference`` is not enough and status from a different
+    issuer fails closed even if that issuer is otherwise trusted; this prevents
+    cross-issuer status spoofing and snapshot substitution. It performs no
+    cryptographic work and does not confirm the status was actually signed by the
+    authority. Any missing, mistyped, or mismatched field fails closed.
+    """
+    if not isinstance(revocation_status, Mapping):
+        return VerificationCheck(
+            name="revocation_status_checked",
+            passed=False,
+            reason="revocation status evidence is missing or not a mapping",
+        )
+
+    status_reference = revocation_status.get("status_reference")
+    status_passport_id = revocation_status.get("passport_id")
+    status_authority = revocation_status.get("status_authority")
+    if not (
+        isinstance(status_reference, str)
+        and isinstance(status_passport_id, str)
+        and isinstance(status_authority, str)
+    ):
+        return VerificationCheck(
+            name="revocation_status_checked",
+            passed=False,
+            reason=(
+                "revocation status must carry string status_reference, "
+                "passport_id, and status_authority fields"
+            ),
+        )
+
+    revocation = passport.get("revocation")
+    expected_status_reference = (
+        revocation.get("status_reference")
+        if isinstance(revocation, Mapping)
+        else None
+    )
+    if status_reference != expected_status_reference:
+        return VerificationCheck(
+            name="revocation_status_checked",
+            passed=False,
+            reason=(
+                "revocation status_reference does not match the passport "
+                "revocation reference"
+            ),
+        )
+    if status_passport_id != passport.get("passport_id"):
+        return VerificationCheck(
+            name="revocation_status_checked",
+            passed=False,
+            reason="revocation status passport_id does not match the passport",
+        )
+    if status_authority != passport.get("issuer_id"):
+        return VerificationCheck(
+            name="revocation_status_checked",
+            passed=False,
+            reason=(
+                "revocation status_authority does not match the passport "
+                "issuer_id"
+            ),
+        )
+
+    # Defence in depth: the status authority must itself be a configured trusted
+    # issuer. Issuer trust has already passed when this runs in the normal flow,
+    # so this can only fail when the helper is exercised in isolation or the
+    # trust configuration is malformed. The guard positively requires a
+    # collection (excluding strings, bytes, and mappings) so a None, bare-string,
+    # mapping, or non-iterable configuration fails closed rather than raising
+    # before the membership test runs.
+    trusted_is_collection = (
+        isinstance(trusted_issuers, Collection)
+        and not isinstance(trusted_issuers, (str, bytes, bytearray))
+        and not isinstance(trusted_issuers, Mapping)
+    )
+    if not trusted_is_collection or status_authority not in trusted_issuers:
+        return VerificationCheck(
+            name="revocation_status_checked",
+            passed=False,
+            reason=(
+                "revocation status_authority is not a configured trusted issuer"
+            ),
+        )
+
+    return VerificationCheck(
+        name="revocation_status_checked",
+        passed=True,
+        reason=(
+            "revocation status is bound to this passport and its "
+            "status_authority is configured as trusted"
+        ),
+    )
+
+
+def _revocation_status_fresh_check(
+    revocation_status: object, now: datetime
+) -> VerificationCheck:
+    """Check that caller-provided revocation status is fresh at ``now``.
+
+    Freshness reuses the strict UTC ``Z`` timestamp parsing used for passport
+    time validity and the already-resolved injected ``now``; the wall clock is
+    not read again here. The status must carry ``produced_at`` and
+    ``valid_until`` as strict UTC ``Z`` timestamps, and freshness holds only when
+    ``produced_at <= now < valid_until`` (``produced_at`` inclusive,
+    ``valid_until`` exclusive). Missing, malformed, non-strict, future-dated
+    (``now`` before ``produced_at``), stale (``now`` at or after ``valid_until``),
+    or inverted (``produced_at`` after ``valid_until``) windows fail closed. It
+    performs no cryptographic work.
+    """
+    if not isinstance(revocation_status, Mapping):
+        return VerificationCheck(
+            name="revocation_status_fresh",
+            passed=False,
+            reason="revocation status evidence is missing or not a mapping",
+        )
+    produced_at = _parse_strict_utc_timestamp(
+        revocation_status.get("produced_at")
+    )
+    if produced_at is None:
+        return VerificationCheck(
+            name="revocation_status_fresh",
+            passed=False,
+            reason="produced_at is not a strict UTC timestamp ending in 'Z'",
+        )
+    valid_until = _parse_strict_utc_timestamp(
+        revocation_status.get("valid_until")
+    )
+    if valid_until is None:
+        return VerificationCheck(
+            name="revocation_status_fresh",
+            passed=False,
+            reason="valid_until is not a strict UTC timestamp ending in 'Z'",
+        )
+    if produced_at > valid_until:
+        return VerificationCheck(
+            name="revocation_status_fresh",
+            passed=False,
+            reason="revocation status produced_at is after valid_until",
+        )
+    if now < produced_at:
+        return VerificationCheck(
+            name="revocation_status_fresh",
+            passed=False,
+            reason=(
+                "revocation status is not yet valid: current time is before "
+                "produced_at"
+            ),
+        )
+    if now >= valid_until:
+        return VerificationCheck(
+            name="revocation_status_fresh",
+            passed=False,
+            reason=(
+                "revocation status is stale: current time is at or after "
+                "valid_until"
+            ),
+        )
+    return VerificationCheck(
+        name="revocation_status_fresh",
+        passed=True,
+        reason=(
+            "revocation status is fresh; produced_at is inclusive and "
+            "valid_until is exclusive"
+        ),
+    )
+
+
+_ACTIVE_REVOCATION_STATUS = "active"
+
+
+def _passport_not_revoked_check(revocation_status: object) -> VerificationCheck:
+    """Check that the caller-provided revocation status reports ``active``.
+
+    This passes only when ``revocation_status["status"]`` is exactly the string
+    ``active``. Every other value fails closed, including a missing field, a
+    non-string value, an unknown or misspelled value, and the values ``revoked``,
+    ``suspended``, ``expired``, ``compromised``, and ``retired``. It performs no
+    cryptographic work and does not parse signed status lists.
+    """
+    if not isinstance(revocation_status, Mapping):
+        return VerificationCheck(
+            name="passport_not_revoked",
+            passed=False,
+            reason="revocation status evidence is missing or not a mapping",
+        )
+    if revocation_status.get("status") == _ACTIVE_REVOCATION_STATUS:
+        return VerificationCheck(
+            name="passport_not_revoked",
+            passed=True,
+            reason=(
+                "revocation status is 'active' according to the provided "
+                "status evidence"
+            ),
+        )
+    return VerificationCheck(
+        name="passport_not_revoked",
+        passed=False,
+        reason="revocation status is not 'active'; the passport fails closed",
     )
 
 
@@ -479,6 +714,7 @@ def verify_passport_json(
     *,
     now: "datetime | None" = None,
     trusted_issuers: object = None,
+    revocation_status: object = None,
 ) -> VerificationResult:
     """Verify an untrusted raw JSON passport envelope.
 
@@ -493,6 +729,11 @@ def verify_passport_json(
     ``trusted_issuers`` is the keyword-only issuer-trust configuration forwarded
     unchanged to :func:`verify_passport_envelope` after duplicate-key-safe
     parsing; ``None`` (the default) fails the issuer-trust check closed.
+
+    ``revocation_status`` is the keyword-only caller-provided revocation status
+    evidence forwarded unchanged to :func:`verify_passport_envelope` after
+    duplicate-key-safe parsing; ``None`` (the default) fails the
+    revocation-status check closed.
     """
     try:
         envelope = parse_json_no_duplicate_keys(text)
@@ -516,7 +757,10 @@ def verify_passport_json(
         reason="raw JSON parsed with duplicate object member rejection",
     )
     result = verify_passport_envelope(
-        envelope, now=now, trusted_issuers=trusted_issuers
+        envelope,
+        now=now,
+        trusted_issuers=trusted_issuers,
+        revocation_status=revocation_status,
     )
     return VerificationResult(
         valid=result.valid,
@@ -531,6 +775,7 @@ def verify_passport_envelope(
     *,
     now: "datetime | None" = None,
     trusted_issuers: object = None,
+    revocation_status: object = None,
 ) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
@@ -554,7 +799,19 @@ def verify_passport_envelope(
     caller-provided ``trusted_issuers`` configuration (``issuer_trusted``); this
     uses caller configuration only, with no registry or network lookup, and
     fails closed to ``DENY`` before proof selection when issuer trust is not
-    configured or the issuer is not trusted. Otherwise the verifier selects the
+    configured or the issuer is not trusted. Otherwise the verifier evaluates
+    caller-provided revocation status before proof selection. The status is
+    in-memory evidence supplied by the caller; this boundary performs no network
+    lookup, registry lookup, signed status list parsing, or cryptographic
+    verification of the status. It records ``revocation_status_checked`` (the
+    status must be a mapping bound to this passport by exact string equality on
+    ``status_reference``, ``passport_id``, and ``status_authority``, with the
+    authority also a trusted issuer), then ``revocation_status_fresh`` (strict
+    UTC ``Z`` ``produced_at`` and ``valid_until`` with
+    ``produced_at <= now < valid_until`` against the already-resolved ``now``),
+    then ``passport_not_revoked`` (the status must be exactly ``active``); any of
+    these failing fails closed to ``DENY`` before proof selection. Otherwise the
+    verifier selects the
     proof to check and records the choice as ``proof_selected``; the
     first-version rule selects the first proof only. It then recomputes the
     canonical payload hash over ``envelope["passport"]`` using the selected
@@ -747,6 +1004,32 @@ def verify_passport_envelope(
     checks.append(issuer_check)
     if not issuer_check.passed:
         return VerificationResult.failed(issuer_check.reason, checks=checks)
+
+    # Caller-provided revocation status is evaluated after issuer trust and
+    # before proof selection. The status is in-memory evidence supplied by the
+    # caller: this boundary performs no network lookup, registry lookup, signed
+    # status list parsing, or cryptographic verification of the status. It binds
+    # the status to this passport and issuer, checks freshness against the same
+    # resolved now, and requires an active status. Each sub-step fails closed,
+    # so an absent or unbound status denies before any later step runs.
+    revocation_checked = _revocation_status_checked_check(
+        passport, revocation_status, trusted_issuers
+    )
+    checks.append(revocation_checked)
+    if not revocation_checked.passed:
+        return VerificationResult.failed(
+            revocation_checked.reason, checks=checks
+        )
+
+    revocation_fresh = _revocation_status_fresh_check(revocation_status, now_dt)
+    checks.append(revocation_fresh)
+    if not revocation_fresh.passed:
+        return VerificationResult.failed(revocation_fresh.reason, checks=checks)
+
+    not_revoked = _passport_not_revoked_check(revocation_status)
+    checks.append(not_revoked)
+    if not not_revoked.passed:
+        return VerificationResult.failed(not_revoked.reason, checks=checks)
 
     proof = _select_proof(proofs)
     checks.append(

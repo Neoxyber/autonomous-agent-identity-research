@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from _support import TRUSTED_ISSUERS, VALID_NOW
+from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 
 EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
@@ -53,7 +53,7 @@ def test_minimal_example_passes_schema_valid_check():
 
 
 def test_minimal_example_still_denied_for_unimplemented_signature():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     assert result.valid is False
     assert result.decision == DENY
     signature = check_named(result, "signature_verification_not_implemented")
@@ -129,7 +129,7 @@ def test_no_signature_verification_in_this_step():
     # A different but still schema-valid signature value: the verifier must not
     # verify the signature, so the deny reason stays "not implemented".
     env["proofs"][0]["signature_b64u"] = "AAAA"
-    result = verify_passport_envelope(env, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
+    result = verify_passport_envelope(env, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
     schema = check_named(result, "schema_valid")
     assert schema is not None
     assert schema.passed is True
