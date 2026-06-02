@@ -1047,3 +1047,26 @@ dependency adoption, canonicalizer replacement, requirements changes, lockfile c
 Next step:
 Record or update the canonicalization candidate decision and isolated evaluation path before dependency adoption or signature-verification planning.
 
+## Entry 067
+
+Date: 2026-06-02
+
+Type: Canonicalization research decision
+
+Summary: Recorded isolated canonicalization candidate evaluation decision.
+
+Files:
+Updated `specs/canonicalization-resolution.md` and this evidence log.
+
+Result:
+Recorded that the next canonicalization step is isolated candidate evaluation only. The decision does not authorize dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, or signature verification. Candidate evaluation should review provenance, license terms, maintenance risk, dependency surface, security behavior, numeric-domain behavior, Unicode and object-key ordering behavior, duplicate-key handling, fail-closed behavior, and the effect on existing golden vectors.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, canonicalizer replacement, package installation, requirements changes, lockfile changes, schema changes, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Prepare or update the isolated canonicalization candidate evaluation path before any adoption or signature-verification planning.
+

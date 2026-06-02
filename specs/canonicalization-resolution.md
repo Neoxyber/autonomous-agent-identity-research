@@ -106,6 +106,29 @@ This step does not add code, dependencies, schema changes, examples, real
 cryptographic verification, post-quantum signing, issuer trust, revocation,
 policy evaluation, a runtime gateway, or cloud or network integrations.
 
+## Candidate evaluation decision
+
+The next canonicalization step is isolated candidate evaluation only.
+
+The project may evaluate a candidate RFC 8785 / JSON Canonicalization Scheme
+implementation outside the repository, using pinned artifacts and recorded
+provenance. This is not dependency adoption and does not authorize package
+installation into the repository, requirements changes, lockfile changes,
+canonicalizer replacement, golden-vector migration, or signature verification.
+
+The evaluation should answer whether the candidate can support the passport
+verification boundary with deterministic canonical bytes, fail-closed error
+handling, duplicate-key-safe raw JSON handling, and clear compatibility behavior
+for the current passport profile.
+
+Before any adoption decision, the project should review source and artifact
+provenance, license terms, maintenance risk, dependency surface, security
+behavior, numeric-domain behavior, Unicode and object-key ordering behavior,
+duplicate-key handling, and the effect on existing golden vectors.
+
+Real signature verification remains blocked until this evaluation path is
+settled and a separate adoption decision is recorded.
+
 ## Next step after this document
 
 A later, separate step should evaluate candidate RFC 8785-compatible
