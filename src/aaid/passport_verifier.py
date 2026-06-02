@@ -1119,6 +1119,36 @@ def verify_passport_envelope(
     if not not_revoked.passed:
         return VerificationResult.failed(not_revoked.reason, checks=checks)
 
+    # Proof-selection hardening: fail closed when more than one proof is present.
+    # The first-version verifier selects the first proof only, which is
+    # acceptable while it cannot return ALLOW, but proof ordering must not become
+    # a trust model. Until a multi-proof, hybrid, or post-quantum selection
+    # policy exists, a multi-proof envelope is not interpreted. Missing,
+    # non-sequence, and empty proofs are already rejected by earlier structural
+    # checks; this runs before proof selection and performs no cryptographic
+    # work.
+    if len(proofs) != 1:
+        checks.append(
+            VerificationCheck(
+                name="proof_count_allowed",
+                passed=False,
+                reason=(
+                    "exactly one proof is required; a multi-proof envelope "
+                    "fails closed until a proof-selection policy exists"
+                ),
+            )
+        )
+        return VerificationResult.failed(
+            "exactly one proof is required", checks=checks
+        )
+    checks.append(
+        VerificationCheck(
+            name="proof_count_allowed",
+            passed=True,
+            reason="exactly one proof is present",
+        )
+    )
+
     proof = _select_proof(proofs)
     checks.append(
         VerificationCheck(

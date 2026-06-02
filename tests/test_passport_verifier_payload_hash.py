@@ -188,8 +188,9 @@ def test_no_signature_verification_in_this_step():
     assert "signature" in result.reason.lower()
 
 
-def test_uses_first_proof_only():
-    # A later proof with a wrong hash is ignored; only proofs[0] is consulted.
+def test_multi_proof_envelope_fails_closed_before_payload_hash():
+    # Proof-selection hardening: a multi-proof envelope fails closed before the
+    # payload-hash step, so payload_hash_valid is never recorded.
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     second = copy.deepcopy(tampered["proofs"][0])
@@ -197,27 +198,27 @@ def test_uses_first_proof_only():
     second["payload_hash"] = "c" * 64
     tampered["proofs"].append(second)
     result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    payload_hash = check_named(result, "payload_hash_valid")
-    assert payload_hash is not None
-    assert payload_hash.passed is True
+    assert check_named(result, "proof_count_allowed").passed is False
+    assert check_named(result, "payload_hash_valid") is None
+    assert result.decision == DENY
+    assert result.valid is False
 
 
-def test_first_proof_governs_even_if_later_proof_correct():
-    # A correct later proof must not rescue a wrong first proof.
+def test_multi_proof_fails_closed_even_with_correct_later_proof():
+    # A correct later proof does not rescue a multi-proof envelope; it fails
+    # closed at proof_count_allowed before payload-hash validation.
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     correct = hash_passport_payload(
         tampered["passport"], tampered["proofs"][0]["hash_alg"]
     )
-    tampered["proofs"][0]["payload_hash"] = "b" * 64
     second = copy.deepcopy(tampered["proofs"][0])
     second["proof_id"] = "urn:aaid:proof:second-test-proof"
     second["payload_hash"] = correct
     tampered["proofs"].append(second)
     result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    payload_hash = check_named(result, "payload_hash_valid")
-    assert payload_hash is not None
-    assert payload_hash.passed is False
+    assert check_named(result, "proof_count_allowed").passed is False
+    assert check_named(result, "payload_hash_valid") is None
     assert result.decision == DENY
 
 

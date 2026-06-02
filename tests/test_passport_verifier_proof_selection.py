@@ -90,18 +90,24 @@ def test_payload_hash_valid_uses_selected_first_proof():
     assert check_named(result, "payload_hash_valid").passed is False
 
 
-def test_mismatched_second_proof_does_not_affect_first_proof_selection():
-    # A later proof with a wrong hash is ignored; selection stays on the first
-    # proof and the payload hash still matches.
+def test_two_proofs_fail_closed_before_proof_selected():
+    # Proof-selection hardening: a multi-proof envelope is not interpreted. It
+    # fails closed at proof_count_allowed and never reaches proof selection or
+    # the payload-hash step.
     envelope = envelope_with_second_proof("a" * 64)
     result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    assert check_named(result, "proof_selected").passed is True
-    assert check_named(result, "payload_hash_valid").passed is True
+    count = check_named(result, "proof_count_allowed")
+    assert count is not None
+    assert count.passed is False
+    assert check_named(result, "proof_selected") is None
+    assert check_named(result, "payload_hash_valid") is None
+    assert result.decision == DENY
+    assert result.valid is False
 
 
-def test_mismatched_first_proof_fails_even_if_later_proof_correct():
-    # A correct later proof must not rescue a wrong first proof: selection binds to
-    # the first proof and payload_hash_valid fails.
+def test_two_proofs_fail_closed_even_with_correct_later_proof():
+    # A correct later proof cannot rescue a multi-proof envelope: it still fails
+    # closed at proof_count_allowed before any payload-hash check.
     envelope = load_envelope()
     correct = hash_passport_payload(
         envelope["passport"], envelope["proofs"][0]["hash_alg"]
@@ -110,11 +116,11 @@ def test_mismatched_first_proof_fails_even_if_later_proof_correct():
     second["proof_id"] = "urn:aaid:proof:second-test-proof"
     second["payload_hash"] = correct
     envelope["proofs"].append(second)
-    envelope["proofs"][0]["payload_hash"] = "b" * 64
 
     result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    assert check_named(result, "proof_selected").passed is True
-    assert check_named(result, "payload_hash_valid").passed is False
+    assert check_named(result, "proof_count_allowed").passed is False
+    assert check_named(result, "proof_selected") is None
+    assert check_named(result, "payload_hash_valid") is None
     assert result.decision == DENY
 
 
