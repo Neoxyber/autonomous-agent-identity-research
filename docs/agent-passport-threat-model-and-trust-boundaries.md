@@ -106,8 +106,9 @@ The current and future trust boundaries are:
    A valid signature does not make an issuer trusted by default.
 
 7. Issuer trust to lifecycle and revocation.
-   Trusted issuance is not enough if the passport or key is expired, revoked,
-   suspended, compromised, or rotated.
+   Trusted issuance is not enough if the passport identity is expired, revoked,
+   suspended, compromised, or retired, or if the key material has been retired
+   or superseded.
 
 8. Lifecycle and revocation to permission policy.
    A current identity still needs action-specific authorization.
@@ -308,6 +309,42 @@ storage, dependency adoption, or canonicalizer replacement.
 
 Later revocation checks may include `revocation_status_checked`,
 `revocation_status_fresh`, and `passport_not_revoked`.
+
+## Lifecycle vocabulary alignment decision
+
+The committed schema and the verifier use one lifecycle vocabulary for
+`lifecycle_status`: `active`, `suspended`, `revoked`, `expired`, `compromised`,
+and `retired`. Only `active` allows verification to continue; every other value
+fails closed. Some earlier model documents also listed `rotated` and
+`pending_verification` as lifecycle states, which the current schema does not
+define. This decision reconciles the prose documents to the existing schema
+vocabulary. It changes no schema, verifier, test, or example, and the verifier
+still cannot return `ALLOW`.
+
+This model uses `retired` to mean superseded or intentionally withdrawn material,
+at two distinct scopes: a `lifecycle_status` of `retired` describes a superseded
+or withdrawn passport identity, and a `public_key.status` of `retired` describes
+superseded key material. They are consistent in intent but enforced at different
+levels; they are not one field.
+
+`rotated` is treated as a transition process and a revocation or audit reason,
+not a `lifecycle_status` value. When identity or key material is replaced, the
+superseded material is recorded as `retired`, newly issued material is `active`,
+and the rotation is captured as a reason. Key material may be rotated or replaced
+over time, so this mapping is a cryptographic-agility cue, not a final
+key-management design.
+
+`pending_verification` is treated as an onboarding and review state outside the
+current `lifecycle_status` enum. Operator-level onboarding is already represented
+by `operator.verification_status`, including `pending_review`. A passport-level
+pending state would require a separate later schema decision; until then, an
+identity that has not completed onboarding has no `active` passport and fails
+closed under default deny.
+
+This is documentation alignment only. The forward-looking documents
+(`ROADMAP.md`, `docs/research-questions.md`, `docs/scope.md`) still list
+`rotated` and `pending_verification` and are deferred to a later reconciliation
+pass, so this change does not claim repo-wide lifecycle consistency.
 
 ## Next step
 

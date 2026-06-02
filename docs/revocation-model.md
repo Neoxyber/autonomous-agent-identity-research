@@ -10,13 +10,13 @@ Revocation is the process of removing an agent from trust. It is required when a
 
 Revocation is part of identity.
 
-An autonomous agent identity is incomplete unless it can be suspended, revoked, expired, marked compromised, or rotated.
+An autonomous agent identity is incomplete unless it can be suspended, revoked, expired, marked compromised, or retired.
 
 A revoked agent must not be allowed to act.
 
 ## Lifecycle states
 
-The initial lifecycle states are:
+The lifecycle states are the schema lifecycle_status values:
 
 1. active
 
@@ -28,11 +28,9 @@ The initial lifecycle states are:
 
 5. compromised
 
-6. rotated
+6. retired
 
-7. pending_verification
-
-These states should be visible to verifiers and enforcement systems.
+These states should be visible to verifiers and enforcement systems. Only active allows verification to continue; the others fail closed.
 
 ## State meanings
 
@@ -46,9 +44,9 @@ expired means the identity is no longer valid because its validity period has en
 
 compromised means the agent, key material, operator account, runtime, or environment may no longer be trustworthy.
 
-rotated means the identity or key material has been replaced by newer trust material.
+retired means the passport identity has been superseded or intentionally withdrawn and must not be used for action. A retired passport identity (lifecycle_status) is distinct from a retired public key (public_key.status), which marks superseded key material.
 
-pending_verification means the agent identity exists but has not yet completed the required verification process.
+Rotation and onboarding are not lifecycle_status values. Rotation is a transition process and a revocation or audit reason: superseded identity or key material is recorded as retired, newly issued material is active, and the rotation is captured as a reason. Onboarding and review happen before an identity becomes active; operator-level onboarding is represented by operator.verification_status, including pending_review.
 
 ## Revocation reasons
 
@@ -82,7 +80,7 @@ Reason codes help later audit, investigation, and evaluation.
 
 Online revocation checks allow a verifier to ask for current status.
 
-An online status check may answer whether an agent is active, suspended, revoked, expired, compromised, rotated, or pending verification.
+An online status check may answer whether an agent is active, suspended, revoked, expired, compromised, or retired.
 
 Online checks are useful when live trust information is available, but they should not be the only verification method.
 
@@ -120,11 +118,9 @@ The research should record what passes, what fails, and what needs improvement.
 
 Before an action is allowed, the verifier or gateway should check lifecycle status.
 
-If the agent is revoked, expired, suspended, or compromised, the action should be denied.
+If the agent is revoked, expired, suspended, compromised, or retired, the action should be denied. Only active allows the action to continue.
 
-If the agent is rotated, the verifier should check whether newer identity or key material must be used.
-
-If the agent is pending verification, the action should be denied unless policy explicitly allows limited pre-verification behaviour.
+Rotation and onboarding are not lifecycle_status values. Rotation is handled as a transition and a reason: superseded identity or key material is recorded as retired and a newly issued identity or key is used. Onboarding and review happen before an identity becomes active and are represented by operator.verification_status, including pending_review, not by lifecycle_status.
 
 ## Audit evidence
 

@@ -24,7 +24,7 @@ An autonomous agent should not be able to act anonymously inside a digital syste
 
 6. Does this action require human approval?
 
-7. Is the agent active, expired, suspended, revoked, compromised, rotated, or pending verification?
+7. Is the agent active, suspended, revoked, expired, compromised, or retired?
 
 8. Can the agent passport be verified outside the issuing system?
 
@@ -162,15 +162,16 @@ Expired agents should not be allowed to act.
 
 The current lifecycle state of the agent.
 
-Supported initial statuses are:
+Supported statuses are the schema lifecycle_status values:
 
 - active
 - suspended
 - revoked
 - expired
 - compromised
-- rotated
-- pending_verification
+- retired
+
+Only active allows verification to continue. The other statuses fail closed.
 
 ### Revocation reference
 
@@ -316,13 +317,17 @@ The passport is past its expiry time and must not be used for action.
 
 The agent, its keys, its runtime, or its operator binding may no longer be trustworthy.
 
-### rotated
+### retired
 
-The agent identity or key material has been replaced by newer material.
+The passport identity has been superseded or intentionally withdrawn and must not be used for action. A retired passport identity (lifecycle_status) is distinct from a retired public key (public_key.status), which marks superseded key material; the two apply at different scopes.
 
-### pending_verification
+### Transition and onboarding states
 
-The agent has been registered or issued but is not yet fully trusted for action.
+Rotation and onboarding are not lifecycle_status values in the current schema.
+
+Rotation is a transition process and a revocation or audit reason. When identity or key material is replaced, the superseded material is recorded as retired, newly issued material is active, and the rotation is captured as a reason. Key material may be rotated or replaced over time as part of cryptographic agility.
+
+Onboarding and review happen before an identity becomes active. Operator-level onboarding is represented by operator.verification_status, including pending_review. A passport-level pending state would require a separate later schema decision; until then, an identity that has not completed onboarding has no active passport and is denied by default.
 
 ## Global verification
 

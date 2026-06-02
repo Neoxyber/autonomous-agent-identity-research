@@ -863,3 +863,26 @@ revocation checking, freshness evidence, lifecycle vocabulary alignment, key exp
 Next step:
 Review lifecycle vocabulary alignment before recording the revocation and freshness verifier-boundary decision.
 
+## Entry 059
+
+Date: 2026-06-02
+
+Type: Documentation alignment decision
+
+Summary: Aligned lifecycle vocabulary prose to the committed schema enum.
+
+Files:
+Updated `docs/identity-layer.md`, `docs/revocation-model.md`, `docs/agent-passport-threat-model-and-trust-boundaries.md`, and this evidence log.
+
+Result:
+The lifecycle prose now aligns with the committed schema and verifier vocabulary: `active`, `suspended`, `revoked`, `expired`, `compromised`, and `retired`. `active` remains the only lifecycle status that allows verification to continue. `rotated` is documented as a transition process and revocation or audit reason, not as a current `lifecycle_status` value. `pending_verification` is documented as an onboarding or review state outside the current lifecycle enum. This is documentation alignment only and does not change the schema, verifier behavior, tests, examples, or the verifier's fail-closed behavior.
+
+Tests:
+244 tests passed.
+
+Not implemented:
+lifecycle vocabulary alignment of deferred forward-looking documents (`ROADMAP.md:119,125`, `docs/research-questions.md:41`, `docs/scope.md:45`), schema additions for `rotated` or `pending_verification`, passport-level pending state, lifecycle transition enforcement, revocation checking, freshness evidence, key expiration enforcement, operator verification enforcement, real signature verification, permission and policy evaluation, human oversight, audit evidence implementation, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Record the revocation and freshness verifier-boundary decision.
+
