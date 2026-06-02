@@ -909,3 +909,26 @@ revocation checking, freshness checking, network lookup, registry lookup, signed
 Next step:
 Implement caller-provided revocation and freshness checks after review.
 
+## Entry 061
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation
+
+Summary: Added caller-provided revocation and freshness checks.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, `tests/_support.py`, added `tests/test_passport_verifier_revocation_freshness.py`, and updated existing verifier tests for explicit fresh status evidence; updated this evidence log.
+
+Result:
+The verifier now records `revocation_status_checked`, `revocation_status_fresh`, and `passport_not_revoked` after `issuer_trusted` and before `proof_selected`. The raw JSON verifier forwards caller-provided `revocation_status` after duplicate-key-safe parsing. Status evidence must bind by exact string equality to the passport `status_reference`, `passport_id`, and issuer through `status_authority`, and the authority must be configured as trusted. Freshness uses strict UTC `Z` timestamps with injected deterministic `now` and requires `produced_at <= now < valid_until`. Only `status == "active"` allows the chain to continue. Missing, malformed, mismatched, stale, future-dated, inverted-window, unknown, or non-active status evidence fails closed. Issuer-trust handling was also hardened so non-iterable trust configuration fails closed instead of raising.
+
+Tests:
+351 tests passed.
+
+Not implemented:
+network lookup, registry lookup, signed status evidence, cryptographic verification of status evidence, replay or rollback protection beyond the freshness window, schema changes, real signature verification, permission and policy evaluation, human oversight, audit evidence implementation, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review the next verifier boundary before policy evaluation, canonicalizer adoption, key-validity expansion, or real signature verification.
+
