@@ -163,8 +163,18 @@ def test_canonicalization_scheme_step_never_returns_allow():
         {},
         None,
     ]
+    # Reach the named step for the valid, trusted example so this sweep actually
+    # exercises signature_canonicalization_supported rather than stopping at
+    # issuer_trusted.
+    reached = verify_passport_envelope(
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+    )
+    assert check_named(reached, CANON_CHECK) is not None
+
     for case in cases:
-        result = verify_passport_envelope(case)
+        result = verify_passport_envelope(
+            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        )
         assert isinstance(result, VerificationResult)
         assert result.decision != ALLOW
         assert result.valid is False

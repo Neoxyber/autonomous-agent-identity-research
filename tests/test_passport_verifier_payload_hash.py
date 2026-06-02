@@ -157,8 +157,17 @@ def test_payload_hash_step_never_returns_allow():
     malformed = {"passport": {"subject": "demo"}, "proofs": []}
 
     cases = [load_envelope(), wrong_hash, tampered_passport, bad_alg, malformed]
+    # Reach the named step for the valid, trusted example so this sweep actually
+    # exercises payload_hash_valid rather than stopping at issuer_trusted.
+    reached = verify_passport_envelope(
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+    )
+    assert check_named(reached, "payload_hash_valid") is not None
+
     for case in cases:
-        result = verify_passport_envelope(case)
+        result = verify_passport_envelope(
+            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        )
         assert result.decision != ALLOW, f"unexpected ALLOW for {case!r}"
         assert result.decision == DENY
         assert result.valid is False

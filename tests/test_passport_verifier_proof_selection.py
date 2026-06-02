@@ -160,8 +160,17 @@ def test_proof_selection_step_never_returns_allow():
     schema_invalid["passport"]["risk_class"] = "critical"
     cases.append(schema_invalid)
 
+    # Reach the named step for the valid, trusted example so this sweep actually
+    # exercises proof_selected rather than stopping at issuer_trusted.
+    reached = verify_passport_envelope(
+        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+    )
+    assert check_named(reached, "proof_selected") is not None
+
     for case in cases:
-        result = verify_passport_envelope(case)
+        result = verify_passport_envelope(
+            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+        )
         assert result.decision != ALLOW, f"unexpected ALLOW for {case!r}"
         assert result.decision == DENY
         assert result.valid is False
