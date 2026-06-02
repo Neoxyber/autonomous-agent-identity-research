@@ -1070,3 +1070,26 @@ dependency adoption, canonicalizer replacement, package installation, requiremen
 Next step:
 Prepare or update the isolated canonicalization candidate evaluation path before any adoption or signature-verification planning.
 
+## Entry 068
+
+Date: 2026-06-02
+
+Type: Documentation alignment
+
+Summary: Aligned roadmap and trust-boundary documents with the verifier-boundary-first path.
+
+Files:
+Updated `ROADMAP.md`, `docs/agent-passport-threat-model-and-trust-boundaries.md`, `docs/canonicalization-candidate-decision-readiness.md`, and this evidence log.
+
+Result:
+Aligned the roadmap with the implemented verifier-boundary-first order: issuer trust, revocation freshness, selected-key validity, proof-selection hardening, canonicalization closure, and only later signature-verification planning. Updated the trust-boundary non-goals so implemented issuer-trust and caller-provided revocation checks are no longer listed as unimplemented. Kept REF-014 positioned only as a leading candidate for provisional integration planning, with adoption still blocked by provenance, license, dependency-risk, numeric-domain, verifier-boundary, and golden-vector considerations.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review the isolated canonicalization candidate evaluation path and adoption blockers before any implementation or signature-verification planning.
+

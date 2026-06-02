@@ -243,8 +243,8 @@ This document does not implement:
 - dependency adoption;
 - canonicalizer replacement;
 - real signature verification;
-- issuer trust;
-- revocation;
+- external issuer registry or network lookup;
+- signed revocation or status evidence;
 - permission evaluation;
 - audit storage;
 - human oversight;

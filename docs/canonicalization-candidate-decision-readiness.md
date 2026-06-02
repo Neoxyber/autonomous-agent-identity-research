@@ -110,7 +110,7 @@ requires:
 
 - explicit approval of a candidate decision record;
 - package artifact and build provenance review;
-- legal compatibility and attribution review;
+- license compatibility and attribution review;
 - maintenance and vulnerability-risk review;
 - verifier entry-point policy for raw JSON versus parsed mappings;
 - duplicate-key rejection before canonicalization when raw JSON is accepted;
@@ -133,7 +133,7 @@ REF-014 is the leading candidate for provisional integration planning only.
 REF-015 remains comparison evidence.
 
 A separate adoption decision record should wait until the remaining provenance,
-legal, dependency-risk, and verifier-boundary blockers are resolved.
+license, dependency-risk, and verifier-boundary blockers are resolved.
 
 This assessment does not authorize requirements changes, canonicalizer
 replacement, verifier changes, Pending review status changes, real signature
@@ -142,5 +142,5 @@ verification, or post-quantum signing work.
 ## Next step
 
 Prepare a REF-014 provisional integration plan. The plan should define required
-tests, provenance checks, legal/attribution checks, dependency-risk checks, and
+tests, provenance checks, license/attribution checks, dependency-risk checks, and
 verifier-boundary changes before any adoption proposal.

@@ -98,35 +98,50 @@ This phase should avoid further broad planning around canonicalization. The work
 
 Exit condition: the selected canonicalization path is recorded, external vectors pass, ambiguous inputs fail safely, and the minimal passport has a stable canonical representation.
 
-## Phase 3. Signature verification foundation
+## Phase 3. Verifier trust boundaries
 
-This phase adds the first real signature verification path.
+This phase hardens verifier trust boundaries before real signature verification.
 
-Signature verification should be performed over canonical passport bytes. The implementation should use maintained cryptographic libraries and should remain algorithm-agile.
+The research should cover issuer trust, key selection, key status, key validity,
+verification-method binding, lifecycle checks, caller-provided revocation
+freshness, and proof-selection hardening.
 
-A valid signature should not by itself authorize action. It only proves that the passport payload has not been modified and that it was signed by a key that may later be evaluated through issuer trust and lifecycle rules.
+The system should not treat any syntactically valid issuer, key, proof, or status
+record as trusted by default.
 
-Exit condition: valid signatures verify, modified passports fail, unsupported algorithms fail closed, and the verifier still denies protected action until trust, revocation, and policy checks are implemented.
+Exit condition: issuer trust, active-key selection, selected-key validity,
+verification-method binding, revocation freshness, and single-proof enforcement
+fail closed and are recorded as verifier checks.
 
-## Phase 4. Issuer trust and key lifecycle
+## Phase 4. Canonicalization closure
 
-This phase defines how a verifier decides whether an issuer and key are trusted.
+This phase settles canonicalization before real signature verification.
 
-The research should cover issuer metadata, trust anchors, key identifiers, key purpose, key status, key rotation, and failure behavior for unknown or unsuitable keys.
+The current helper remains useful for local research regression tests, but real
+signature verification requires a reviewed canonicalization path, external
+conformance evidence, fail-closed input handling, and a deliberate golden-vector
+migration if canonical bytes change.
 
-The system should not treat any syntactically valid key as trusted by default.
+Exit condition: the selected canonicalization path is recorded, external vectors
+pass for the accepted input domain, ambiguous inputs fail safely, and the
+minimal passport has a stable canonical representation.
 
-Exit condition: trusted issuers and active keys can be recognized, unknown issuers fail closed, retired or rotated keys fail safely, and trust decisions are recorded as evidence.
+## Phase 5. Signature verification foundation
 
-## Phase 5. Revocation and lifecycle enforcement
+This phase adds the first real signature verification path only after verifier
+trust boundaries and canonicalization are settled.
 
-This phase ensures that an agent can lose authority after issuance.
+Signature verification should be performed over canonical passport bytes. The
+implementation should use reviewed cryptographic libraries and should remain
+algorithm-agile.
 
-The model already defines lifecycle states such as active, suspended, revoked, expired, compromised, rotated, and pending verification. This phase turns those states into enforceable verifier behavior.
+A valid signature should not by itself authorize action. It only proves that the
+passport payload has not been modified and that it was signed by a key that is
+evaluated through issuer trust, lifecycle, revocation, and policy rules.
 
-The research should include online status checks, signed or cached revocation evidence, short-lived passports, and the limits of offline verification.
-
-Exit condition: revoked, suspended, expired, and compromised agents are denied; offline limitations are documented; and revocation decisions produce audit evidence.
+Exit condition: valid signatures verify, modified passports fail, unsupported
+algorithms fail closed, and the verifier still denies protected action until
+permission, approval, and audit policy checks are implemented.
 
 ## Phase 6. Permission and policy evaluation
 
@@ -224,19 +239,22 @@ These topics should be introduced through small, reviewed research steps after t
 
 The near-term work should stay narrow.
 
-1. Align the README with the current research stage.
+1. Keep the README aligned with the current research stage.
 
-2. Add a concise standards-positioning map.
+2. Keep standards positioning concise and evidence-based.
 
-3. Close canonicalization through external conformance tests.
+3. Maintain verifier trust-boundary checks before any `ALLOW` path.
 
-4. Add signature verification behind a small abstraction.
+4. Close canonicalization through isolated candidate evaluation and external
+   conformance evidence.
 
-5. Add issuer trust and key lifecycle checks.
+5. Record any canonicalizer adoption decision before requirements, lockfile,
+   canonicalizer, or golden-vector changes.
 
-6. Add revocation and lifecycle enforcement.
+6. Plan real signature verification only after canonicalization is settled.
 
-7. Add permission and policy evaluation.
+7. Add permission, approval, and audit evaluation after identity verification
+   boundaries are complete.
 
 8. Add audit evidence for each important decision.
 
