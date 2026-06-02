@@ -6,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
+from _support import VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope, verify_passport_json
 from aaid.verification import VerificationResult
 
@@ -41,7 +42,7 @@ def test_verify_passport_json_exported_from_package():
 
 
 def test_valid_raw_json_reaches_existing_verifier_path():
-    result = verify_passport_json(load_text())
+    result = verify_passport_json(load_text(), now=VALID_NOW)
 
     assert result.decision == DENY
     assert result.valid is False
@@ -54,7 +55,7 @@ def test_valid_raw_json_reaches_existing_verifier_path():
 
 
 def test_raw_json_parsed_check_is_first_on_success():
-    result = verify_passport_json(load_text())
+    result = verify_passport_json(load_text(), now=VALID_NOW)
 
     assert result.checks[0].name == "raw_json_parsed"
     assert result.checks[0].passed is True
@@ -129,8 +130,8 @@ def test_raw_json_verifier_never_returns_allow():
 
 
 def test_parsed_object_verifier_remains_available_and_unchanged():
-    direct = verify_passport_envelope(load_envelope())
-    raw = verify_passport_json(load_text())
+    direct = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    raw = verify_passport_json(load_text(), now=VALID_NOW)
 
     assert direct.checks[0].name == "envelope_is_mapping"
     assert check_named(direct, "raw_json_parsed") is None

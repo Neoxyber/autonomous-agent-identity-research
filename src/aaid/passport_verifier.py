@@ -33,7 +33,9 @@ the decision can be explained and audited.
 """
 
 import json
+import re
 from collections.abc import Mapping, Sequence
+from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 
@@ -59,6 +61,121 @@ def _envelope_validator() -> Draft202012Validator:
     with _SCHEMA_PATH.open(encoding="utf-8") as handle:
         schema = json.load(handle)
     return Draft202012Validator(schema)
+
+
+_UTC_TIMESTAMP_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+
+
+def _parse_strict_utc_timestamp(value: object) -> "datetime | None":
+    """Parse a strict UTC RFC3339-style timestamp ending in ``Z``.
+
+    This is intentionally stricter than :func:`datetime.fromisoformat`, which
+    accepts numeric offsets, a space separator, fractional seconds, and a
+    lowercase ``z``. Parsing runs in two mandatory stages and ``fromisoformat``
+    is never used:
+
+    1. ``value`` must be a string matching ``_UTC_TIMESTAMP_RE``
+       (``YYYY-MM-DDTHH:MM:SSZ``). This rejects offsets, the space separator,
+       fractional seconds, lowercase ``z``, date-only values, and surrounding
+       whitespace.
+    2. :func:`datetime.strptime` validates the calendar fields, rejecting values
+       such as month 13 or hour 24 that still match the shape, and the result is
+       made timezone-aware in UTC.
+
+    Both stages are required; the regex alone would admit calendar-invalid
+    values. Any failure returns ``None`` so callers fail closed.
+    """
+    if not isinstance(value, str) or _UTC_TIMESTAMP_RE.match(value) is None:
+        return None
+    try:
+        parsed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
+    except ValueError:
+        return None
+    return parsed.replace(tzinfo=timezone.utc)
+
+
+def _passport_time_valid_check(
+    passport: Mapping, now: datetime
+) -> VerificationCheck:
+    """Check that ``now`` is within the passport validity window.
+
+    ``now`` is an already-resolved, timezone-aware UTC instant. ``issued_at`` is
+    inclusive and ``expires_at`` is exclusive. The check fails closed when either
+    timestamp is not a strict UTC ``Z`` timestamp, when ``issued_at`` is after
+    ``expires_at``, when ``now`` is before ``issued_at``, or when ``now`` is at or
+    after ``expires_at``. It performs no cryptographic work.
+    """
+    issued_at = _parse_strict_utc_timestamp(passport.get("issued_at"))
+    if issued_at is None:
+        return VerificationCheck(
+            name="passport_time_valid",
+            passed=False,
+            reason="issued_at is not a strict UTC timestamp ending in 'Z'",
+        )
+    expires_at = _parse_strict_utc_timestamp(passport.get("expires_at"))
+    if expires_at is None:
+        return VerificationCheck(
+            name="passport_time_valid",
+            passed=False,
+            reason="expires_at is not a strict UTC timestamp ending in 'Z'",
+        )
+    if issued_at > expires_at:
+        return VerificationCheck(
+            name="passport_time_valid",
+            passed=False,
+            reason="passport issued_at is after expires_at",
+        )
+    if now < issued_at:
+        return VerificationCheck(
+            name="passport_time_valid",
+            passed=False,
+            reason="passport is not yet valid: current time is before issued_at",
+        )
+    if now >= expires_at:
+        return VerificationCheck(
+            name="passport_time_valid",
+            passed=False,
+            reason="passport has expired: current time is at or after expires_at",
+        )
+    return VerificationCheck(
+        name="passport_time_valid",
+        passed=True,
+        reason=(
+            "current time is within the passport validity window; issued_at is "
+            "inclusive and expires_at is exclusive"
+        ),
+    )
+
+
+_VERIFIABLE_LIFECYCLE_STATUS = "active"
+
+
+def _lifecycle_status_allows_verification_check(
+    passport: Mapping,
+) -> VerificationCheck:
+    """Check that the lifecycle status allows verification to continue.
+
+    Only ``active`` continues; ``suspended``, ``revoked``, ``expired``,
+    ``compromised``, and ``retired`` fail closed. Schema validation has already
+    constrained the value to the lifecycle enum members. This validates the
+    status value only: it does not check revocation references, issuer trust, or
+    time windows, and it takes no ``now``. It performs no cryptographic work.
+    """
+    status = passport.get("lifecycle_status")
+    if status == _VERIFIABLE_LIFECYCLE_STATUS:
+        return VerificationCheck(
+            name="lifecycle_status_allows_verification",
+            passed=True,
+            reason="lifecycle_status is 'active'; verification may continue",
+        )
+    return VerificationCheck(
+        name="lifecycle_status_allows_verification",
+        passed=False,
+        reason=(
+            "lifecycle_status does not allow verification; only 'active' "
+            "continues"
+        ),
+    )
 
 
 def _select_proof(proofs: Sequence) -> Mapping:
@@ -297,12 +414,18 @@ def _signature_algorithm_supported_check(key: Mapping) -> VerificationCheck:
 
 
 
-def verify_passport_json(text: str) -> VerificationResult:
+def verify_passport_json(
+    text: str, *, now: "datetime | None" = None
+) -> VerificationResult:
     """Verify an untrusted raw JSON passport envelope.
 
     Raw JSON input is parsed with duplicate object member rejection before schema
     validation, canonicalization, payload-hash comparison, or signature input
     preparation. Malformed JSON and duplicate member names fail closed.
+
+    ``now`` is the keyword-only effective verification time forwarded to
+    :func:`verify_passport_envelope` for the expiration check; ``None`` uses the
+    real wall-clock UTC time.
     """
     try:
         envelope = parse_json_no_duplicate_keys(text)
@@ -325,7 +448,7 @@ def verify_passport_json(text: str) -> VerificationResult:
         passed=True,
         reason="raw JSON parsed with duplicate object member rejection",
     )
-    result = verify_passport_envelope(envelope)
+    result = verify_passport_envelope(envelope, now=now)
     return VerificationResult(
         valid=result.valid,
         decision=result.decision,
@@ -334,7 +457,9 @@ def verify_passport_json(text: str) -> VerificationResult:
     )
 
 
-def verify_passport_envelope(envelope: object) -> VerificationResult:
+def verify_passport_envelope(
+    envelope: object, *, now: "datetime | None" = None
+) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
     The checks run in order and stop at the first structural problem, because
@@ -346,7 +471,13 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
     and a non-empty, non-string ``proofs`` sequence) is then validated against
     the committed JSON Schema and the outcome is recorded as ``schema_valid``.
     If schema validation fails, the result fails closed to ``DENY`` with the
-    failing ``schema_valid`` check. If it passes, the verifier selects the proof
+    failing ``schema_valid`` check. When it passes, the verifier resolves the
+    effective time (``now``; ``None`` uses the wall clock, a naive value is
+    assumed UTC) and checks the passport validity window
+    (``passport_time_valid``: ``issued_at`` inclusive, ``expires_at`` exclusive)
+    and then that the lifecycle status is ``active``
+    (``lifecycle_status_allows_verification``); either failing fails closed to
+    ``DENY`` before proof selection. Otherwise the verifier selects the proof
     to check and records the choice as ``proof_selected``; the first-version
     rule selects the first proof only. It then recomputes the canonical payload
     hash over ``envelope["passport"]`` using the selected proof's recorded hash
@@ -512,6 +643,23 @@ def verify_passport_envelope(envelope: object) -> VerificationResult:
             reason="envelope matches the agent passport schema",
         )
     )
+
+    # Resolve the effective verification time exactly once. now=None uses the
+    # real wall clock; a naive injected now is assumed to be UTC so every
+    # comparison below is timezone-aware.
+    now_dt = now if now is not None else datetime.now(timezone.utc)
+    if now_dt.tzinfo is None:
+        now_dt = now_dt.replace(tzinfo=timezone.utc)
+
+    time_check = _passport_time_valid_check(passport, now_dt)
+    checks.append(time_check)
+    if not time_check.passed:
+        return VerificationResult.failed(time_check.reason, checks=checks)
+
+    lifecycle_check = _lifecycle_status_allows_verification_check(passport)
+    checks.append(lifecycle_check)
+    if not lifecycle_check.passed:
+        return VerificationResult.failed(lifecycle_check.reason, checks=checks)
 
     proof = _select_proof(proofs)
     checks.append(
