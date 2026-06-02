@@ -485,9 +485,10 @@ scheme checks, signature-input preparation, and any future canonicalizer
 candidate integration.
 
 The current passport payload profile remains numeric-field-free. Future numeric
-payload fields require a recorded numeric-domain policy before canonicalizer
-adoption, golden-vector migration, or signature-verification planning. Ambiguous
-or unsupported numeric domains should fail closed.
+payload fields require a recorded numeric-domain policy and schema bounds before
+canonicalizer adoption, golden-vector migration, or signature-verification
+planning. Non-finite, ambiguous, or unsupported numeric domains should fail
+closed.
 
 Canonicalization and candidate-canonicalizer errors should be represented as
 failed verifier checks and `DENY` results. They should not escape as unhandled

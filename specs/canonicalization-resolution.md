@@ -138,9 +138,12 @@ verifier boundary should preserve these requirements:
 2. Parsed-envelope verification operates on duplicate-key-safe mappings.
 3. Schema validation runs before canonicalization-dependent verification.
 4. The current passport payload profile remains numeric-field-free.
-5. Future numeric payload fields require an explicit numeric-domain policy.
-6. Canonicalization errors fail closed through verifier results.
-7. Golden-vector migration is reviewed as a separate compatibility event.
+5. Future numeric payload fields require an explicit numeric-domain policy and
+   schema bounds before adoption, golden-vector migration, or signature planning.
+6. Non-finite, ambiguous, or unsupported numeric values fail closed.
+7. Canonicalization and candidate-canonicalizer errors fail closed through
+   verifier results rather than unhandled exceptions.
+8. Golden-vector migration is reviewed as a separate compatibility event.
 
 These requirements apply regardless of whether REF-014 remains the selected
 candidate, another candidate is evaluated, or the current profile is constrained.

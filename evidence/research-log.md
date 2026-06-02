@@ -1185,3 +1185,26 @@ dependency adoption, package installation, requirements changes, lockfile change
 Next step:
 Review numeric-domain policy and fail-closed canonicalization error semantics before any REF-014 integration-test execution, adoption proposal, or signature-verification planning.
 
+## Entry 073
+
+Date: 2026-06-02
+
+Type: Canonicalization research decision
+
+Summary: Recorded numeric-domain and canonicalization-error policy.
+
+Files:
+Updated `specs/canonicalization.md`, `specs/canonicalization-resolution.md`, `docs/agent-passport-threat-model-and-trust-boundaries.md`, and this evidence log.
+
+Result:
+Recorded that the current passport payload profile is numeric-field-free and that no numeric payload field should be added until a separate schema and canonicalization decision records the accepted numeric domain. Future numeric fields should be explicitly schema-bounded, reject non-finite values, and avoid ambiguous or unsupported numeric representations. REF-014 unsafe-integer blocking is treated as input-domain enforcement rather than an ordinary byte mismatch. Canonicalization and candidate-canonicalizer errors should fail closed through verifier checks and `DENY` results rather than escaping as unhandled exceptions in verifier paths.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+numeric-domain enforcement, parser changes, canonicalizer-error handling code, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, REF-014 test execution, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review whether fail-closed canonicalization error handling needs a verifier implementation decision before any REF-014 integration-test execution, adoption proposal, or signature-verification planning.
+

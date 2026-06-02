@@ -96,6 +96,27 @@ Canonicalization only ensures that the same passport payload produces the same b
 
 Policy, revocation, lifecycle status, issuer trust, and human oversight are separate checks.
 
+## Numeric-domain policy
+
+The current passport payload profile is numeric-field-free. The canonicalized
+payload should not contain JSON numbers under the current schema.
+
+No numeric payload field should be added until a separate schema and
+canonicalization decision records the accepted numeric domain. Any future numeric
+field should be explicitly bounded in schema, should reject non-finite values,
+and should avoid ambiguous or unsupported numeric representations.
+
+REF-014's unsafe-integer blocking behavior should be treated as input-domain
+enforcement. Values outside the accepted numeric domain should fail closed rather
+than being treated as ordinary canonical byte mismatches.
+
+## Canonicalization error handling
+
+Canonicalization errors should fail closed. In verifier paths that return
+`VerificationResult`, canonicalization and candidate-canonicalizer errors should
+be represented as failed checks and `DENY` results rather than unhandled
+exceptions.
+
 ## Current boundary
 
 These rules define the first research boundary for passport hashing and signing.
