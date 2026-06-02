@@ -748,3 +748,26 @@ expiration enforcement, lifecycle enforcement, issuer trust, revocation checking
 Next step:
 Plan, implement, and test the expiration and lifecycle verifier boundary as the next small verifier step.
 
+## Entry 054
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation
+
+Summary: Added passport expiration and lifecycle validity checks.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, added `tests/_support.py`, added `tests/test_passport_verifier_expiration_lifecycle.py`, and updated existing verifier tests for deterministic `now` injection; updated this evidence log.
+
+Result:
+The verifier now records `passport_time_valid` and `lifecycle_status_allows_verification` after `schema_valid` and before `proof_selected`. Passport timestamps are checked as strict UTC `Z` values, `issued_at` is treated as inclusive, and `expires_at` is treated as exclusive. Malformed timestamps, non-strict timestamp forms, inverted validity windows, not-yet-valid passports, expired passports, and non-active lifecycle statuses fail closed before proof selection, payload-hash comparison, key selection, canonicalization metadata checks, signature-input preparation, or future signature verification. The raw JSON verifier now forwards deterministic `now` into the parsed-object verifier after duplicate-key-safe parsing. Existing verifier tests now inject a fixed UTC `now` where they intentionally exercise checks beyond schema validation.
+
+Tests:
+225 tests passed.
+
+Not implemented:
+issuer trust, revocation checking, permission and policy evaluation, human oversight, audit evidence implementation, real signature verification, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Review the next verifier trust boundary before adding issuer trust, revocation, policy evaluation, canonicalizer adoption, or signature verification.
+
