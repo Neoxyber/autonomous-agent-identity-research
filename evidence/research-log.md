@@ -1231,3 +1231,26 @@ canonical payload preparation check, parser changes, numeric-domain enforcement,
 Next step:
 Implement fail-closed canonical payload preparation after review, before any REF-014 runtime integration, adoption proposal, or signature-verification planning.
 
+## Entry 075
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation
+
+Summary: Added canonical payload preparation check.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, added `tests/test_passport_verifier_canonical_payload.py`, and updated this evidence log.
+
+Result:
+The verifier now records `canonical_payload_prepared` after `proof_selected` and before `payload_hash_valid`. The check prepares canonical payload bytes, fails closed with `DENY` when canonicalization or candidate-canonicalizer errors occur, and prevents later payload-hash, key-selection, signature-input, and signature-stage checks from running after preparation failure. Prepared canonical bytes are reused for `signature_input_prepared`. The verifier still cannot return `ALLOW`.
+
+Tests:
+419 tests passed.
+
+Not implemented:
+REF-014 test execution, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, parser changes, numeric-domain enforcement, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review remaining canonicalization adoption requirements before any REF-014 execution, adoption proposal, or signature-verification planning.
+
