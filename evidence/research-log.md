@@ -1139,3 +1139,26 @@ dependency adoption, package installation, requirements changes, lockfile change
 Next step:
 Review the remaining REF-014 adoption requirements before any adoption proposal, runtime integration work, or signature-verification planning.
 
+## Entry 071
+
+Date: 2026-06-02
+
+Type: Canonicalization research decision
+
+Summary: Recorded verifier canonicalization-boundary decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md`, `specs/canonicalization-resolution.md`, and this evidence log.
+
+Result:
+Recorded the verifier canonicalization boundary before any candidate adoption or signature-verification planning. Raw JSON input remains behind duplicate-key rejection, parsed-envelope verification operates on parsed mappings, schema validation remains before canonicalization-dependent checks, and the current passport payload profile remains numeric-field-free. Future numeric payload fields require a recorded numeric-domain policy before adoption, golden-vector migration, or signature-verification planning. Canonicalization errors should fail closed through verifier results rather than escaping as unhandled exceptions in verifier paths.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, numeric-domain enforcement, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review REF-014 integration-test planning and remaining adoption requirements before any adoption proposal or signature-verification planning.
+

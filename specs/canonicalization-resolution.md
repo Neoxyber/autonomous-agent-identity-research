@@ -129,6 +129,22 @@ duplicate-key handling, and the effect on existing golden vectors.
 Real signature verification remains blocked until this evaluation path is
 settled and a separate adoption decision is recorded.
 
+## Verifier boundary requirements
+
+Before any canonicalizer adoption or signature-verification planning, the
+verifier boundary should preserve these requirements:
+
+1. Raw JSON input is parsed with duplicate-key rejection before schema validation.
+2. Parsed-envelope verification operates on duplicate-key-safe mappings.
+3. Schema validation runs before canonicalization-dependent verification.
+4. The current passport payload profile remains numeric-field-free.
+5. Future numeric payload fields require an explicit numeric-domain policy.
+6. Canonicalization errors fail closed through verifier results.
+7. Golden-vector migration is reviewed as a separate compatibility event.
+
+These requirements apply regardless of whether REF-014 remains the selected
+candidate, another candidate is evaluated, or the current profile is constrained.
+
 ## Next step after this document
 
 A later, separate step should evaluate candidate RFC 8785-compatible

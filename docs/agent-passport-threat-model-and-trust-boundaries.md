@@ -470,8 +470,35 @@ canonicalizer, verify signatures, change requirements, change the schema, update
 golden vectors, implement policy evaluation, implement audit storage, or add
 post-quantum signing.
 
+## Verifier canonicalization-boundary decision
+
+Canonicalization should remain behind the verifier's existing parse and schema
+boundaries.
+
+Raw JSON input should be parsed with duplicate-key rejection before schema
+validation or canonicalization-dependent checks. The envelope verifier should
+continue to operate on parsed mappings only. Callers that bypass the raw JSON
+entry point are responsible for providing duplicate-key-safe parsed input.
+
+Schema validation should remain before payload-hash comparison, canonicalization
+scheme checks, signature-input preparation, and any future canonicalizer
+candidate integration.
+
+The current passport payload profile remains numeric-field-free. Future numeric
+payload fields require a recorded numeric-domain policy before canonicalizer
+adoption, golden-vector migration, or signature-verification planning. Ambiguous
+or unsupported numeric domains should fail closed.
+
+Canonicalization and candidate-canonicalizer errors should be represented as
+failed verifier checks and `DENY` results. They should not escape as unhandled
+exceptions in verifier paths intended to produce `VerificationResult`.
+
+This decision does not adopt REF-014, install packages, change requirements,
+replace the canonicalizer, migrate golden vectors, implement numeric-domain
+enforcement, or add real signature verification.
+
 ## Next step
 
-Record or update the canonicalization candidate decision and isolated evaluation
-path before dependency adoption, canonicalizer replacement, or signature-verification
-planning.
+Review REF-014 integration-test planning and remaining adoption requirements
+before dependency adoption, canonicalizer replacement, golden-vector migration,
+or signature-verification planning.
