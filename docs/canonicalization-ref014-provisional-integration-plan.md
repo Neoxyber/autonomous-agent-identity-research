@@ -46,7 +46,7 @@ The repository currently has:
 
 REF-014 is the leading candidate for provisional integration planning only.
 This does not mean adoption, runtime selection, full RFC 8785/JCS conformance,
-legal compatibility, package provenance, or signature-readiness.
+license compatibility, package provenance, or signature-readiness.
 
 REF-015 remains comparison evidence and a cyberphone-lineage cross-check.
 
@@ -81,15 +81,15 @@ This is provenance evidence only. Cryptographic Sigstore verification, Rekor
 inclusion verification, certificate-chain verification, expected issuer policy,
 and expected workflow identity policy remain pending.
 
-## Required legal and attribution review
+## Required license and attribution review
 
 Before any adoption proposal, the project should record declared package
 license, source license file status, copyright and attribution requirements,
 metadata/source-license agreement, required documentation attribution, and
-whether legal compatibility remains pending user or legal review.
+whether license compatibility remains pending review.
 
 Legal compatibility should not be claimed until reviewed through appropriate
-legal resources.
+license resources.
 
 ## Required dependency-risk review
 
@@ -99,9 +99,9 @@ signals, maintainer/source trust considerations, unsupported-domain behavior,
 update/rollback expectations, and whether the dependency can be isolated behind
 a small internal boundary.
 
-## P1 legal and dependency-risk evidence collected
+## P1 license and dependency-risk evidence collected
 
-A first isolated legal/attribution and dependency-risk pass inspected the wheel
+A first isolated license/attribution and dependency-risk pass inspected the wheel
 and source distribution staged under `/tmp/aaid-ref014-provenance-review`.
 
 Findings:
@@ -116,7 +116,7 @@ reference implementation, also described as Apache License, Version 2.0.
 are optional extras for development, documentation, lint, and tests.
 
 Status:
-This is legal/attribution and dependency-risk evidence only. Legal compatibility
+This is license/attribution and dependency-risk evidence only. License compatibility
 and attribution completeness remain pending review. No adoption, package
 installation, requirements change, or runtime behavior change is authorized.
 
@@ -132,7 +132,7 @@ excluding pull requests and one open pull request related to mypy settings.
 
 Status:
 This is maintenance-risk evidence only. It does not establish long-term
-maintenance suitability, vulnerability posture, adoption readiness, or production
+maintenance suitability, vulnerability posture, adoption readiness, or operational
 readiness.
 
 ## Required verifier-boundary decisions
@@ -217,7 +217,7 @@ algorithms without redefining canonical payload bytes.
 
 REF-014 must not be adopted until these items are resolved or explicitly
 deferred with rationale: package artifact provenance, build provenance,
-legal/attribution review, dependency and maintenance risk, verifier raw-JSON
+license/attribution review, dependency and maintenance risk, verifier raw-JSON
 boundary, schema-before-canonicalization rule, unsafe integer and future numeric
 payload-domain policy, integration tests, golden vector migration review, and
 verification-result failure semantics.
@@ -231,6 +231,9 @@ integrations.
 
 ## Next step
 
-Perform REF-014 provenance, legal/attribution, dependency-risk, and
-verifier-boundary review before any adoption proposal or runtime integration
-branch.
+Review the remaining REF-014 adoption requirements: cryptographic provenance
+verification, license/attribution review, dependency and maintenance-risk
+review, verifier entry-point decisions, numeric-domain policy, integration
+tests, golden-vector migration review, and verification-result failure semantics.
+No adoption proposal, runtime integration work, requirements change, or
+canonicalizer replacement is authorized by this plan.

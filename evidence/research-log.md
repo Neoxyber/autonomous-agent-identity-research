@@ -1116,3 +1116,26 @@ dependency adoption, package installation, requirements changes, lockfile change
 Next step:
 Review the existing REF-014 provisional integration plan and remaining adoption blockers before any adoption or signature-verification planning.
 
+## Entry 070
+
+Date: 2026-06-02
+
+Type: Documentation alignment
+
+Summary: Aligned REF-014 provisional integration requirements.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+Aligned the REF-014 provisional integration plan with the current review language by using license and attribution wording, and refreshed the next step to focus on remaining adoption requirements rather than already collected evidence passes. The plan still keeps REF-014 at provisional integration planning only and does not authorize adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, or signature verification.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review the remaining REF-014 adoption requirements before any adoption proposal, runtime integration work, or signature-verification planning.
+
