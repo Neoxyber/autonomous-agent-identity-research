@@ -771,3 +771,26 @@ issuer trust, revocation checking, permission and policy evaluation, human overs
 Next step:
 Review the next verifier trust boundary before adding issuer trust, revocation, policy evaluation, canonicalizer adoption, or signature verification.
 
+## Entry 055
+
+Date: 2026-06-02
+
+Type: Verifier-boundary research decision
+
+Summary: Recorded issuer trust and revocation ordering decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md`; updated this evidence log.
+
+Result:
+The threat model now records that issuer trust should be decided before revocation or freshness checks. A revocation result is useful only when the verifier knows which issuer, registry, trust anchor, or status authority is allowed to provide that result. The document also updates current fail-closed behavior to include passport validity-window failure and non-active lifecycle status, removes stale expiration and lifecycle enforcement from current gaps, and updates the next step toward planning the smallest issuer-trust verifier boundary. This records a research decision only and does not implement issuer trust or revocation checking.
+
+Tests:
+225 tests passed.
+
+Not implemented:
+issuer trust, revocation checking, network lookup, permission and policy evaluation, human oversight, audit evidence implementation, real signature verification, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Plan the smallest issuer-trust verifier boundary before revocation, policy evaluation, canonicalizer adoption, or signature verification.
+
