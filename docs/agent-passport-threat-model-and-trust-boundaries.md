@@ -498,8 +498,34 @@ This decision does not adopt REF-014, install packages, change requirements,
 replace the canonicalizer, migrate golden vectors, implement numeric-domain
 enforcement, or add real signature verification.
 
+## Canonical payload preparation decision
+
+Before any REF-014 runtime integration or signature-verification planning, the
+verifier should make canonical payload preparation an explicit verifier check.
+
+The planned check name is `canonical_payload_prepared`. It should run after
+`proof_selected` and before `payload_hash_valid`. Its purpose is to prepare the
+canonical payload bytes once, fail closed on canonicalization or
+candidate-canonicalizer errors, and make later payload-hash and signature-input
+checks use the same canonical bytes.
+
+Canonicalization errors should not be reported as hash mismatches, unsupported
+canonicalization schemes, or signature-input failures. They should fail the
+`canonical_payload_prepared` check and return `DENY`.
+
+The future implementation should be testable without REF-014 adoption by
+simulating canonicalization failures in verifier tests. It should preserve the
+never-`ALLOW` invariant and should not change parser behavior, schema behavior,
+numeric-domain enforcement, dependency configuration, golden vectors, or real
+signature verification.
+
+This decision records implementation planning only. It does not implement the
+check, adopt REF-014, install packages, change requirements, replace the
+canonicalizer, execute REF-014 tests, migrate golden vectors, or add signature
+verification.
+
 ## Next step
 
-Review REF-014 integration-test planning and remaining adoption requirements
-before dependency adoption, canonicalizer replacement, golden-vector migration,
-or signature-verification planning.
+Implement fail-closed canonical payload preparation after review, before any
+REF-014 runtime integration, adoption proposal, or signature-verification
+planning.

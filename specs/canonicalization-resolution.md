@@ -148,6 +148,21 @@ verifier boundary should preserve these requirements:
 These requirements apply regardless of whether REF-014 remains the selected
 candidate, another candidate is evaluated, or the current profile is constrained.
 
+## Planned canonical payload preparation check
+
+A later verifier implementation should add a `canonical_payload_prepared` check
+after `proof_selected` and before `payload_hash_valid`.
+
+The check should prepare canonical payload bytes once and fail closed if
+canonicalization or a candidate canonicalizer raises an error. Later
+payload-hash and signature-input checks should use the same prepared canonical
+bytes. This separates canonical payload preparation failures from payload hash
+mismatches and unsupported canonicalization-scheme failures.
+
+This is an implementation-planning requirement only. It does not authorize
+dependency adoption, canonicalizer replacement, REF-014 test execution,
+golden-vector migration, or signature verification.
+
 ## Next step after this document
 
 A later, separate step should evaluate candidate RFC 8785-compatible

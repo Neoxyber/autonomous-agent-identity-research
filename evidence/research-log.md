@@ -1208,3 +1208,26 @@ numeric-domain enforcement, parser changes, canonicalizer-error handling code, d
 Next step:
 Review whether fail-closed canonicalization error handling needs a verifier implementation decision before any REF-014 integration-test execution, adoption proposal, or signature-verification planning.
 
+## Entry 074
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation decision
+
+Summary: Recorded canonical payload preparation decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md`, `specs/canonicalization-resolution.md`, and this evidence log.
+
+Result:
+Recorded the planned `canonical_payload_prepared` verifier check. The planned check runs after `proof_selected` and before `payload_hash_valid`, prepares canonical payload bytes once, fails closed on canonicalization or candidate-canonicalizer errors, and keeps later payload-hash and signature-input checks on the same canonical bytes. The decision separates canonical payload preparation failures from payload hash mismatches, unsupported canonicalization schemes, and signature-input failures. This is implementation planning only.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+canonical payload preparation check, parser changes, numeric-domain enforcement, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, REF-014 test execution, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Implement fail-closed canonical payload preparation after review, before any REF-014 runtime integration, adoption proposal, or signature-verification planning.
+
