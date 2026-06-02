@@ -142,10 +142,11 @@ The project should consider attackers who can:
 
 The current verifier is intentionally conservative.
 
-It denies non-mapping envelopes, missing required fields, malformed structural
-shape, schema invalidity, payload-hash mismatch, unsuitable key metadata,
-unsupported canonicalization, unsupported signature algorithm, and the absence
-of real signature verification.
+It denies malformed raw JSON, duplicate JSON object member names, non-mapping
+envelopes, missing required fields, malformed structural shape, schema
+invalidity, payload-hash mismatch, unsuitable key metadata, unsupported
+canonicalization, unsupported signature algorithm, and the absence of real
+signature verification.
 
 The verifier cannot return allow today.
 
@@ -153,8 +154,6 @@ The verifier cannot return allow today.
 
 The current repository still lacks:
 
-- raw JSON verifier entry point;
-- integrated duplicate-key rejection at the public verifier boundary;
 - adopted RFC 8785/JCS canonicalizer;
 - real signature verification;
 - issuer trust registry or trust anchor model;
@@ -242,7 +241,6 @@ This document does not implement:
 
 - dependency adoption;
 - canonicalizer replacement;
-- raw JSON verifier entry point;
 - real signature verification;
 - issuer trust;
 - revocation;
@@ -269,12 +267,30 @@ boundary for internal use and caller-trusted mappings. If the original source
 was raw JSON, callers must provide duplicate-key parsing guarantees before using
 this boundary.
 
-This decision does not implement the raw JSON verifier entry point. It records
-the API boundary that should guide the next implementation step.
+This boundary is now implemented by `verify_passport_json(text: str)`, while
+`verify_passport_envelope(envelope: object)` remains available for parsed
+objects with explicit trust assumptions.
+
+## Expiration and lifecycle verifier-boundary decision
+
+The next verifier boundary should run after `schema_valid` and before
+`proof_selected`. The planned checks are `passport_time_valid` and
+`lifecycle_status_allows_verification`.
+
+For this stage, timestamps should be strict UTC RFC3339-style strings ending in
+`Z`. `issued_at` is inclusive. `expires_at` is exclusive, so
+`now >= expires_at` fails closed. The verifier should also fail closed when
+timestamps cannot be parsed safely, when `issued_at` is after `expires_at`, or
+when `now < issued_at`.
+
+Only `active` lifecycle status should allow verification to continue. The
+statuses `suspended`, `revoked`, `expired`, `compromised`, and `retired` should
+fail closed. The verifier should later support deterministic UTC `now`
+injection. This decision does not implement expiration enforcement, lifecycle
+enforcement, issuer trust, revocation checking, policy evaluation, signatures,
+dependency adoption, or canonicalizer replacement.
 
 ## Next step
 
-Use this threat model to guide the next small research step. The likely next
-step is a raw JSON verifier-boundary plan or implementation, but only after
-reviewing whether the public verifier API should accept raw JSON text, parsed
-mappings, or both with explicit trust guarantees.
+Plan, implement, and test the expiration and lifecycle verifier boundary as
+the next small verifier step.
