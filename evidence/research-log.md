@@ -794,3 +794,26 @@ issuer trust, revocation checking, network lookup, permission and policy evaluat
 Next step:
 Plan the smallest issuer-trust verifier boundary before revocation, policy evaluation, canonicalizer adoption, or signature verification.
 
+## Entry 056
+
+Date: 2026-06-02
+
+Type: Example vector alignment
+
+Summary: Aligned minimal example issuer identifier.
+
+Files:
+Updated `specs/examples/agent-passport.minimal.json` and `tests/test_passport_canonicalization_conformance.py`; updated this evidence log.
+
+Result:
+The minimal example issuer identifier was changed from `urn:aaid:issuer:aixyber-research-issuer` to `urn:aaid:issuer:aixybertech-issuer`. Because `issuer_id` is part of the canonicalized passport payload, the example proof `payload_hash` and the frozen canonical SHA-256 golden vector were re-pinned from `c8548cbedf9be9a378d0b48ddc7f070c5597230cf9f9ada715f0802eb1c8089c` to `b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc`. This was a fixture and vector alignment only and did not change verifier behavior.
+
+Tests:
+225 tests passed.
+
+Not implemented:
+issuer trust, revocation checking, network lookup, permission and policy evaluation, human oversight, audit evidence implementation, real signature verification, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Resume the issuer-trust verifier-boundary implementation using `urn:aaid:issuer:aixybertech-issuer` as the configured example issuer.
+
