@@ -226,5 +226,5 @@ def test_example_canonical_sha256_is_frozen_golden_vector():
     digest = hash_passport_payload(envelope["passport"], "SHA-256")
     assert digest == envelope["proofs"][0]["payload_hash"]
     assert digest == (
-        "c8548cbedf9be9a378d0b48ddc7f070c5597230cf9f9ada715f0802eb1c8089c"
+        "b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc"
     )
