@@ -1277,3 +1277,30 @@ provenance verification execution, Sigstore/Rekor/certificate-chain execution, l
 Next step:
 Request explicit approval to execute the REF-014 provenance verification plan in an isolated environment before any license/dependency sign-off, adoption proposal, or signature-verification planning.
 
+## Entry 077
+
+Date: 2026-06-02
+
+Type: Authorization implementation
+
+Summary: Added local action authorization evaluator.
+
+Files:
+Added `src/aaid/authorization.py`, added `tests/test_authorization.py`, and updated this evidence log.
+
+Result:
+The project now includes a local, deterministic action authorization evaluator separate from passport verification. It evaluates action requests against passport permission lists using exact `{action, resource_scope}` matching. It requires `permissions.default_decision` to be `DENY`, fails closed on malformed requests or malformed permissions, does not mutate inputs, and returns an explainable authorization decision with checks.
+
+The evaluator applies the intended precedence: prohibited actions return `DENY`, approval-required actions return `REQUIRE_HUMAN_APPROVAL`, allowed actions return `ALLOW`, and unknown actions return `DENY` by default or `REQUIRE_HUMAN_REVIEW` when explicitly configured. Unsupported unknown-action policy values fail closed to `DENY`.
+
+The authorization evaluator remains separate from the passport verifier. Tests confirm that authorization can return `ALLOW` for an action while `verify_passport_envelope` still returns `DENY` for the same passport. The passport verifier still cannot return `ALLOW`.
+
+Tests:
+447 tests passed.
+
+Not implemented:
+gateway enforcement, MCP integration, audit storage, approval records, delegation chains, recursive accountability, runtime-state verification, policy language, REF-014 execution or adoption, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, reference promotion to Verified, or any passport-verifier `ALLOW` path.
+
+Next step:
+Review the next smallest authorization boundary before adding gateway, audit, approval, delegation, or policy-language behavior.
+
