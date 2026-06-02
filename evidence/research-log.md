@@ -955,3 +955,26 @@ selected-key time-validity enforcement, verification-method binding enforcement,
 Next step:
 Implement selected-key validity and verification-method binding after review.
 
+## Entry 063
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation
+
+Summary: Added selected-key validity and verification-method binding checks.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, added `tests/test_passport_verifier_key_validity.py`, and updated this evidence log.
+
+Result:
+The verifier now records `verification_key_valid_for_proof` after `verification_key_selected` and before signature-stage checks. The check requires the selected key `created_at` value to be a strict UTC `Z` timestamp and treats it as inclusive. Optional `not_after` is strict UTC `Z` when present and is treated as exclusive. The check uses the already resolved injected deterministic `now` and fails closed for missing, malformed, non-strict, future-created, expired, or inverted key validity windows. It also binds `proof.verification_method` to the selected key `kid` by exact string equality. This adds selected-key time validity and proof/key self-consistency only; it does not perform cryptographic verification.
+
+Tests:
+395 tests passed.
+
+Not implemented:
+real signature verification, proof-selection hardening, canonicalizer replacement, dependency adoption, signed status evidence, network lookup, registry lookup, replay or rollback protection beyond the freshness window, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review proof-selection hardening and canonicalization conformance before signature-verification planning.
+
