@@ -840,3 +840,26 @@ revocation checking, freshness evidence, issuer registry or external trust-ancho
 Next step:
 Plan the revocation and freshness verifier boundary before policy evaluation, canonicalizer adoption, or signature verification.
 
+## Entry 058
+
+Date: 2026-06-02
+
+Type: Security-review test evidence
+
+Summary: Strengthened never-allow verifier step tests.
+
+Files:
+Updated `tests/test_passport_verifier_proof_selection.py`, `tests/test_passport_verifier_payload_hash.py`, `tests/test_passport_verifier_key_selection.py`, `tests/test_passport_verifier_canonicalization_scheme.py`, `tests/test_passport_verifier_signature_input.py`, and `tests/test_passport_verifier_signature_abstraction.py`; updated this evidence log.
+
+Result:
+A read-only security review found that six `*_step_never_returns_allow` sweeps could short-circuit at `issuer_trusted` without proving they reached the verifier step named by the test. The tests now inject `VALID_NOW` and `TRUSTED_ISSUERS` for the valid trusted example, assert the named step is reached, and still assert the verifier never returns `ALLOW`. This is a behavior-neutral test-evidence fix only and does not change verifier behavior.
+
+Tests:
+244 tests passed.
+
+Not implemented:
+revocation checking, freshness evidence, lifecycle vocabulary alignment, key expiration enforcement, proof-selection hardening, signature verification, permission and policy evaluation, human oversight, audit evidence implementation, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Review lifecycle vocabulary alignment before recording the revocation and freshness verifier-boundary decision.
+
