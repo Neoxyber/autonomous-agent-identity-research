@@ -725,3 +725,26 @@ dependency adoption, requirements changes, canonicalizer replacement, real signa
 Next step:
 Review whether the next small verifier step should address expiration, lifecycle, or another fail-closed trust boundary before any canonicalizer adoption or signature implementation.
 
+## Entry 053
+
+Date: 2026-06-02
+
+Type: Verifier-boundary research decision
+
+Summary: Recorded expiration and lifecycle verifier-boundary decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md`; updated this evidence log.
+
+Result:
+The threat model now records the planned expiration and lifecycle verifier boundary. The next verifier checks should be `passport_time_valid` and `lifecycle_status_allows_verification`, running after `schema_valid` and before `proof_selected`. The decision records strict UTC `Z` timestamp handling, inclusive `issued_at`, exclusive `expires_at`, fail-closed timestamp behavior, active-only lifecycle continuation, and future deterministic UTC `now` injection. This records a research decision only and does not implement expiration or lifecycle enforcement.
+
+Tests:
+181 tests passed.
+
+Not implemented:
+expiration enforcement, lifecycle enforcement, issuer trust, revocation checking, permission and policy evaluation, human oversight, audit evidence implementation, signatures, post-quantum signing, dependency adoption, requirements changes, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Plan, implement, and test the expiration and lifecycle verifier boundary as the next small verifier step.
+
