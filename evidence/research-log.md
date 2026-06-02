@@ -1304,3 +1304,30 @@ gateway enforcement, MCP integration, audit storage, approval records, delegatio
 Next step:
 Review the next smallest authorization boundary before adding gateway, audit, approval, delegation, or policy-language behavior.
 
+## Entry 078
+
+Date: 2026-06-02
+
+Type: Decision composition implementation
+
+Summary: Added local decision composition.
+
+Files:
+Added `src/aaid/composition.py`, added `tests/test_composition.py`, and updated this evidence log.
+
+Result:
+The project now includes a local decision composition layer that combines an already-produced passport verification result and an already-produced action authorization decision. The composition layer is deterministic, stdlib-only, and separate from both passport verification execution and authorization evaluation execution.
+
+The composition layer returns a frozen `ComposedDecision` with a decision, reason, and checks. It applies a fail-closed composition rule where `ALLOW` requires both passport verification and action authorization to contribute `ALLOW`. Verification contributes `ALLOW` only when `verification.valid` is true and `verification.decision` is `ALLOW`; invalid or malformed inputs fail closed to `DENY`.
+
+Tests confirm that the current real verifier output still prevents an end-to-end `ALLOW`: `verify_passport_envelope` returns `DENY` for the minimal example, authorization can return `ALLOW` for the requested action, and composition still returns `DENY`. The passport verifier still cannot return `ALLOW`.
+
+Tests:
+467 tests passed.
+
+Not implemented:
+gateway enforcement, MCP integration, audit storage, approval records, delegation chains, recursive accountability, runtime-state verification, policy language, REF-014 execution or adoption, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, reference promotion to Verified, or any passport-verifier `ALLOW` path.
+
+Next step:
+Review the next smallest accountability boundary before adding gateway, audit storage, approval records, delegation, or policy-language behavior.
+
