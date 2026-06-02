@@ -79,7 +79,9 @@ artifact hashes and certificate hints for `trailofbits/rfc8785.py`,
 Status:
 This is provenance evidence only. Cryptographic Sigstore verification, Rekor
 inclusion verification, certificate-chain verification, expected issuer policy,
-and expected workflow identity policy remain pending.
+and expected workflow identity policy remain pending. The procedure for that
+cryptographic verification, with acceptance criteria, is recorded in
+`docs/canonicalization-ref014-provenance-verification-plan.md`.
 
 ## Required license and attribution review
 
@@ -165,11 +167,13 @@ canonicalization fails closed before signature input preparation. Real signature
 verification remains unimplemented and fails closed.
 
 Status:
-Before any REF-014 adoption proposal, the project should decide whether to add a
-raw JSON verifier entry point that calls `parse_json_no_duplicate_keys()` before
-schema validation, or document that parsed mappings are accepted only with
-caller-side duplicate-key parsing guarantees. This section does not authorize
-verifier changes or runtime behavior changes.
+A raw JSON verifier entry point already exists: `verify_passport_json()` parses
+input with `parse_json_no_duplicate_keys()` before schema validation, so raw JSON
+duplicate-key rejection runs before canonicalization-dependent checks. The remaining
+decision before any REF-014 adoption proposal is whether to document that
+`verify_passport_envelope()` accepts only already-parsed, duplicate-key-safe
+mappings, or to direct raw JSON callers to `verify_passport_json()`. This section
+does not authorize verifier changes or runtime behavior changes.
 
 ## Required integration-test planning
 

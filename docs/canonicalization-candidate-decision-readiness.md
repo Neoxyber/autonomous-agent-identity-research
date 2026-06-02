@@ -112,8 +112,10 @@ requires:
 - package artifact and build provenance review;
 - license compatibility and attribution review;
 - maintenance and vulnerability-risk review;
-- verifier entry-point policy for raw JSON versus parsed mappings;
-- duplicate-key rejection before canonicalization when raw JSON is accepted;
+- documentation of the verifier raw-JSON entry-point contract: a raw JSON entry
+  point (`verify_passport_json`) that rejects duplicate keys before canonicalization
+  is already implemented; the remaining decision is whether to document that
+  `verify_passport_envelope` accepts only already-parsed, duplicate-key-safe mappings;
 - schema validation before canonicalization;
 - numeric-domain policy for future payload fields;
 - implementation tests before runtime behavior changes;

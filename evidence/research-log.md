@@ -1254,3 +1254,26 @@ REF-014 test execution, dependency adoption, package installation, requirements 
 Next step:
 Review remaining canonicalization adoption requirements before any REF-014 execution, adoption proposal, or signature-verification planning.
 
+## Entry 076
+
+Date: 2026-06-02
+
+Type: Canonicalization research planning
+
+Summary: Recorded the REF-014 provenance verification plan and reconciled the raw-JSON verifier-entry-point documentation.
+
+Files:
+Added `docs/canonicalization-ref014-provenance-verification-plan.md`; updated `docs/canonicalization-ref014-provisional-integration-plan.md`, `docs/canonicalization-candidate-decision-readiness.md`, and this evidence log.
+
+Result:
+Specified the cryptographic provenance verification procedure for REF-014 `rfc8785==0.1.4` (artifact-digest pinning, Sigstore signature, Rekor inclusion, Fulcio certificate-chain, issuer and workflow identity policy, and source-to-artifact correspondence) with fail-closed acceptance criteria. Documentation now reflects that the raw-JSON entry point `verify_passport_json` already rejects duplicate keys before schema validation. This is planning and documentation only; it does not execute verification or change verifier behavior.
+
+Tests:
+419 tests passed (unchanged; no code modified).
+
+Not implemented:
+provenance verification execution, Sigstore/Rekor/certificate-chain execution, license/attribution sign-off, dependency/maintenance-risk sign-off, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, parser changes, numeric-domain enforcement, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Request explicit approval to execute the REF-014 provenance verification plan in an isolated environment before any license/dependency sign-off, adoption proposal, or signature-verification planning.
+
