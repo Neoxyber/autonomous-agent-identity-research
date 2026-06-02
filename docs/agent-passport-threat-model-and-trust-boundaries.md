@@ -144,9 +144,10 @@ The current verifier is intentionally conservative.
 
 It denies malformed raw JSON, duplicate JSON object member names, non-mapping
 envelopes, missing required fields, malformed structural shape, schema
-invalidity, payload-hash mismatch, unsuitable key metadata, unsupported
-canonicalization, unsupported signature algorithm, and the absence of real
-signature verification.
+invalidity, passport validity-window failure, non-active lifecycle status,
+payload-hash mismatch, unsuitable key metadata, unsupported canonicalization,
+unsupported signature algorithm, and the absence of real signature
+verification.
 
 The verifier cannot return allow today.
 
@@ -158,7 +159,6 @@ The current repository still lacks:
 - real signature verification;
 - issuer trust registry or trust anchor model;
 - key rotation enforcement;
-- expiration and lifecycle enforcement;
 - revocation checking;
 - permission and policy evaluation;
 - human approval or review enforcement;
@@ -285,12 +285,30 @@ when `now < issued_at`.
 
 Only `active` lifecycle status should allow verification to continue. The
 statuses `suspended`, `revoked`, `expired`, `compromised`, and `retired` should
-fail closed. The verifier should later support deterministic UTC `now`
-injection. This decision does not implement expiration enforcement, lifecycle
-enforcement, issuer trust, revocation checking, policy evaluation, signatures,
-dependency adoption, or canonicalizer replacement.
+fail closed. This boundary is now implemented with deterministic UTC `now`
+injection support. It does not implement issuer trust, revocation checking,
+policy evaluation, signatures, dependency adoption, or canonicalizer
+replacement.
+
+## Issuer trust and revocation ordering decision
+
+Issuer trust should be decided before revocation or freshness checks.
+
+A revocation result is only useful when the verifier knows which issuer,
+registry, trust anchor, or status authority is allowed to provide that result.
+Without that trust basis, a verifier could accept status evidence from the wrong
+source or treat an unknown authority as meaningful.
+
+The planned future issuer-trust check is `issuer_trusted`. It should fail closed
+when the issuer is unknown, inactive, unsuitable, or not configured as trusted.
+Later revocation checks may include `revocation_status_checked`,
+`revocation_status_fresh`, and `passport_not_revoked`.
+
+This decision records ordering only. It does not implement issuer trust,
+revocation checking, network lookup, policy evaluation, audit storage,
+signatures, dependency adoption, or canonicalizer replacement.
 
 ## Next step
 
-Plan, implement, and test the expiration and lifecycle verifier boundary as
-the next small verifier step.
+Plan the smallest issuer-trust verifier boundary before revocation, policy
+evaluation, canonicalizer adoption, or signature verification.
