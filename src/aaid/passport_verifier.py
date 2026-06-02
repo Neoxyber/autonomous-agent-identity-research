@@ -737,6 +737,7 @@ _SUPPORTED_SIGNATURE_ALGORITHMS = ("ML-DSA-65",)
 
 def _prepare_signature_input(
     passport: Mapping,
+    canonical_payload: "bytes | None" = None,
 ) -> "tuple[VerificationCheck, bytes | None]":
     """Prepare the canonical passport payload bytes for signature verification.
 
@@ -748,11 +749,20 @@ def _prepare_signature_input(
     display-formatted JSON. This prepares input only: it performs no
     cryptographic work and does not verify signatures.
 
+    When ``canonical_payload`` is provided (the bytes already prepared by the
+    ``canonical_payload_prepared`` step), it is reused unchanged so the signing
+    input is byte-identical to the prepared canonical payload. When it is
+    ``None`` the bytes are produced from the shared canonicalization helper, so
+    callers that pass only the passport keep the previous behavior.
+
     Returns a ``(check, signature_input)`` pair. The canonicalization helper
     already returns UTF-8 bytes, so ``signature_input`` is those canonical
     payload bytes.
     """
-    signature_input = canonicalization.canonicalize_passport_payload(passport)
+    if canonical_payload is None:
+        canonical_payload = canonicalization.canonicalize_passport_payload(
+            passport
+        )
     return (
         VerificationCheck(
             name="signature_input_prepared",
@@ -762,7 +772,7 @@ def _prepare_signature_input(
                 "signature input"
             ),
         ),
-        signature_input,
+        canonical_payload,
     )
 
 
@@ -1161,6 +1171,38 @@ def verify_passport_envelope(
         )
     )
 
+    # Prepare the canonical passport payload bytes once, before the payload-hash
+    # and signature-input steps reuse them. A canonicalization error (and any
+    # future candidate-canonicalizer error) fails closed here as a recorded
+    # check and a ``DENY`` result rather than escaping as an unhandled exception
+    # in a verifier path that must return a ``VerificationResult``. The except is
+    # deliberately scoped to this single canonicalization call.
+    try:
+        canonical_payload = canonicalization.canonicalize_passport_payload(
+            passport
+        )
+    except Exception:
+        checks.append(
+            VerificationCheck(
+                name="canonical_payload_prepared",
+                passed=False,
+                reason=(
+                    "canonical payload bytes could not be prepared; "
+                    "canonicalization failed closed"
+                ),
+            )
+        )
+        return VerificationResult.failed(
+            "canonical payload bytes could not be prepared", checks=checks
+        )
+    checks.append(
+        VerificationCheck(
+            name="canonical_payload_prepared",
+            passed=True,
+            reason="prepared the canonical passport payload bytes",
+        )
+    )
+
     expected_payload_hash = proof["payload_hash"]
     computed_payload_hash = canonicalization.hash_passport_payload(
         passport, proof["hash_alg"]
@@ -1217,10 +1259,11 @@ def verify_passport_envelope(
             canonicalization_check.reason, checks=checks
         )
 
-    # Prepare the canonical passport payload bytes the future signature verifier
-    # will use. The bytes are not consumed yet because real signature
-    # verification is not implemented in this step.
-    input_check, _ = _prepare_signature_input(passport)
+    # Reuse the canonical payload bytes prepared above as the future signature
+    # input, so the signing input is byte-identical to the prepared payload. The
+    # bytes are not consumed yet because real signature verification is not
+    # implemented in this step.
+    input_check, _ = _prepare_signature_input(passport, canonical_payload)
     checks.append(input_check)
 
     # The algorithm decision uses the selected key's signed metadata, not the
