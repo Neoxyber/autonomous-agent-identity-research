@@ -411,8 +411,39 @@ validity, verification-method binding, proof-selection hardening, canonicalizer
 replacement, dependency adoption, real signature verification, policy evaluation,
 audit storage, or post-quantum signing.
 
+## Proof-selection hardening and downgrade-policy decision
+
+Before real signature verification, the verifier should avoid treating proof
+ordering as a trust policy.
+
+The current first-version verifier selects the first proof only. That behavior is
+acceptable while the verifier cannot return `ALLOW`, but it should not become a
+signature-verification trust model. Once real signatures, algorithm agility, or
+future hybrid and post-quantum proofs are introduced, accepting the first proof
+could allow downgrade or substitution risk.
+
+The next verifier boundary should therefore fail closed when more than one proof
+is present. This keeps the current research implementation simple and prevents a
+multi-proof envelope from being interpreted before a full proof-selection policy
+exists.
+
+The planned check should run before `proof_selected`. It should pass only when
+the envelope contains exactly one proof. Missing, non-sequence, or empty proof
+collections are already handled by earlier structural checks. A proof sequence
+with more than one proof should fail closed before payload-hash validation, key
+selection, canonicalization, or signature-stage checks.
+
+This decision does not define long-term multi-proof, hybrid-signature, or
+post-quantum proof selection. A later policy may select proofs by issuer policy,
+key purpose, verification method, algorithm family, assurance level, or
+classical/PQ hybrid requirements. Until that policy is specified and tested,
+multi-proof envelopes should not continue through the verifier.
+
+This decision records a research boundary only. It does not implement
+multi-proof policy, real signature verification, canonicalizer replacement,
+dependency adoption, policy evaluation, audit storage, or post-quantum signing.
+
 ## Next step
 
-Implement selected-key validity and verification-method binding after review,
-before proof-selection hardening, canonicalizer adoption, policy evaluation, or
-real signature verification.
+Implement proof-selection hardening after review, before canonicalizer adoption,
+policy evaluation, or real signature verification.

@@ -978,3 +978,26 @@ real signature verification, proof-selection hardening, canonicalizer replacemen
 Next step:
 Review proof-selection hardening and canonicalization conformance before signature-verification planning.
 
+## Entry 064
+
+Date: 2026-06-02
+
+Type: Verifier-boundary research decision
+
+Summary: Recorded proof-selection hardening and downgrade-policy decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md` and this evidence log.
+
+Result:
+Recorded the next verifier boundary decision for proof-selection hardening. The current verifier selects the first proof only, which remains acceptable while the verifier cannot return `ALLOW`, but should not become a real signature-verification trust model. The planned boundary should fail closed when more than one proof is present and should run before `proof_selected`. This prevents multi-proof envelopes from continuing before a long-term proof-selection policy exists.
+
+Tests:
+395 tests passed.
+
+Not implemented:
+proof-selection hardening, multi-proof policy, hybrid-signature proof selection, post-quantum proof selection, canonicalizer replacement, dependency adoption, real signature verification, signed status evidence, policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Implement proof-selection hardening after review.
+
