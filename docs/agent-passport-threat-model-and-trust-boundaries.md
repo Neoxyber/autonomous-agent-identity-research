@@ -443,7 +443,35 @@ This decision records a research boundary only. It does not implement
 multi-proof policy, real signature verification, canonicalizer replacement,
 dependency adoption, policy evaluation, audit storage, or post-quantum signing.
 
+## Canonicalization adoption boundary decision
+
+Before real signature verification, canonicalization must be settled as a trust
+boundary.
+
+The current helper remains a research-stage canonicalization helper. It provides
+deterministic bytes for the current passport fixtures and tests, but it is not a
+complete independent RFC 8785 / JSON Canonicalization Scheme implementation and
+should not be treated as signature-ready for interoperable verification.
+
+Real signature verification should remain blocked until the project records a
+canonicalization adoption decision, completes isolated candidate evaluation, and
+reviews dependency, provenance, license, and security risks. Any candidate
+canonicalizer should be evaluated outside the repository before adoption. No
+package installation, requirements change, lockfile change, or canonicalizer
+replacement should occur without explicit review.
+
+Canonicalizer replacement may change canonical bytes and therefore may require a
+deliberate golden-vector migration, including the minimal example payload hash
+and pinned canonicalization tests. Such migration should be reviewed as a
+separate compatibility event, not as an incidental side effect of signature work.
+
+This decision records a research boundary only. It does not adopt a
+canonicalizer, verify signatures, change requirements, change the schema, update
+golden vectors, implement policy evaluation, implement audit storage, or add
+post-quantum signing.
+
 ## Next step
 
-Implement proof-selection hardening after review, before canonicalizer adoption,
-policy evaluation, or real signature verification.
+Record or update the canonicalization candidate decision and isolated evaluation
+path before dependency adoption, canonicalizer replacement, or signature-verification
+planning.

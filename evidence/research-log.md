@@ -1024,3 +1024,26 @@ multi-proof policy, hybrid-signature proof selection, post-quantum proof selecti
 Next step:
 Review canonicalization conformance and dependency adoption before signature-verification planning.
 
+## Entry 066
+
+Date: 2026-06-02
+
+Type: Canonicalization research decision
+
+Summary: Recorded canonicalization adoption boundary decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md` and this evidence log.
+
+Result:
+Recorded that real signature verification remains blocked until canonicalization is settled as a trust boundary. The current helper remains a research-stage deterministic helper for the current fixtures and should not be treated as a complete independent RFC 8785 / JSON Canonicalization Scheme implementation. The decision records that any canonicalizer candidate requires isolated evaluation and dependency, provenance, license, and security review before adoption. It also records that canonicalizer replacement may require deliberate golden-vector migration.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, canonicalizer replacement, requirements changes, lockfile changes, schema changes, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Record or update the canonicalization candidate decision and isolated evaluation path before dependency adoption or signature-verification planning.
+
