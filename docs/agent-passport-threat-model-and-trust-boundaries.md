@@ -382,7 +382,37 @@ signed status evidence, replay or rollback protection, policy evaluation, audit
 storage, dependency adoption, canonicalizer replacement, or real signature
 verification.
 
+## Selected-key validity and verification-method binding decision
+
+Before real signature verification, the verifier should confirm that the selected
+verification key is currently usable for the selected proof.
+
+The planned boundary should run after `verification_key_selected` and before
+signature-input preparation or signature-algorithm checks. It should fail closed
+when the selected key is not active, is not yet valid, is expired, has malformed
+time metadata, or is not bound to the proof method being verified.
+
+The selected key's required `created_at` value should be treated as the beginning
+of the key validity window and should use the same strict UTC `Z` timestamp
+rules as passport and revocation time checks. If `not_after` is present, it
+should be exclusive. The planned validity rule is
+`created_at <= now < not_after` when `not_after` exists, and `created_at <= now`
+when it does not. The check should use the already injected deterministic `now`
+and should not read the wall clock again.
+
+The proof `verification_method` should be bound to the selected public key before
+signature verification is introduced. For the current schema and example, the
+planned rule is exact string equality between `proof.verification_method` and the
+selected key `kid`. No normalization, prefix matching, substring matching, or
+case folding should be used.
+
+This decision records a research boundary only. It does not implement key-time
+validity, verification-method binding, proof-selection hardening, canonicalizer
+replacement, dependency adoption, real signature verification, policy evaluation,
+audit storage, or post-quantum signing.
+
 ## Next step
 
-Implement caller-provided revocation and freshness checks after review, before
-policy evaluation, canonicalizer adoption, or signature verification.
+Implement selected-key validity and verification-method binding after review,
+before proof-selection hardening, canonicalizer adoption, policy evaluation, or
+real signature verification.

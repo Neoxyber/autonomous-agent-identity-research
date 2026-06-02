@@ -932,3 +932,26 @@ network lookup, registry lookup, signed status evidence, cryptographic verificat
 Next step:
 Review the next verifier boundary before policy evaluation, canonicalizer adoption, key-validity expansion, or real signature verification.
 
+## Entry 062
+
+Date: 2026-06-02
+
+Type: Verifier-boundary research decision
+
+Summary: Recorded selected-key validity and verification-method binding decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md` and this evidence log.
+
+Result:
+Recorded the next verifier boundary decision for selected-key validity and proof binding. The planned check should run after `verification_key_selected` and before signature-input preparation or signature-algorithm checks. The selected key should fail closed when it is not yet valid, expired, malformed, or not bound to the proof `verification_method`. Key `created_at` should be inclusive, optional `not_after` should be exclusive, and the check should use strict UTC `Z` timestamps with injected deterministic `now`. The proof `verification_method` should match the selected key `kid` by exact string equality.
+
+Tests:
+351 tests passed.
+
+Not implemented:
+selected-key time-validity enforcement, verification-method binding enforcement, proof-selection hardening, canonicalizer replacement, dependency adoption, real signature verification, signed status evidence, policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Implement selected-key validity and verification-method binding after review.
+
