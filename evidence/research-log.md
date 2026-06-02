@@ -1001,3 +1001,26 @@ proof-selection hardening, multi-proof policy, hybrid-signature proof selection,
 Next step:
 Implement proof-selection hardening after review.
 
+## Entry 065
+
+Date: 2026-06-02
+
+Type: Verifier-boundary implementation
+
+Summary: Added proof-selection hardening.
+
+Files:
+Updated `src/aaid/passport_verifier.py`, added `tests/test_passport_verifier_proof_selection_hardening.py`, updated existing proof-selection and payload-hash tests for fail-closed multi-proof behavior, and updated this evidence log.
+
+Result:
+The verifier now records `proof_count_allowed` before `proof_selected`. The check passes only when exactly one proof is present and fails closed when more than one proof is present. Multi-proof envelopes no longer reach `proof_selected`, `payload_hash_valid`, key selection, key-validity checks, canonicalization checks, signature-input preparation, signature-algorithm checks, or signature verification. Existing missing, non-sequence, and empty proof structural checks remain earlier and unchanged. This removes first-proof-only behavior as a future trust boundary while keeping long-term multi-proof, hybrid-signature, and post-quantum proof-selection policy deferred.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+multi-proof policy, hybrid-signature proof selection, post-quantum proof selection, canonicalizer replacement, dependency adoption, real signature verification, signed status evidence, network lookup, registry lookup, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review canonicalization conformance and dependency adoption before signature-verification planning.
+
