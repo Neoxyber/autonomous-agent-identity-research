@@ -608,6 +608,94 @@ def _select_verification_key(
     )
 
 
+def _verification_key_valid_for_proof_check(
+    key: Mapping, proof: Mapping, now: datetime
+) -> VerificationCheck:
+    """Check the selected public key's time validity and proof binding.
+
+    This runs after the key is selected and before the signing input is prepared.
+    It reuses the strict UTC ``Z`` timestamp parsing used for passport time
+    validity and the already-resolved injected ``now``; the wall clock is not
+    read again here. The key's required ``created_at`` is inclusive
+    (``created_at <= now``) and its optional ``not_after`` is exclusive (when
+    present, ``now < not_after``). Missing, malformed, non-strict, future-created
+    (``now`` before ``created_at``), expired (``now`` at or after ``not_after``),
+    or inverted (``created_at`` after ``not_after``) key validity windows fail
+    closed. It also binds the proof to the selected key by exact string equality:
+    ``proof["verification_method"]`` must equal the selected key's ``kid`` with no
+    normalization, prefix, substring, or case folding. It performs no
+    cryptographic work and does not verify signatures.
+    """
+    created_at = _parse_strict_utc_timestamp(key.get("created_at"))
+    if created_at is None:
+        return VerificationCheck(
+            name="verification_key_valid_for_proof",
+            passed=False,
+            reason=(
+                "selected public key created_at is not a strict UTC timestamp "
+                "ending in 'Z'"
+            ),
+        )
+
+    not_after = None
+    raw_not_after = key.get("not_after")
+    if raw_not_after is not None:
+        not_after = _parse_strict_utc_timestamp(raw_not_after)
+        if not_after is None:
+            return VerificationCheck(
+                name="verification_key_valid_for_proof",
+                passed=False,
+                reason=(
+                    "selected public key not_after is not a strict UTC "
+                    "timestamp ending in 'Z'"
+                ),
+            )
+        if created_at > not_after:
+            return VerificationCheck(
+                name="verification_key_valid_for_proof",
+                passed=False,
+                reason="selected public key created_at is after not_after",
+            )
+
+    if now < created_at:
+        return VerificationCheck(
+            name="verification_key_valid_for_proof",
+            passed=False,
+            reason=(
+                "selected public key is not yet valid: current time is before "
+                "created_at"
+            ),
+        )
+    if not_after is not None and now >= not_after:
+        return VerificationCheck(
+            name="verification_key_valid_for_proof",
+            passed=False,
+            reason=(
+                "selected public key has expired: current time is at or after "
+                "not_after"
+            ),
+        )
+
+    if proof.get("verification_method") != key.get("kid"):
+        return VerificationCheck(
+            name="verification_key_valid_for_proof",
+            passed=False,
+            reason=(
+                "proof verification_method does not match the selected public "
+                "key kid"
+            ),
+        )
+
+    return VerificationCheck(
+        name="verification_key_valid_for_proof",
+        passed=True,
+        reason=(
+            "selected public key is within its validity window and the proof "
+            "verification_method matches the selected key kid"
+        ),
+    )
+
+
 _SUPPORTED_SIGNATURE_CANONICALIZATIONS = ("json-canonicalization-scheme",)
 
 
@@ -1076,6 +1164,18 @@ def verify_passport_envelope(
     checks.append(key_check)
     if not key_check.passed:
         return VerificationResult.failed(key_check.reason, checks=checks)
+
+    # Validate the selected key's time validity and bind the proof to it before
+    # preparing the signing input. This reuses the already-resolved now and
+    # performs no cryptographic work.
+    key_validity_check = _verification_key_valid_for_proof_check(
+        selected_key, proof, now_dt
+    )
+    checks.append(key_validity_check)
+    if not key_validity_check.passed:
+        return VerificationResult.failed(
+            key_validity_check.reason, checks=checks
+        )
 
     # Validate the proof's declared canonicalization scheme before preparing the
     # signing input, so the input is prepared under a recognized scheme. This
