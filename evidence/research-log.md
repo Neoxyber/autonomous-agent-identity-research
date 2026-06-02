@@ -1162,3 +1162,26 @@ dependency adoption, package installation, requirements changes, lockfile change
 Next step:
 Review REF-014 integration-test planning and remaining adoption requirements before any adoption proposal or signature-verification planning.
 
+## Entry 072
+
+Date: 2026-06-02
+
+Type: Canonicalization research planning
+
+Summary: Recorded REF-014 integration-test planning requirements.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+Expanded the REF-014 integration-test planning section without authorizing test execution, dependency adoption, runtime integration, requirements changes, canonicalizer replacement, golden-vector migration, or signature verification. The plan now separates future REF-014-based test execution from current planning and records expected test categories for canonical bytes, payload-hash migration, ordering behavior, proof exclusion, payload-hash and signature-input byte consistency, non-finite and unsafe numeric behavior, duplicate-key parsing, schema-before-canonicalization ordering, unsupported canonicalization, fail-closed canonicalization errors, and continued blocking of signature verification.
+
+Tests:
+409 tests passed.
+
+Not implemented:
+dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, numeric-domain enforcement, REF-014 test execution, golden-vector migration, real signature verification, signed status evidence, permission and policy evaluation, human oversight, audit evidence implementation, cloud deployment, MCP integration, post-quantum signing, or external integrations.
+
+Next step:
+Review numeric-domain policy and fail-closed canonicalization error semantics before any REF-014 integration-test execution, adoption proposal, or signature-verification planning.
+

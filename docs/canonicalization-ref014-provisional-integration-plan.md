@@ -171,22 +171,31 @@ schema validation, or document that parsed mappings are accepted only with
 caller-side duplicate-key parsing guarantees. This section does not authorize
 verifier changes or runtime behavior changes.
 
-## Required integration tests
+## Required integration-test planning
 
-A future integration branch should add tests before or with any runtime change:
+Future integration tests should be planned before any runtime change. Executing
+REF-014-based tests requires separate adoption approval and is not authorized by
+this plan.
 
-- REF-014 produces expected canonical bytes for the minimal passport;
-- the minimal passport payload hash is intentionally migrated or preserved with
-  explanation;
-- object order remains irrelevant;
-- array order remains significant;
-- proof material remains excluded from the signed payload;
-- non-finite numbers fail closed;
-- unsafe integer-domain behavior is tested and documented;
-- duplicate-key raw JSON behavior remains enforced at the parse boundary;
-- schema validation still runs before canonicalization-dependent verification;
-- unsupported canonicalization fails closed;
-- signature verification remains blocked until a later phase.
+Planned categories:
+
+1. REF-014 produces expected canonical bytes for the minimal passport.
+2. The minimal passport payload hash is intentionally migrated or preserved with
+   explanation.
+3. Object order remains irrelevant.
+4. Array order remains significant.
+5. Proof material remains excluded from the signed payload.
+6. Payload-hash input and signature-input preparation use the same canonical
+   bytes.
+7. Non-finite numbers fail closed.
+8. Unsafe integer-domain behavior is tested and documented after the
+   numeric-domain policy is recorded.
+9. Duplicate-key raw JSON behavior remains enforced at the parse boundary.
+10. Schema validation still runs before canonicalization-dependent verification.
+11. Unsupported canonicalization fails closed.
+12. Canonicalization and candidate-canonicalizer errors become failed verifier
+    checks and `DENY` results, not unhandled exceptions.
+13. Signature verification remains blocked until a later phase.
 
 ## Golden vector migration
 
