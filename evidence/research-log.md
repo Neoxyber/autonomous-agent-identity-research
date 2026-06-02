@@ -886,3 +886,26 @@ lifecycle vocabulary alignment of deferred forward-looking documents (`ROADMAP.m
 Next step:
 Record the revocation and freshness verifier-boundary decision.
 
+## Entry 060
+
+Date: 2026-06-02
+
+Type: Verifier-boundary research decision
+
+Summary: Recorded revocation and freshness verifier-boundary decision.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md` and this evidence log.
+
+Result:
+Recorded the planned revocation and freshness checks: `revocation_status_checked`, `revocation_status_fresh`, and `passport_not_revoked`. The checks should run after `issuer_trusted` and before `proof_selected`. The decision records caller-provided in-memory status evidence, exact binding to `status_reference`, `passport_id`, and `status_authority`, strict UTC freshness, and `active` as the only status that allows the chain to continue. The decision also records fail-closed handling for missing, mismatched, stale, malformed, unknown, or non-active status evidence.
+
+Tests:
+244 tests passed.
+
+Not implemented:
+revocation checking, freshness checking, network lookup, registry lookup, signed status evidence, replay or rollback protection, schema changes, real signature verification, permission and policy evaluation, human oversight, audit evidence implementation, dependency adoption, canonicalizer replacement, cloud deployment, or external integrations.
+
+Next step:
+Implement caller-provided revocation and freshness checks after review.
+

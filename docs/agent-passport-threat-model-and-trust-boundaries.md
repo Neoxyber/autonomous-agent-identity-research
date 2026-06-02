@@ -346,7 +346,43 @@ This is documentation alignment only. The forward-looking documents
 `rotated` and `pending_verification` and are deferred to a later reconciliation
 pass, so this change does not claim repo-wide lifecycle consistency.
 
+## Revocation and freshness verifier-boundary decision
+
+The next verifier boundary should check caller-provided revocation status after
+`issuer_trusted` and before `proof_selected`. The planned checks are
+`revocation_status_checked`, `revocation_status_fresh`, and
+`passport_not_revoked`. Each check should fail closed and stop the chain on
+failure. The verifier still cannot return `ALLOW`.
+
+For this stage, status evidence is an in-memory object supplied by the caller.
+The verifier should not perform network lookup, registry lookup, signed status
+evidence parsing, schema changes, or cryptographic verification of status
+evidence.
+
+`revocation_status_checked` should pass only when the status evidence is bound
+to the exact passport and issuer: `status_reference` matches
+`passport.revocation.status_reference`, `passport_id` matches
+`passport.passport_id`, and `status_authority` matches `passport.issuer_id` and
+is present in `trusted_issuers`. Exact string equality is required. Matching
+only `status_reference` is not enough, and status from another issuer should
+fail closed even if that issuer is otherwise trusted.
+
+`revocation_status_fresh` should use strict UTC `Z` timestamps and the injected
+deterministic `now`. Freshness should hold only when
+`produced_at <= now < valid_until`; missing, malformed, future-dated, stale, or
+inverted timestamp windows should fail closed.
+
+`passport_not_revoked` should pass only when status is exactly `active`. Every
+other status value, including missing, unknown, malformed, `revoked`,
+`suspended`, `expired`, `compromised`, or `retired`, should fail closed.
+
+This decision records a research boundary only. It does not implement
+revocation checking, freshness checking, network lookup, registry lookup,
+signed status evidence, replay or rollback protection, policy evaluation, audit
+storage, dependency adoption, canonicalizer replacement, or real signature
+verification.
+
 ## Next step
 
-Plan the revocation and freshness verifier boundary before policy evaluation,
-canonicalizer adoption, or signature verification.
+Implement caller-provided revocation and freshness checks after review, before
+policy evaluation, canonicalizer adoption, or signature verification.
