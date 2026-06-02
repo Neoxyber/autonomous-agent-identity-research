@@ -14,7 +14,8 @@ the first proof only. It then recomputes the canonical payload hash over the
 passport and compares it to the selected proof's recorded hash, recording the
 outcome as a ``payload_hash_valid`` check. This step verifies
 the payload hash only: it does not verify signatures or proofs, does not check
-revocation or issuer trust, and does not evaluate policy. After the payload hash
+revocation, and does not evaluate policy. Issuer trust is checked earlier as a
+separate boundary. After the payload hash
 matches, the verifier selects the public key referenced by the proof and
 validates basic, non-cryptographic key metadata, recording the outcome as a
 ``verification_key_selected`` check; finding no single suitable key fails closed
@@ -175,6 +176,65 @@ def _lifecycle_status_allows_verification_check(
             "lifecycle_status does not allow verification; only 'active' "
             "continues"
         ),
+    )
+
+
+def _issuer_trusted_check(
+    passport: Mapping, trusted_issuers: object
+) -> VerificationCheck:
+    """Check that the passport issuer is explicitly configured as trusted.
+
+    Issuer trust is evaluated against caller-provided configuration only. This
+    boundary uses no registry, performs no network lookup, and does not perform
+    external issuer verification. ``trusted_issuers`` is a collection of issuer
+    identifier strings (for example a ``set``, ``frozenset``, ``tuple``, or
+    ``list``); the check passes only when ``passport["issuer_id"]`` is a member
+    of that collection.
+
+    It fails closed when issuer trust is not configured (``None``), when the
+    configuration is a bare string or a mapping rather than a collection of
+    identifiers, and when the issuer is not explicitly configured as trusted
+    (an empty collection trusts no issuer). It performs no cryptographic work
+    and does not verify signatures, key possession, revocation, or an external
+    issuer identity; a passing check does not by itself allow the passport.
+    """
+    if trusted_issuers is None:
+        return VerificationCheck(
+            name="issuer_trusted",
+            passed=False,
+            reason=(
+                "issuer trust is not configured; no trusted issuers were "
+                "provided"
+            ),
+        )
+    if isinstance(trusted_issuers, (str, bytes, bytearray)):
+        return VerificationCheck(
+            name="issuer_trusted",
+            passed=False,
+            reason=(
+                "trusted issuer configuration must be a collection of issuer "
+                "identifiers, not a string"
+            ),
+        )
+    if isinstance(trusted_issuers, Mapping):
+        return VerificationCheck(
+            name="issuer_trusted",
+            passed=False,
+            reason=(
+                "trusted issuer configuration must be a collection of issuer "
+                "identifiers, not a mapping"
+            ),
+        )
+    if passport.get("issuer_id") in trusted_issuers:
+        return VerificationCheck(
+            name="issuer_trusted",
+            passed=True,
+            reason="issuer_id is explicitly configured as trusted",
+        )
+    return VerificationCheck(
+        name="issuer_trusted",
+        passed=False,
+        reason="issuer_id is not configured as trusted",
     )
 
 
@@ -415,7 +475,10 @@ def _signature_algorithm_supported_check(key: Mapping) -> VerificationCheck:
 
 
 def verify_passport_json(
-    text: str, *, now: "datetime | None" = None
+    text: str,
+    *,
+    now: "datetime | None" = None,
+    trusted_issuers: object = None,
 ) -> VerificationResult:
     """Verify an untrusted raw JSON passport envelope.
 
@@ -426,6 +489,10 @@ def verify_passport_json(
     ``now`` is the keyword-only effective verification time forwarded to
     :func:`verify_passport_envelope` for the expiration check; ``None`` uses the
     real wall-clock UTC time.
+
+    ``trusted_issuers`` is the keyword-only issuer-trust configuration forwarded
+    unchanged to :func:`verify_passport_envelope` after duplicate-key-safe
+    parsing; ``None`` (the default) fails the issuer-trust check closed.
     """
     try:
         envelope = parse_json_no_duplicate_keys(text)
@@ -448,7 +515,9 @@ def verify_passport_json(
         passed=True,
         reason="raw JSON parsed with duplicate object member rejection",
     )
-    result = verify_passport_envelope(envelope, now=now)
+    result = verify_passport_envelope(
+        envelope, now=now, trusted_issuers=trusted_issuers
+    )
     return VerificationResult(
         valid=result.valid,
         decision=result.decision,
@@ -458,7 +527,10 @@ def verify_passport_json(
 
 
 def verify_passport_envelope(
-    envelope: object, *, now: "datetime | None" = None
+    envelope: object,
+    *,
+    now: "datetime | None" = None,
+    trusted_issuers: object = None,
 ) -> VerificationResult:
     """Check the structure of a passport envelope and record the outcome.
 
@@ -477,10 +549,16 @@ def verify_passport_envelope(
     (``passport_time_valid``: ``issued_at`` inclusive, ``expires_at`` exclusive)
     and then that the lifecycle status is ``active``
     (``lifecycle_status_allows_verification``); either failing fails closed to
-    ``DENY`` before proof selection. Otherwise the verifier selects the proof
-    to check and records the choice as ``proof_selected``; the first-version
-    rule selects the first proof only. It then recomputes the canonical payload
-    hash over ``envelope["passport"]`` using the selected proof's recorded hash
+    ``DENY`` before the issuer-trust check. Otherwise the verifier checks that
+    the passport issuer is explicitly configured as trusted against the
+    caller-provided ``trusted_issuers`` configuration (``issuer_trusted``); this
+    uses caller configuration only, with no registry or network lookup, and
+    fails closed to ``DENY`` before proof selection when issuer trust is not
+    configured or the issuer is not trusted. Otherwise the verifier selects the
+    proof to check and records the choice as ``proof_selected``; the
+    first-version rule selects the first proof only. It then recomputes the
+    canonical payload hash over ``envelope["passport"]`` using the selected
+    proof's recorded hash
     algorithm and compares it to that proof's ``payload_hash``; the outcome is
     recorded as ``payload_hash_valid``. The hash algorithm is taken from the
     schema-validated proof, so it is always a supported algorithm. A mismatch
@@ -660,6 +738,15 @@ def verify_passport_envelope(
     checks.append(lifecycle_check)
     if not lifecycle_check.passed:
         return VerificationResult.failed(lifecycle_check.reason, checks=checks)
+
+    # Issuer trust is decided before proof selection, payload-hash comparison,
+    # key selection, and any future signature or revocation step: a later result
+    # is only meaningful once the verifier knows the issuer is trusted under the
+    # caller-provided configuration. This step uses caller configuration only.
+    issuer_check = _issuer_trusted_check(passport, trusted_issuers)
+    checks.append(issuer_check)
+    if not issuer_check.passed:
+        return VerificationResult.failed(issuer_check.reason, checks=checks)
 
     proof = _select_proof(proofs)
     checks.append(

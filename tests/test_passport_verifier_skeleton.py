@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from _support import VALID_NOW
+from _support import TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.verification import VerificationCheck, VerificationResult
 
@@ -111,7 +111,7 @@ def test_empty_proofs_is_rejected():
 
 
 def test_minimal_example_is_denied_due_to_signature_not_implemented():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     assert result.valid is False
     assert result.decision == DENY
     for name in STRUCTURAL_CHECK_NAMES:

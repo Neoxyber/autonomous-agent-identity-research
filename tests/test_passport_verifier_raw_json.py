@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from _support import VALID_NOW
+from _support import TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope, verify_passport_json
 from aaid.verification import VerificationResult
 
@@ -42,7 +42,9 @@ def test_verify_passport_json_exported_from_package():
 
 
 def test_valid_raw_json_reaches_existing_verifier_path():
-    result = verify_passport_json(load_text(), now=VALID_NOW)
+    result = verify_passport_json(
+        load_text(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
+    )
 
     assert result.decision == DENY
     assert result.valid is False

@@ -8,7 +8,7 @@ SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
 import aaid.passport_verifier as passport_verifier_module
-from _support import VALID_NOW
+from _support import TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.canonicalization import hash_passport_payload
 from aaid.verification import VerificationResult
@@ -78,7 +78,7 @@ def envelope_with_duplicate_key_kid():
 
 # 1. Minimal example reaches verification_key_selected passed=True.
 def test_minimal_example_reaches_verification_key_selected_passed():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     assert check_named(result, PAYLOAD_CHECK).passed is True
     key_check = check_named(result, KEY_CHECK)
     assert key_check is not None
@@ -87,7 +87,7 @@ def test_minimal_example_reaches_verification_key_selected_passed():
 
 # 2. verification_key_selected sits between payload_hash_valid and signature.
 def test_verification_key_selected_between_payload_hash_and_signature():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_index = check_index(result, PAYLOAD_CHECK)
     key_index = check_index(result, KEY_CHECK)
     signature_index = check_index(result, SIGNATURE_CHECK)
@@ -100,7 +100,7 @@ def test_verification_key_selected_between_payload_hash_and_signature():
 # 3. Missing public key for the selected proof kid fails closed.
 def test_missing_public_key_for_proof_kid_fails_closed():
     envelope = envelope_with_proof_field("kid", "urn:aaid:key:no-such-key-0001")
-    result = verify_passport_envelope(envelope, now=VALID_NOW)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     key_check = check_named(result, KEY_CHECK)
     assert key_check is not None
     assert key_check.passed is False
@@ -112,7 +112,7 @@ def test_missing_public_key_for_proof_kid_fails_closed():
 # 4. Duplicate public key kid fails closed.
 def test_duplicate_public_key_kid_fails_closed():
     result = verify_passport_envelope(
-        envelope_with_duplicate_key_kid(), now=VALID_NOW
+        envelope_with_duplicate_key_kid(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
     )
     # Confirm the fixture reached key selection (schema + payload hash passed).
     assert check_named(result, PAYLOAD_CHECK).passed is True
@@ -126,7 +126,7 @@ def test_duplicate_public_key_kid_fails_closed():
 # 5. proof.alg mismatch with the selected public key alg fails closed.
 def test_proof_alg_mismatch_with_key_fails_closed():
     result = verify_passport_envelope(
-        envelope_with_proof_field("alg", "ML-DSA-87"), now=VALID_NOW
+        envelope_with_proof_field("alg", "ML-DSA-87"), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
     )
     assert check_named(result, PAYLOAD_CHECK).passed is True
     key_check = check_named(result, KEY_CHECK)
@@ -139,7 +139,7 @@ def test_proof_alg_mismatch_with_key_fails_closed():
 # 6. Selected public key status retired fails closed.
 def test_retired_key_status_fails_closed():
     result = verify_passport_envelope(
-        envelope_with_key_field("status", "retired"), now=VALID_NOW
+        envelope_with_key_field("status", "retired"), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
     )
     assert check_named(result, PAYLOAD_CHECK).passed is True
     key_check = check_named(result, KEY_CHECK)
@@ -152,7 +152,7 @@ def test_retired_key_status_fails_closed():
 # 7. Selected public key status compromised fails closed.
 def test_compromised_key_status_fails_closed():
     result = verify_passport_envelope(
-        envelope_with_key_field("status", "compromised"), now=VALID_NOW
+        envelope_with_key_field("status", "compromised"), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
     )
     assert check_named(result, PAYLOAD_CHECK).passed is True
     key_check = check_named(result, KEY_CHECK)
@@ -166,7 +166,7 @@ def test_compromised_key_status_fails_closed():
 def test_accepted_key_purposes_pass_key_selection():
     for purpose in ("sig", "verify", "hybrid-sig"):
         result = verify_passport_envelope(
-            envelope_with_key_field("purpose", purpose), now=VALID_NOW
+            envelope_with_key_field("purpose", purpose), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS
         )
         assert check_named(result, PAYLOAD_CHECK).passed is True, purpose
         key_check = check_named(result, KEY_CHECK)
@@ -177,7 +177,7 @@ def test_accepted_key_purposes_pass_key_selection():
 # 9. Key-selection failure short-circuits before signature verification.
 def test_key_selection_failure_short_circuits_before_signature():
     envelope = envelope_with_proof_field("kid", "urn:aaid:key:no-such-key-0002")
-    result = verify_passport_envelope(envelope, now=VALID_NOW)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     assert check_named(result, KEY_CHECK).passed is False
     assert check_named(result, SIGNATURE_CHECK) is None
 
@@ -186,7 +186,7 @@ def test_key_selection_failure_short_circuits_before_signature():
 def test_payload_hash_failure_short_circuits_before_key_selection():
     envelope = load_envelope()
     envelope["proofs"][0]["payload_hash"] = "0" * 64
-    result = verify_passport_envelope(envelope, now=VALID_NOW)
+    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     assert check_named(result, PAYLOAD_CHECK).passed is False
     assert check_named(result, KEY_CHECK) is None
     assert check_named(result, SIGNATURE_CHECK) is None
@@ -229,7 +229,7 @@ def test_key_selection_step_never_returns_allow():
 
 # 14. Signature verification is still not implemented.
 def test_signature_verification_still_not_implemented():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     signature = check_named(result, SIGNATURE_CHECK)
     assert signature is not None
     assert signature.passed is False

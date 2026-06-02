@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 sys.path.insert(0, str(SRC))
 
-from _support import VALID_NOW
+from _support import TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.canonicalization import hash_passport_payload
 
@@ -38,7 +38,7 @@ def check_named(result, name):
 def test_minimal_example_reaches_payload_hash_valid_true():
     # The committed example stores the real canonical digest of its passport, so
     # the verifier recomputes it and records payload_hash_valid as passed.
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     for name in STRUCTURAL_CHECK_NAMES:
         assert check_named(result, name).passed is True
     assert check_named(result, "schema_valid").passed is True
@@ -50,7 +50,7 @@ def test_minimal_example_reaches_payload_hash_valid_true():
 def test_minimal_example_denied_with_signature_not_implemented():
     # payload_hash passing does not allow the envelope: signature verification
     # is still not implemented, so the result fails closed to DENY.
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW)
+    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     assert check_named(result, "payload_hash_valid").passed is True
     signature = check_named(result, "signature_verification_not_implemented")
     assert signature is not None
@@ -66,7 +66,7 @@ def test_tampering_passport_content_fails_payload_hash():
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     tampered["passport"]["subject"] = "A tampered subject"
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is False
@@ -80,7 +80,7 @@ def test_tampering_proof_payload_hash_fails():
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     tampered["proofs"][0]["payload_hash"] = "b" * 64
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is False
@@ -139,7 +139,7 @@ def test_payload_hash_failure_short_circuits_before_signature_check():
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     tampered["proofs"][0]["payload_hash"] = "b" * 64
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is False
@@ -170,7 +170,7 @@ def test_no_signature_verification_in_this_step():
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     tampered["proofs"][0]["signature_b64u"] = "QW5vdGhlci1zaWduYXR1cmU"
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     assert check_named(result, "payload_hash_valid").passed is True
     signature = check_named(result, "signature_verification_not_implemented")
     assert signature is not None
@@ -187,7 +187,7 @@ def test_uses_first_proof_only():
     second["proof_id"] = "urn:aaid:proof:second-test-proof"
     second["payload_hash"] = "c" * 64
     tampered["proofs"].append(second)
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is True
@@ -205,7 +205,7 @@ def test_first_proof_governs_even_if_later_proof_correct():
     second["proof_id"] = "urn:aaid:proof:second-test-proof"
     second["payload_hash"] = correct
     tampered["proofs"].append(second)
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is False
@@ -219,7 +219,7 @@ def test_hash_alg_length_mismatch_fails_payload_hash():
     tampered = copy.deepcopy(envelope)
     tampered["proofs"][0]["hash_alg"] = "SHA-512"
     tampered["proofs"][0]["payload_hash"] = "a" * 64
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     schema = check_named(result, "schema_valid")
     assert schema is not None
     assert schema.passed is True
@@ -236,7 +236,7 @@ def test_changing_a_proof_field_does_not_affect_payload_hash():
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     tampered["proofs"][0]["signature_b64u"] = "QW5vdGhlci1zaWduYXR1cmU"
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is True
@@ -248,7 +248,7 @@ def test_payload_hash_failure_reason_is_about_hash_not_signature():
     envelope = load_envelope()
     tampered = copy.deepcopy(envelope)
     tampered["proofs"][0]["payload_hash"] = "b" * 64
-    result = verify_passport_envelope(tampered, now=VALID_NOW)
+    result = verify_passport_envelope(tampered, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS)
     payload_hash = check_named(result, "payload_hash_valid")
     assert payload_hash is not None
     assert payload_hash.passed is False
