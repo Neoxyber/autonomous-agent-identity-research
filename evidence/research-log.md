@@ -1331,3 +1331,30 @@ gateway enforcement, MCP integration, audit storage, approval records, delegatio
 Next step:
 Review the next smallest accountability boundary before adding gateway, audit storage, approval records, delegation, or policy-language behavior.
 
+## Entry 079
+
+Date: 2026-06-03
+
+Type: Audit preparation implementation
+
+Summary: Added local audit event preparation.
+
+Files:
+Added `src/aaid/audit.py`, added `tests/test_audit.py`, and updated this evidence log.
+
+Result:
+The project now includes a local audit event preparation boundary. It prepares a frozen in-memory `AuditEvent` from already-produced verification, authorization, and composed decision results plus caller-provided passport and request data. The audit builder is local, deterministic, stdlib-only, and uses allowlist-only scalar extraction.
+
+The audit event records safe decision and identifier fields only, including event type, occurrence time, composed decision, verification decision, authorization decision, requested action, resource scope, passport identifier, agent identifier, operator identifier, issuer identifier, lifecycle status, risk class, policy identifier, audit stream identifier, and revocation reference when present.
+
+The implementation does not store, write, transmit, log, hash, sign, chain, read the clock, or call verifier, authorization, or composition execution functions. Tests confirm known sensitive values from the minimal example are not copied, extra request fields are not copied, permission lists are not copied, and `ERROR` remains local to audit events.
+
+Tests:
+493 tests passed.
+
+Not implemented:
+audit storage, file or database writes, network transmission, logging, event hashing, event chaining, signing, gateway enforcement, MCP integration, approval records, delegation chains, recursive accountability, runtime-state verification, policy language, REF-014 execution or adoption, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, reference promotion to Verified, or any passport-verifier `ALLOW` path.
+
+Next step:
+Review the next smallest accountability boundary before adding audit storage, approval records, gateway enforcement, MCP integration, delegation, or policy-language behavior.
+
