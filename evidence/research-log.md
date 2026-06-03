@@ -1412,3 +1412,30 @@ execution allow, approval expiry enforcement, replay protection, approval storag
 Next step:
 Review the next smallest enforcement-composition boundary before adding approval expiry enforcement, replay protection, storage, gateway enforcement, MCP integration, delegation, or policy-language behavior.
 
+## Entry 082
+
+Date: 2026-06-03
+
+Type: Enforcement composition implementation
+
+Summary: Added local enforcement composition.
+
+Files:
+Added `src/aaid/enforcement.py`, added `tests/test_enforcement.py`, and updated this evidence log.
+
+Result:
+The project now includes a local enforcement composition boundary. It composes an already-produced audit event with optional already-produced approval validation. The enforcement composer is local, deterministic, stdlib-only, and returns a frozen `EnforcementDecision` result.
+
+The enforcement decision mirrors the audit event decision. Approval satisfaction is true only when the audit decision is `REQUIRE_HUMAN_APPROVAL` and a valid approval validation result is supplied. Valid approval validation does not affect `DENY`, `ERROR`, `ALLOW`, or `REQUIRE_HUMAN_REVIEW` contexts. Malformed audit input fails closed to `ERROR`.
+
+The enforcement composer is non-executing. `execution_allowed` is always false, including for synthetic `ALLOW` and valid approval contexts. It does not execute tools, call gateways, call MCP, store records, evaluate approval expiry or replay, or create any passport-verifier `ALLOW` path.
+
+Tests:
+594 tests passed.
+
+Not implemented:
+execution allow, gateway enforcement, MCP integration, approval expiry enforcement, replay protection, approval storage, audit storage, file or database writes, network transmission, logging, event hashing, event chaining, signing, delegation chains, recursive accountability, runtime-state verification, policy language, REF-014 execution or adoption, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, reference promotion to Verified, or any passport-verifier `ALLOW` path.
+
+Next step:
+Review the next smallest boundary before adding expiry enforcement, replay protection, storage, gateway enforcement, MCP integration, delegation, or policy-language behavior.
+
