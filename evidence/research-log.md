@@ -1439,3 +1439,28 @@ execution allow, gateway enforcement, MCP integration, approval expiry enforceme
 Next step:
 Review the next smallest boundary before adding expiry enforcement, replay protection, storage, gateway enforcement, MCP integration, delegation, or policy-language behavior.
 
+## Entry 083
+
+Date: 2026-06-03
+
+Type: Test maintenance
+
+Summary: Consolidated duplicated test fixture constants.
+
+Files:
+Updated `tests/_support.py`, `tests/test_audit.py`, `tests/test_approval.py`, `tests/test_approval_validation.py`, `tests/test_enforcement.py`, and this evidence log.
+
+Result:
+The test suite now stores shared test-only fixture constants in `tests/_support.py`, including the minimal example path, shared request fixture, approval fixture, planted secret values, and known sensitive values used by no-leak tests. Audit, approval, approval-validation, and enforcement tests now import those shared constants instead of repeating the same fixture blocks.
+
+This was a test-only, behavior-preserving cleanup. No source modules changed. Safety tests remain intact, including no-leak tests, forbidden-import checks, and no-I/O/no-clock/no-randomness source scans.
+
+Tests:
+594 tests passed.
+
+Not implemented:
+source behavior changes, public result-name changes, verifier behavior changes, decision semantics changes, execution allow, gateway enforcement, MCP integration, approval expiry enforcement, replay protection, approval storage, audit storage, file or database writes, network transmission, logging, event hashing, event chaining, signing, delegation chains, recursive accountability, runtime-state verification, policy language, REF-014 execution or adoption, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, reference promotion to Verified, or any passport-verifier `ALLOW` path.
+
+Next step:
+Run a fresh read-only planning step before adding any new behavior boundary.
+
