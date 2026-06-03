@@ -27,32 +27,15 @@ VerificationResult = verification.VerificationResult
 AuthorizationDecision = authorization.AuthorizationDecision
 ComposedDecision = composition.ComposedDecision
 
-EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
-REQUEST = {"action": "summarize_public_text", "resource_scope": "demo.public_text"}
-APPROVAL = {
-    "approver_id": "urn:aaid:approver:reviewer-1",
-    "approver_role": "operator_admin",
-    "approval_outcome": "approved",
-    "approval_reason": "reviewed in research demo",
-    "approval_scope": "demo.public_text",
-    "approval_expires_at": "2026-06-03T01:00:00Z",
-}
-PLANTED_SECRETS = ["SIGSECRET", "TOKENSECRET", "MFASECRET", "DOCSECRET", "BIOSECRET"]
-SECRET_APPROVAL = {
-    **APPROVAL,
-    "approval_signature": "SIGSECRET",
-    "approver_token": "TOKENSECRET",
-    "mfa_code": "MFASECRET",
-    "justification_document": "DOCSECRET",
-    "biometric": "BIOSECRET",
-}
-SENSITIVE_VALUES = [
-    "VGhpcy1pcy1hLWRlbW8tcHVibGljLWtleQ",
-    "VGhpcy1pcy1hLWRlbW8tc2lnbmF0dXJl",
-    "b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc",
-    "urn:aaid:key:018fd7c2-8c44-72ff-91ab-2e81e9fd4422",
-    "urn:aaid:proof:018fd7c2-a110-70ac-81d0-f934ed842010",
-]
+from _support import (
+    APPROVAL,
+    EXAMPLE_PATH,
+    PLANTED_SECRETS,
+    REQUEST,
+    SECRET_APPROVAL,
+    SENSITIVE_VALUES,
+)
+
 DECISIONS = [DENY, ALLOW, REQUIRE_HUMAN_APPROVAL, REQUIRE_HUMAN_REVIEW, ERROR]
 
 

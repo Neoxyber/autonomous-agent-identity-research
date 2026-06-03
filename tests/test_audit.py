@@ -20,15 +20,7 @@ VerificationResult = verification.VerificationResult
 AuthorizationDecision = authorization.AuthorizationDecision
 ComposedDecision = composition.ComposedDecision
 
-EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
-REQUEST = {"action": "summarize_public_text", "resource_scope": "demo.public_text"}
-SENSITIVE_VALUES = [
-    "VGhpcy1pcy1hLWRlbW8tcHVibGljLWtleQ",
-    "VGhpcy1pcy1hLWRlbW8tc2lnbmF0dXJl",
-    "b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc",
-    "urn:aaid:key:018fd7c2-8c44-72ff-91ab-2e81e9fd4422",
-    "urn:aaid:proof:018fd7c2-a110-70ac-81d0-f934ed842010",
-]
+from _support import EXAMPLE_PATH, REQUEST, SENSITIVE_VALUES
 
 
 def verif(decision=DENY, *, valid=None):
