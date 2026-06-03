@@ -1385,3 +1385,30 @@ approval storage, approval validation, expiry enforcement, replay protection, ga
 Next step:
 Review the next smallest approval-validation or enforcement-boundary step before adding approval storage, expiry enforcement, gateway enforcement, MCP integration, delegation, or policy-language behavior.
 
+## Entry 081
+
+Date: 2026-06-03
+
+Type: Approval validation implementation
+
+Summary: Added local approval validation.
+
+Files:
+Added `src/aaid/approval_validation.py`, added `tests/test_approval_validation.py`, and updated this evidence log.
+
+Result:
+The project now includes a local approval validation boundary. It validates an already-produced audit event against already-produced approval evidence. The validator is local, deterministic, stdlib-only, and returns a frozen `ApprovalValidation` result.
+
+Approval validation checks that approval evidence is bound to the same audit event context across passport identifier, agent identifier, operator identifier, issuer identifier, requested action, resource scope, authorization decision, and composed decision. Binding checks pass only when both sides are non-`None` and equal. Validation is applicable only when the audit event decision is `REQUIRE_HUMAN_APPROVAL` and the approval evidence is marked applicable.
+
+`valid` means only that approval evidence is context-bound and applicable. Approval validation does not grant execution, does not change the bound decision, does not evaluate expiry or replay, and does not override `DENY`, `ERROR`, `ALLOW`, review-required, prohibited-action, or failed-verification paths. `grants_execution` is always false.
+
+Tests:
+558 tests passed.
+
+Not implemented:
+execution allow, approval expiry enforcement, replay protection, approval storage, audit storage, gateway enforcement, MCP integration, file or database writes, network transmission, logging, event hashing, event chaining, signing, delegation chains, recursive accountability, runtime-state verification, policy language, REF-014 execution or adoption, dependency adoption, package installation, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, real signature verification, reference promotion to Verified, or any passport-verifier `ALLOW` path.
+
+Next step:
+Review the next smallest enforcement-composition boundary before adding approval expiry enforcement, replay protection, storage, gateway enforcement, MCP integration, delegation, or policy-language behavior.
+
