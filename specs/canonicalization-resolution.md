@@ -132,7 +132,9 @@ settled and a separate adoption decision is recorded.
 ## Verifier boundary requirements
 
 Before any canonicalizer adoption or signature-verification planning, the
-verifier boundary should preserve these requirements:
+verifier boundary should preserve these requirements. Requirements 1 and 2 are
+already implemented by `verify_passport_json()` and `verify_passport_envelope()`
+and must continue to hold.
 
 1. Raw JSON input is parsed with duplicate-key rejection before schema validation.
 2. Parsed-envelope verification operates on duplicate-key-safe mappings.

@@ -70,10 +70,10 @@ integer-domain behavior is not presently exposed by the declared passport
 profile.
 
 This supports delaying a candidate adoption decision until the project has a
-clear integration plan for how raw JSON inputs enter verification. In
-particular, future verifier entry points should either parse raw JSON through
-the duplicate-key rejecting helper or document why they only accept already
-trusted parsed objects.
+clear integration plan for how raw JSON inputs enter verification.
+`verify_passport_json()` already handles raw JSON with duplicate key rejection
+before schema validation. The remaining open item is documenting the parsed
+mapping precondition for `verify_passport_envelope()`.
 
 ## Required constraints before adoption
 
