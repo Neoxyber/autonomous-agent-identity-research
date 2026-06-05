@@ -266,16 +266,18 @@ Planned categories:
 4. Array order remains significant.
 5. Proof material remains excluded from the signed payload.
 6. Payload-hash input and signature-input preparation use the same canonical
-   bytes.
-7. Non-finite numbers fail closed.
-8. Unsafe integer-domain behavior is tested and documented after the
-   numeric-domain policy is recorded.
-9. Duplicate-key raw JSON behavior remains enforced at the parse boundary.
-10. Schema validation still runs before canonicalization-dependent verification.
-11. Unsupported canonicalization fails closed.
-12. Canonicalization and candidate-canonicalizer errors become failed verifier
+   bytes, including the existing `canonical_payload_prepared` boundary.
+7. Non-finite values fail closed.
+8. Current-profile unsafe-integer behavior remains outside the passport payload
+   domain because the current profile is numeric-field-free.
+9. Future numeric payload fields remain blocked until explicit schema bounds,
+   accepted numeric domains, and failure semantics are recorded.
+10. Duplicate-key raw JSON behavior remains enforced at the parse boundary.
+11. Schema validation still runs before canonicalization-dependent verification.
+12. Unsupported canonicalization fails closed.
+13. Canonicalization and candidate-canonicalizer errors become failed verifier
     checks and `DENY` results, not unhandled exceptions.
-13. Signature verification remains blocked until a later phase.
+14. Signature verification remains blocked until a later phase.
 
 ## Golden vector migration
 
@@ -306,7 +308,7 @@ algorithms without redefining canonical payload bytes.
 
 REF-014 must not be adopted until these items are resolved or explicitly
 deferred with rationale: build provenance, legal compatibility and attribution
-completeness, integration tests, golden vector migration review, and
+completeness, integration-test execution, golden vector migration review, and
 verification-result failure semantics.
 
 ## Non-goals
@@ -319,7 +321,7 @@ integrations.
 ## Next step
 
 Review the remaining REF-014 adoption requirements: legal compatibility and
-attribution completeness, integration tests, golden-vector migration review, and
-verification-result failure semantics.
+attribution completeness, integration-test execution, golden-vector migration
+review, and verification-result failure semantics.
 No adoption proposal, runtime integration work, requirements change, or
 canonicalizer replacement is authorized by this plan.
