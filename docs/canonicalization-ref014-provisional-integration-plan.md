@@ -167,16 +167,22 @@ SHA-256 payload hash is:
 
 This hash matches the minimal example proof `payload_hash`.
 
-Any future canonicalizer replacement must treat changes to the minimal passport
-canonical bytes or payload hash as intentional migration, not incidental drift.
-Before adoption, the project must record:
+An isolated REF-014 golden-vector comparison was run for the minimal passport.
+The first attempt used the isolated REF-014 verifier environment directly and
+failed because that environment did not include the repository dependency
+`jsonschema`. The corrected attempt used the repository virtual environment and
+added only the isolated REF-014 site-packages path for importing `rfc8785`.
 
-- current helper canonical bytes or hash;
-- REF-014 canonical bytes or hash;
-- whether the minimal example changes;
-- whether the existing payload hash is preserved or intentionally migrated;
-- why any migration is acceptable;
-- which tests pin the expected value.
+Result:
+PASS. REF-014 produced 1628 canonical bytes for the minimal passport, matching
+the current helper byte-for-byte. The REF-014 SHA-256 payload hash was
+`b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc`, matching
+the current helper hash and the minimal example proof `payload_hash`.
+
+Current interpretation:
+No golden-vector migration is required for the current minimal passport example.
+Any future canonicalizer replacement must still pin this expected value in tests
+before adoption.
 
 ### Verification-result failure semantics
 
