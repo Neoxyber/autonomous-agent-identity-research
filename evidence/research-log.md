@@ -48,3 +48,32 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review REF-014 license and attribution, dependency and maintenance risk, verifier entry-point decisions, numeric-domain policy, integration tests, golden-vector migration review, and verification-result failure semantics before any adoption decision.
+
+## Entry 085
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate license evidence
+
+Summary: Recorded REF-014 license and attribution evidence.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+REF-014 `rfc8785==0.1.4` license and attribution evidence was refined using the pinned wheel, pinned source distribution, and exact GitHub `v0.1.4` tag metadata.
+
+The wheel included `rfc8785-0.1.4.dist-info/LICENSE`; the source distribution included `LICENSE`, `PKG-INFO`, `README.md`, and `pyproject.toml`. The wheel and source distribution license files were identical, with SHA-256 digest `0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594`.
+
+The inspected artifact metadata identified Apache License, Version 2.0 evidence through the Apache Software License classifier and `pyproject.toml` license-file declaration. Metadata identified Trail of Bits as the author contact and stated that parts of the implementation are adapted from Andrew Rundgren's Apache License 2.0 reference implementation. No `NOTICE` file was found in the inspected wheel, source distribution, or exact GitHub `v0.1.4` tag metadata.
+
+This is license and attribution evidence only. It is not a legal opinion, does not complete legal review, does not adopt REF-014, does not promote REF-014 to Verified in `docs/references.md`, and does not approve dependency integration.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, numeric-domain policy changes, integration-test migration, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review REF-014 dependency and maintenance risk, verifier entry-point decisions, numeric-domain policy, integration tests, golden-vector migration review, and verification-result failure semantics before any adoption decision.
