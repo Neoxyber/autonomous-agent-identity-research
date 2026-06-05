@@ -259,3 +259,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review remaining REF-014 adoption blockers: build provenance, legal compatibility and attribution completeness, integration-test execution, and golden-vector migration review before any adoption decision.
+
+## Entry 092
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate adoption-readiness checkpoint
+
+Summary: Recorded REF-014 adoption-readiness checkpoint.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+The REF-014 provisional integration plan now records an adoption-readiness checkpoint.
+
+The checkpoint records that REF-014 evidence has been collected for artifact provenance, license and attribution signals, dependency and maintenance risk, verifier entry-point boundaries, current-profile numeric-domain policy, integration-test planning, golden-vector migration planning, and verification-result failure semantics.
+
+Current readiness is recorded as PARTIAL. REF-014 is better understood, but it is not ready for adoption. Remaining blockers are intentionally narrow and must be resolved or explicitly deferred with rationale before any adoption decision.
+
+Remaining blockers are build provenance, legal compatibility and attribution completeness, integration-test execution, and golden-vector migration review. The checkpoint also records that future research-paper evidence should distinguish artifact evidence, legal evidence, maintenance-risk evidence, behavioral verification, and adoption readiness.
+
+This is an adoption-readiness checkpoint only. It does not adopt REF-014, execute REF-014 tests, replace the canonicalizer, change verifier source, change requirements or lockfiles, migrate golden vectors, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, integration-test execution, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review remaining REF-014 blockers carefully before any adoption decision. Do not execute REF-014-based tests or replace the canonicalizer without explicit approval.
