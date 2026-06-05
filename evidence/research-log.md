@@ -290,3 +290,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review remaining REF-014 blockers carefully before any adoption decision. Do not execute REF-014-based tests or replace the canonicalizer without explicit approval.
+
+## Entry 093
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate build-provenance status
+
+Summary: Recorded REF-014 build-provenance status.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+The REF-014 provisional integration plan now separates artifact provenance evidence from build provenance.
+
+Artifact provenance evidence has been collected for the pinned wheel and source distribution, including pinned SHA-256 digests and Sigstore verification against the fixed GitHub Actions OIDC issuer and release workflow identity.
+
+Build provenance remains unresolved. The project has not re-derived the wheel from the source tag, has not verified reproducible source-to-artifact correspondence, and has not recorded an equivalent build-reproducibility result.
+
+Current status is PARTIAL. Artifact provenance is evidenced, but source-to-artifact build provenance is not established. Build provenance remains an adoption blocker unless it is verified or explicitly deferred with rationale in a separate adoption decision.
+
+This is build-provenance status recording only. It does not adopt REF-014, execute REF-014 tests, rebuild artifacts, replace the canonicalizer, change verifier source, change requirements or lockfiles, migrate golden vectors, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, artifact rebuild, reproducible-build verification, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, integration-test execution, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review legal compatibility and attribution completeness before any REF-014 adoption decision, REF-014-based test execution, canonicalizer replacement, or golden-vector migration.
