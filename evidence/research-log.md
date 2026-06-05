@@ -201,3 +201,32 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review golden-vector migration and verification-result failure semantics before any REF-014 adoption decision or REF-014-based test execution.
+
+## Entry 090
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate golden-vector planning
+
+Summary: Recorded REF-014 golden-vector migration planning.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+The REF-014 provisional integration plan now records golden-vector migration planning for the minimal passport example.
+
+The current helper canonicalizes the minimal passport to 1628 bytes. The current SHA-256 payload hash is `b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc`, which matches the minimal example proof `payload_hash`.
+
+The plan now states that any canonicalizer replacement must treat changes to the minimal passport canonical bytes or payload hash as intentional migration, not incidental drift. Before adoption, the project must record the current helper canonical bytes or hash, the REF-014 canonical bytes or hash, whether the minimal example changes, whether the existing payload hash is preserved or intentionally migrated, why any migration is acceptable, and which tests pin the expected value.
+
+This is golden-vector migration planning only. It does not execute REF-014, adopt REF-014, replace the canonicalizer, update the minimal example, change the payload hash, migrate golden vectors, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, integration-test execution, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review verification-result failure semantics before any REF-014 adoption decision, REF-014-based test execution, canonicalizer replacement, golden-vector migration, or real signature-verification planning.
