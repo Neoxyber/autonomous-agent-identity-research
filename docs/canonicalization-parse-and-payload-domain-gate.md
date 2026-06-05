@@ -69,11 +69,11 @@ research helper. The current schema avoids numeric typed fields, so unsafe
 integer-domain behavior is not presently exposed by the declared passport
 profile.
 
-This supports delaying a candidate adoption decision until the project has a
-clear integration plan for how raw JSON inputs enter verification.
-`verify_passport_json()` already handles raw JSON with duplicate key rejection
-before schema validation. The remaining open item is documenting the parsed
-mapping precondition for `verify_passport_envelope()`.
+This supports the recorded verifier entry-point boundary.
+`verify_passport_json()` is the raw JSON entry point and handles duplicate-key
+rejection before schema validation. `verify_passport_envelope()` is the
+parsed-envelope entry point and assumes callers provide already parsed,
+duplicate-key-safe mappings.
 
 ## Required constraints before adoption
 

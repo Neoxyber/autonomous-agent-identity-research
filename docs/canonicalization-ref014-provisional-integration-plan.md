@@ -221,13 +221,13 @@ canonicalization fails closed before signature input preparation. Real signature
 verification remains unimplemented and fails closed.
 
 Status:
-A raw JSON verifier entry point already exists: `verify_passport_json()` parses
-input with `parse_json_no_duplicate_keys()` before schema validation, so raw JSON
-duplicate-key rejection runs before canonicalization-dependent checks. The remaining
-decision before any REF-014 adoption proposal is whether to document that
-`verify_passport_envelope()` accepts only already-parsed, duplicate-key-safe
-mappings, or to direct raw JSON callers to `verify_passport_json()`. This section
-does not authorize verifier changes or runtime behavior changes.
+The verifier entry-point boundary is recorded. `verify_passport_json()` is the
+raw JSON entry point and parses input with `parse_json_no_duplicate_keys()`
+before schema validation, so raw JSON duplicate-key rejection runs before
+canonicalization-dependent checks. `verify_passport_envelope()` is the
+parsed-envelope entry point and assumes callers provide already parsed,
+duplicate-key-safe mappings. This section does not authorize verifier changes or
+runtime behavior changes.
 
 ## Required integration-test planning
 
@@ -283,11 +283,9 @@ algorithms without redefining canonical payload bytes.
 ## Adoption blockers
 
 REF-014 must not be adopted until these items are resolved or explicitly
-deferred with rationale: package artifact provenance, build provenance,
-license/attribution review, dependency and maintenance risk, verifier raw-JSON
-boundary, schema-before-canonicalization rule, unsafe integer and future numeric
-payload-domain policy, integration tests, golden vector migration review, and
-verification-result failure semantics.
+deferred with rationale: build provenance, legal compatibility and attribution
+completeness, numeric payload-domain policy, integration tests, golden vector
+migration review, and verification-result failure semantics.
 
 ## Non-goals
 
@@ -298,9 +296,8 @@ integrations.
 
 ## Next step
 
-Review the remaining REF-014 adoption requirements: license/attribution
-review, dependency and maintenance-risk review, verifier entry-point decisions,
-numeric-domain policy, integration tests, golden-vector migration review, and
-verification-result failure semantics.
+Review the remaining REF-014 adoption requirements: legal compatibility and
+attribution completeness, numeric-domain policy, integration tests,
+golden-vector migration review, and verification-result failure semantics.
 No adoption proposal, runtime integration work, requirements change, or
 canonicalizer replacement is authorized by this plan.
