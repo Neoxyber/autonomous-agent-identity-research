@@ -321,3 +321,38 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review legal compatibility and attribution completeness before any REF-014 adoption decision, REF-014-based test execution, canonicalizer replacement, or golden-vector migration.
+
+## Entry 094
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate golden-vector comparison
+
+Summary: Recorded REF-014 minimal passport golden-vector comparison.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+An isolated REF-014 golden-vector comparison was run for the minimal passport example.
+
+The first attempt used the isolated REF-014 verifier environment directly and failed because that environment did not include the repository dependency `jsonschema`. This was an environment issue, not a canonicalization mismatch.
+
+The corrected attempt used the repository virtual environment and added only the isolated REF-014 site-packages path for importing `rfc8785`.
+
+REF-014 produced 1628 canonical bytes for the minimal passport, matching the current helper byte-for-byte. The REF-014 SHA-256 payload hash was `b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc`, matching the current helper hash and the minimal example proof `payload_hash`.
+
+No golden-vector migration is required for the current minimal passport example. Any future canonicalizer replacement must still pin this expected value in tests before adoption.
+
+Earlier REF-014 entries already recorded artifact provenance, Apache-2.0 license and attribution evidence, dependency and maintenance-risk evidence, build-provenance status, verifier-boundary evidence, numeric-domain evidence, and verification-result failure semantics.
+
+This is isolated comparison evidence only. It does not adopt REF-014, install REF-014 into the repository, change requirements or lockfiles, replace the canonicalizer, change verifier source, execute REF-014 verifier integration tests, migrate golden vectors, or unblock real signature verification.
+
+Tests:
+Repository baseline before the comparison passed with 594 tests. Full tests should be run again before push.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, artifact rebuild, reproducible-build verification, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, REF-014 verifier integration-test execution, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review whether to run REF-014 verifier integration-test execution in isolation or defer REF-014 adoption before moving to real signature-verification planning.
