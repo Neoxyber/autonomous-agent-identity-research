@@ -117,6 +117,21 @@ not change requirements or lockfiles, does not replace the current
 canonicalization helper, does not migrate golden vectors, and does not unblock
 real signature verification by itself.
 
+## Build provenance status
+
+Artifact provenance evidence has been collected for the pinned wheel and source
+distribution, including pinned SHA-256 digests and Sigstore verification against
+the fixed GitHub Actions OIDC issuer and release workflow identity.
+
+Build provenance remains unresolved. The project has not re-derived the wheel
+from the source tag, has not verified reproducible source-to-artifact
+correspondence, and has not recorded an equivalent build-reproducibility result.
+
+Status:
+PARTIAL. Artifact provenance is evidenced, but source-to-artifact build
+provenance is not established. This remains an adoption blocker unless it is
+verified or explicitly deferred with rationale in a separate adoption decision.
+
 ## Required license and attribution review
 
 Before any adoption proposal, the project should record declared package
