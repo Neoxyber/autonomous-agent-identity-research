@@ -76,12 +76,46 @@ artifact hashes and certificate hints for `trailofbits/rfc8785.py`,
 `refs/tags/v0.1.4`, `https://token.actions.githubusercontent.com`, and
 `release.yml@refs/tags/v0.1.4`.
 
-Status:
-This is provenance evidence only. Cryptographic Sigstore verification, Rekor
-inclusion verification, certificate-chain verification, expected issuer policy,
-and expected workflow identity policy remain pending. The procedure for that
-cryptographic verification, with acceptance criteria, is recorded in
+Status at P0:
+This was provenance evidence only. At P0, cryptographic Sigstore verification,
+Rekor inclusion verification, certificate-chain verification, expected issuer
+policy, and expected workflow identity policy remained pending. The procedure
+for that cryptographic verification, with acceptance criteria, was recorded in
 `docs/canonicalization-ref014-provenance-verification-plan.md`.
+
+## P1 cryptographic provenance verification result
+
+A second isolated provenance pass was run under
+`/tmp/aaid-ref014-provenance-verify`, using a separate verifier environment at
+`/tmp/aaid-ref014-tools/.venv`.
+
+Result:
+PASS. The pinned wheel and source distribution were downloaded from the GitHub
+release assets and their SHA-256 digests matched the values already recorded in
+this plan. Sigstore 4.3.0 verified both artifacts offline against their release
+bundles, using the fixed OIDC issuer
+`https://token.actions.githubusercontent.com` and the fixed workflow identity
+`https://github.com/trailofbits/rfc8785.py/.github/workflows/release.yml@refs/tags/v0.1.4`.
+
+Tooling:
+The verifier environment used Python 3.12.3, pip 26.1.2, and Sigstore 4.3.0.
+Relevant verifier packages included `sigstore==4.3.0`,
+`sigstore-models==0.0.6`, `sigstore-rekor-types==0.0.18`, `tuf==7.0.0`,
+`securesystemslib==1.4.0`, `cryptography==48.0.0`, and `rfc8785==0.1.4`
+inside the isolated verifier environment only.
+
+Artifact digests:
+The wheel digest matched
+`520d690b448ecf0703691c76e1a34a24ddcd4fc5bc41d589cb7c58ec651bcd48`. The
+source distribution digest matched
+`e545841329fe0eee4f6a3b44e7034343100c12b4ec566dc06ca9735681deb4da`.
+
+Status:
+This is artifact provenance evidence only. It does not adopt REF-014, does not
+promote REF-014 to Verified, does not install REF-014 into the repository, does
+not change requirements or lockfiles, does not replace the current
+canonicalization helper, does not migrate golden vectors, and does not unblock
+real signature verification by itself.
 
 ## Required license and attribution review
 
@@ -244,9 +278,9 @@ integrations.
 
 ## Next step
 
-Review the remaining REF-014 adoption requirements: cryptographic provenance
-verification, license/attribution review, dependency and maintenance-risk
-review, verifier entry-point decisions, numeric-domain policy, integration
-tests, golden-vector migration review, and verification-result failure semantics.
+Review the remaining REF-014 adoption requirements: license/attribution
+review, dependency and maintenance-risk review, verifier entry-point decisions,
+numeric-domain policy, integration tests, golden-vector migration review, and
+verification-result failure semantics.
 No adoption proposal, runtime integration work, requirements change, or
 canonicalizer replacement is authorized by this plan.
