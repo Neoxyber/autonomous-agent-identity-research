@@ -339,6 +339,35 @@ semantics that a future REF-014 integration must preserve. This does not execute
 REF-014 tests, adopt REF-014, replace the canonicalizer, change verifier source,
 or unblock real signature verification.
 
+## Adoption-readiness checkpoint
+
+The current REF-014 review has collected evidence for artifact provenance,
+license and attribution signals, dependency and maintenance risk, verifier
+entry-point boundaries, current-profile numeric-domain policy, integration-test
+planning, golden-vector migration planning, and verification-result failure
+semantics.
+
+Current readiness:
+PARTIAL. REF-014 is better understood, but it is not ready for adoption. The
+remaining blockers are intentionally narrow and must be resolved or explicitly
+deferred with rationale before any adoption decision.
+
+Remaining blockers:
+- build provenance remains unresolved unless source-to-artifact reproducibility
+  is verified or explicitly deferred;
+- legal compatibility and attribution completeness remain unresolved because the
+  project has collected license evidence but has not made a legal compatibility
+  decision;
+- integration-test execution remains blocked because REF-014-based tests have
+  not been approved or run;
+- golden-vector migration review remains blocked until REF-014 canonical bytes
+  and hash behavior are compared with the current helper and recorded.
+
+Research-paper note:
+This checkpoint records the decision method, not an adoption result. The
+research evidence should distinguish artifact evidence, legal evidence,
+maintenance-risk evidence, behavioral verification, and adoption readiness.
+
 ## Adoption blockers
 
 REF-014 must not be adopted until these items are resolved or explicitly
