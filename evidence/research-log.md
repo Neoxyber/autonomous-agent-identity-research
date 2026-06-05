@@ -77,3 +77,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review REF-014 dependency and maintenance risk, verifier entry-point decisions, numeric-domain policy, integration tests, golden-vector migration review, and verification-result failure semantics before any adoption decision.
+
+## Entry 086
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate maintenance-risk evidence
+
+Summary: Recorded REF-014 dependency and maintenance-risk evidence.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+REF-014 `rfc8785==0.1.4` dependency and maintenance-risk evidence was reviewed and recorded as PARTIAL.
+
+The pinned package metadata declared `Requires-Python >=3.8`, `Development Status :: 4 - Beta`, and no normal runtime dependencies. Observed `Requires-Dist` entries were optional extras for development, documentation, lint, and tests.
+
+GitHub repository metadata for `trailofbits/rfc8785.py` showed that the repository was not archived, not a fork, not a mirror, not private, not empty, and had GitHub security policy support enabled. The default branch was `main`, the primary language was Python, issues were enabled, and metadata showed activity in May 2026.
+
+Tags and releases were observed from `v0.0.1` through `v0.1.4`. The evaluated release `v0.1.4` was created and published on 2024-09-27, was not a draft, and was not a prerelease. The release assets included the pinned wheel, source distribution, and corresponding Sigstore bundles. The open issue query found no open issues excluding pull requests. One open pull request related to mypy settings was observed. The GitHub security-advisory query returned no entries.
+
+This is dependency and maintenance-risk evidence only. The normal runtime dependency surface is low and no obvious repository blocking signal was observed, but the package is marked beta, the latest release is from 2024, GitHub repository license metadata is null, and long-term maintenance suitability, vulnerability posture, adoption readiness, and operational readiness remain unproven.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, numeric-domain policy changes, integration-test migration, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review verifier entry-point decisions, numeric-domain policy, integration tests, golden-vector migration review, and verification-result failure semantics before any REF-014 adoption decision.
