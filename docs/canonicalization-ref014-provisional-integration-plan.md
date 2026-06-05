@@ -164,18 +164,32 @@ installation, requirements change, or runtime behavior change is authorized.
 
 ## P2 maintenance-risk evidence collected
 
-A first maintenance-risk pass observed that REF-014 `rfc8785==0.1.4` declares
+A maintenance-risk pass observed that REF-014 `rfc8785==0.1.4` declares
 `Requires-Python >=3.8`, has no normal runtime dependencies, and is marked
-`Development Status :: 4 - Beta`. The GitHub repository was not archived,
-disabled, or a fork. Tags and releases were observed from `v0.0.1` through
-`v0.1.4`; the evaluated release was published on 2024-09-27. Repository metadata
-showed recent activity in May 2026. The open issue query found no open issues
-excluding pull requests and one open pull request related to mypy settings.
+`Development Status :: 4 - Beta`. Observed `Requires-Dist` entries were optional
+extras for development, documentation, lint, and tests.
+
+Repository metadata showed that `trailofbits/rfc8785.py` was not archived, not a
+fork, not a mirror, not private, not empty, and had GitHub security policy
+support enabled. The default branch was `main`, primary language was Python, the
+repository had issues enabled, and metadata showed activity in May 2026. GitHub
+repository license metadata returned `null`, while artifact license evidence is
+recorded separately in the P1 section.
+
+Tags and releases were observed from `v0.0.1` through `v0.1.4`. The evaluated
+release `v0.1.4` was created and published on 2024-09-27, was not a draft, and
+was not a prerelease. The release assets included the pinned wheel, source
+distribution, and corresponding Sigstore bundles. The open issue query found no
+open issues excluding pull requests. One open pull request related to mypy
+settings was observed. The GitHub security-advisory query returned no entries.
 
 Status:
-This is maintenance-risk evidence only. It does not establish long-term
-maintenance suitability, vulnerability posture, adoption readiness, or operational
-readiness.
+PARTIAL. This is dependency and maintenance-risk evidence only. The normal
+runtime dependency surface is low and no obvious repository blocking signal was
+observed, but the package is marked beta, the latest release is from 2024, GitHub
+repository license metadata is null, and long-term maintenance suitability,
+vulnerability posture, adoption readiness, and operational readiness remain
+unproven.
 
 ## Required verifier-boundary decisions
 
