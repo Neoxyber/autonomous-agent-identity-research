@@ -316,12 +316,34 @@ The canonicalization dependency should remain behind a small internal boundary
 so future algorithm-agility and post-quantum signature work can change signature
 algorithms without redefining canonical payload bytes.
 
+## Verification-result failure semantics
+
+The current verifier already records canonicalization failure semantics that a
+future REF-014 integration must preserve.
+
+Required behavior:
+- canonical payload preparation failures are represented by a failed
+  `canonical_payload_prepared` verifier check;
+- verifier paths return `VerificationResult.failed(...)` with `DENY` rather
+  than allowing canonicalization or candidate-canonicalizer exceptions to escape;
+- later payload-hash, key-selection, signature-input, algorithm, and signature
+  checks do not run after canonical payload preparation fails;
+- unsupported declared canonicalization remains a separate
+  `signature_canonicalization_supported` failure;
+- payload-hash mismatch remains a separate `payload_hash_valid` failure;
+- real signature verification remains blocked until a later phase.
+
+Status:
+PASS for planning. The current verifier and tests already define the failure
+semantics that a future REF-014 integration must preserve. This does not execute
+REF-014 tests, adopt REF-014, replace the canonicalizer, change verifier source,
+or unblock real signature verification.
+
 ## Adoption blockers
 
 REF-014 must not be adopted until these items are resolved or explicitly
 deferred with rationale: build provenance, legal compatibility and attribution
-completeness, integration-test execution, golden vector migration review, and
-verification-result failure semantics.
+completeness, integration-test execution, and golden vector migration review.
 
 ## Non-goals
 
@@ -333,7 +355,7 @@ integrations.
 ## Next step
 
 Review the remaining REF-014 adoption requirements: legal compatibility and
-attribution completeness, integration-test execution, golden-vector migration
-review, and verification-result failure semantics.
+attribution completeness, integration-test execution, and golden-vector
+migration review.
 No adoption proposal, runtime integration work, requirements change, or
 canonicalizer replacement is authorized by this plan.
