@@ -139,3 +139,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review numeric payload-domain policy before any REF-014 adoption decision, integration-test planning, golden-vector migration review, or real signature-verification planning.
+
+## Entry 088
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate numeric-domain evidence
+
+Summary: Recorded REF-014 numeric-domain evidence for the current passport profile.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+REF-014 numeric-domain evidence was recorded as PASS for the current numeric-field-free passport profile.
+
+The current passport schema inspection found no `number` or `integer` typed fields in the current passport profile. Existing canonicalization and threat-model documents already record that future numeric payload fields require a separate schema and canonicalization decision before canonicalizer adoption, golden-vector migration, or signature-verification planning.
+
+Repository current-profile evidence records fail-closed handling for non-finite values. REF-014's unsafe-integer blocking behavior is treated as input-domain enforcement, not as an ordinary canonical byte mismatch.
+
+The REF-014 provisional integration plan no longer treats numeric payload-domain policy as a remaining adoption blocker for the current numeric-field-free profile. Future numeric payload fields remain blocked until explicit schema bounds, accepted numeric domains, and failure semantics are recorded.
+
+This is current-profile numeric-domain evidence only. It does not approve future numeric payload fields, implement numeric-domain enforcement, adopt REF-014, replace the canonicalizer, migrate golden vectors, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, integration-test migration, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review integration-test planning, golden-vector migration review, and verification-result failure semantics before any REF-014 adoption decision.
