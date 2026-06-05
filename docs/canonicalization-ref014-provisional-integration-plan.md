@@ -143,13 +143,19 @@ and source distribution staged under `/tmp/aaid-ref014-provenance-review`.
 Findings:
 The wheel includes `rfc8785-0.1.4.dist-info/LICENSE`; the source distribution
 includes `LICENSE`, `PKG-INFO`, `README.md`, and `pyproject.toml`. The included
-license text is Apache License, Version 2.0. Package metadata includes the
-Apache Software License classifier, `pyproject.toml` declares
-`license = { file = "LICENSE" }`, and author metadata identifies Trail of Bits.
-The README/PKG-INFO states that parts are adapted from Andrew Rundgren's
-reference implementation, also described as Apache License, Version 2.0.
-`pyproject.toml` declares `dependencies = []`; observed `Requires-Dist` entries
-are optional extras for development, documentation, lint, and tests.
+license text is Apache License, Version 2.0. The wheel and source distribution
+license files were identical, with SHA-256 digest
+`0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594`. No
+`NOTICE` file was found in the inspected wheel, source distribution, or exact
+GitHub `v0.1.4` tag metadata.
+
+Package metadata includes the Apache Software License classifier,
+`pyproject.toml` declares `license = { file = "LICENSE" }`, and author metadata
+identifies Trail of Bits. The README/PKG-INFO states that parts are adapted from
+Andrew Rundgren's reference implementation, also described as Apache License,
+Version 2.0. `pyproject.toml` declares `dependencies = []`; observed
+`Requires-Dist` entries are optional extras for development, documentation,
+lint, and tests.
 
 Status:
 This is license/attribution and dependency-risk evidence only. License compatibility
