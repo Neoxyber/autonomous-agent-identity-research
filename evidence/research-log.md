@@ -108,3 +108,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review verifier entry-point decisions, numeric-domain policy, integration tests, golden-vector migration review, and verification-result failure semantics before any REF-014 adoption decision.
+
+## Entry 087
+
+Date: 2026-06-05
+
+Type: Verifier boundary documentation
+
+Summary: Recorded verifier entry-point boundary for canonicalization planning.
+
+Files:
+Updated `docs/canonicalization-parse-and-payload-domain-gate.md`, updated `docs/canonicalization-ref014-provisional-integration-plan.md`, and this evidence log.
+
+Result:
+The canonicalization planning documents now record the verifier entry-point boundary for REF-014 adoption planning.
+
+`verify_passport_json()` is the raw JSON entry point. It parses input with `parse_json_no_duplicate_keys()` before schema validation, so duplicate-key rejection runs before canonicalization-dependent checks.
+
+`verify_passport_envelope()` is the parsed-envelope entry point. It assumes callers provide already parsed, duplicate-key-safe mappings.
+
+The REF-014 provisional integration plan no longer treats the verifier raw-JSON boundary as a remaining adoption blocker. Remaining REF-014 adoption blockers are build provenance, legal compatibility and attribution completeness, numeric payload-domain policy, integration tests, golden-vector migration review, and verification-result failure semantics.
+
+This is documentation alignment only. It does not change verifier behavior, adopt REF-014, install packages, change requirements or lockfiles, replace the canonicalizer, migrate golden vectors, implement numeric-domain policy, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, numeric-domain policy changes, integration-test migration, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review numeric payload-domain policy before any REF-014 adoption decision, integration-test planning, golden-vector migration review, or real signature-verification planning.
