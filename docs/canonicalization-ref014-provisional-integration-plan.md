@@ -282,16 +282,28 @@ Planned categories:
 ## Golden vector migration
 
 Replacing the helper may change the minimal passport canonical byte output or
-payload hash. Any change should be treated as an intentional migration, not
+payload hash. Any change must be treated as an intentional migration, not
 incidental drift.
 
-Before adoption, the project should record:
+Current helper evidence:
+The current helper canonicalizes the minimal passport to 1628 bytes. The current
+SHA-256 payload hash is
+`b85a7ddfefccb9582bf6ab23dac42a968cc0b6aabfc1d29d416ea25e27bfb6bc`, which
+matches the minimal example proof `payload_hash`.
 
-- old helper canonical bytes or hash;
+Before adoption, the project must record:
+
+- current helper canonical bytes or hash;
 - REF-014 canonical bytes or hash;
 - whether the minimal example changes;
-- why the migration is acceptable;
-- which tests pin the new expected value.
+- whether the existing payload hash is preserved or intentionally migrated;
+- why any migration is acceptable;
+- which tests pin the expected value.
+
+Status:
+This is golden-vector migration planning only. It does not execute REF-014,
+adopt REF-014, replace the canonicalizer, update the minimal example, change the
+payload hash, migrate golden vectors, or unblock real signature verification.
 
 ## Security interpretation
 
