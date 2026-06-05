@@ -170,3 +170,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review integration-test planning, golden-vector migration review, and verification-result failure semantics before any REF-014 adoption decision.
+
+## Entry 089
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate integration-test planning
+
+Summary: Refined REF-014 integration-test planning.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+The REF-014 provisional integration plan now refines integration-test planning without executing REF-014-based tests or authorizing runtime integration.
+
+The planned categories now explicitly include the existing `canonical_payload_prepared` boundary, require payload-hash input and signature-input preparation to use the same canonical bytes, preserve proof exclusion from the signed payload, keep duplicate-key raw JSON behavior at the parse boundary, keep schema validation before canonicalization-dependent verification, require unsupported canonicalization and canonicalizer errors to fail closed, and keep signature verification blocked until a later phase.
+
+The plan now aligns with the current numeric-domain milestone. Non-finite values must fail closed. Current-profile unsafe-integer behavior remains outside the passport payload domain because the current profile is numeric-field-free. Future numeric payload fields remain blocked until explicit schema bounds, accepted numeric domains, and failure semantics are recorded.
+
+The REF-014 provisional integration plan now names the remaining adoption blocker as integration-test execution rather than generic integration tests. Executing REF-014-based tests still requires separate adoption approval and is not authorized by the plan.
+
+This is integration-test planning only. It does not execute REF-014 tests, adopt REF-014, install packages, change requirements or lockfiles, replace the canonicalizer, migrate golden vectors, implement numeric-domain enforcement, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, integration-test execution, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review golden-vector migration and verification-result failure semantics before any REF-014 adoption decision or REF-014-based test execution.
