@@ -230,3 +230,32 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review verification-result failure semantics before any REF-014 adoption decision, REF-014-based test execution, canonicalizer replacement, golden-vector migration, or real signature-verification planning.
+
+## Entry 091
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate failure-semantics planning
+
+Summary: Recorded REF-014 verification-result failure semantics.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+The REF-014 provisional integration plan now records verification-result failure semantics that any future REF-014 integration must preserve.
+
+The plan records that canonical payload preparation failures must be represented by a failed `canonical_payload_prepared` verifier check, and verifier paths must return `VerificationResult.failed(...)` with `DENY` rather than allowing canonicalization or candidate-canonicalizer exceptions to escape.
+
+The plan also records that later payload-hash, key-selection, signature-input, algorithm, and signature checks must not run after canonical payload preparation fails. Unsupported declared canonicalization remains a separate `signature_canonicalization_supported` failure. Payload-hash mismatch remains a separate `payload_hash_valid` failure. Real signature verification remains blocked until a later phase.
+
+This is failure-semantics planning only. It does not execute REF-014 tests, adopt REF-014, replace the canonicalizer, change verifier source, change requirements or lockfiles, migrate golden vectors, or unblock real signature verification.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, integration-test execution, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Review remaining REF-014 adoption blockers: build provenance, legal compatibility and attribution completeness, integration-test execution, and golden-vector migration review before any adoption decision.
