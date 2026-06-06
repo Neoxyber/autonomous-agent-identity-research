@@ -634,3 +634,39 @@ repository dependency adoption, package installation in the repository environme
 
 Next step:
 Review official ML-DSA test-vector compatibility and package artifact evidence before any repository dependency adoption or verifier integration proposal.
+
+## Entry 104
+
+Date: 2026-06-06
+
+Type: Signature runtime artifact evidence
+
+Summary: Recorded isolated cryptography package artifact evidence.
+
+Files:
+Added `docs/signature-runtime-artifact-evidence-cryptography-48.0.0.md` and updated this evidence log.
+
+Result:
+Isolated package artifact evidence was recorded for Python `cryptography` version `48.0.0`.
+
+The artifact evidence run used `/tmp/aaid-cryptography-48-artifact-evidence` and a temporary virtual environment outside the repository. The package was not installed into the repository virtual environment.
+
+The isolated run downloaded the `cryptography-48.0.0` source distribution and the `cryptography-48.0.0-cp311-abi3-manylinux_2_34_x86_64` wheel. Observed SHA-256 hashes were recorded for both artifacts.
+
+The wheel metadata and source-distribution metadata recorded package name, version, license expression, Python requirement, runtime dependency surface, project URLs, wheel generator, wheel tag, and license-file presence.
+
+The repository environment check confirmed `repo_venv_cryptography: not installed`.
+
+Overall result:
+PARTIAL. Artifact hashes, metadata, license signal, and dependency surface were captured, but adoption readiness remains partial until provenance verification, vulnerability/security advisory review, dependency-risk review, official test-vector compatibility, encoding decision, and verifier integration planning are completed.
+
+This is artifact evidence only. It does not adopt `cryptography`, approve dependency adoption, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, execute official test vectors, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the artifact evidence commit.
+
+Not implemented:
+repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, official test-vector execution, provenance verification, vulnerability/security advisory review, real passport signature verification, signing-key generation in the repository, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review official ML-DSA test-vector compatibility, provenance options, and dependency-risk evidence before any repository dependency adoption or verifier integration proposal.
