@@ -538,3 +538,32 @@ source verification completion, reference promotion to Verified, dependency adop
 
 Next step:
 Review the exact source identity, publisher identity, access date, and relevance of the new signature runtime references before any isolated runtime experiment.
+
+## Entry 101
+
+Date: 2026-06-06
+
+Type: Signature runtime source review
+
+Summary: Recorded source review details for signature runtime references.
+
+Files:
+Updated `docs/references.md` and this evidence log.
+
+Result:
+The reference register now records access date and source-review notes for REF-020 through REF-027.
+
+REF-020 through REF-027 cover ML-DSA validation-style JSON test planning, NIST final-vector source location, Python `cryptography` ML-DSA runtime API review, pyca/cryptography backend-support boundary review, Open Quantum Safe `liboqs`, Open Quantum Safe ML-DSA documentation, RFC 9881 ML-DSA X.509 encoding research, and RFC 9882 ML-DSA CMS encoding research.
+
+All updated references remain marked `Pending review`. No reference was promoted to `Verified`.
+
+This is source-review documentation only. It records source identity, publisher identity, access date, and relevance notes for later review. It does not complete source verification, approve dependency adoption, run isolated runtime experiments, install packages, change requirements or lockfiles, change verifier source, change schema, implement signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the source-review commit.
+
+Not implemented:
+source verification completion, reference promotion to Verified, dependency adoption, package installation, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, ML-DSA runtime integration, signing key generation, real ML-DSA public-key or signature material, test-vector execution, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Plan the isolated ML-DSA runtime experiment in a temporary environment before any package execution or repository dependency adoption.
