@@ -134,10 +134,24 @@ and failure semantics are recorded.
 
 ### Integration-test planning
 
-REF-014-based tests have not been executed against the repository verifier.
-Executing them requires a separate explicit approval.
+An isolated REF-014 verifier integration execution was run without editing
+source, tests, requirements, or lockfiles. The script monkeypatched the verifier
+canonicalization boundary in memory so REF-014 supplied canonical bytes and
+payload hashes during the run.
 
-Planned categories before runtime integration:
+The first attempt failed because the test script expected unsupported proof
+canonicalization to reach `signature_canonicalization_supported`; the mutated
+value was instead rejected earlier at schema validation. The corrected execution
+treated this as schema-gated fail-closed behavior.
+
+Result:
+PASS. The corrected execution verified byte/hash parity, verifier DENY
+invariant, raw JSON parse boundary, schema-before-canonicalization behavior,
+payload-hash behavior, proof exclusion, signature-input reuse, and
+candidate-canonicalizer error failure semantics. Unsupported canonicalization
+mutation was handled at `schema_valid`.
+
+Planned categories before any runtime integration:
 
 1. REF-014 produces expected canonical bytes for the minimal passport.
 2. The minimal passport payload hash is preserved or intentionally migrated.
