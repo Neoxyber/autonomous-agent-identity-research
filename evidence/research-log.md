@@ -701,3 +701,39 @@ official vector download, official vector execution, repository dependency adopt
 
 Next step:
 Review exact NIST CAVP / ACVP ML-DSA vector files and decide whether an isolated `/tmp` vector-format inspection should be approved.
+
+## Entry 106
+
+Date: 2026-06-06
+
+Type: Signature test-vector format inspection
+
+Summary: Recorded ML-DSA FIPS204 test-vector format inspection.
+
+Files:
+Added `docs/signature-test-vector-format-inspection-mldsa-fips204.md` and updated this evidence log.
+
+Result:
+An isolated format inspection was recorded for NIST ACVP-Server ML-DSA FIPS204 JSON files.
+
+The inspection ran outside the repository under `/tmp/aaid-mldsa-vector-format`. The inspected JSON files were downloaded and inspected only under `/tmp`; no vector files were copied into the repository.
+
+The inspected source family was `usnistgov/ACVP-Server` under `gen-val/json-files`, covering `ML-DSA-keyGen-FIPS204`, `ML-DSA-sigGen-FIPS204`, and `ML-DSA-sigVer-FIPS204`.
+
+The inspection recorded SHA-256 hashes for the selected prompt and expected-results JSON files, confirmed top-level ML-DSA FIPS204 structure, and recorded case counts for key generation, signature generation, and signature verification.
+
+Observed ML-DSA-65 coverage included 8 `sigGen` groups and 4 `sigVer` groups. The `sigVer` format included public keys, signatures, messages or `mu`, context where applicable, and expected `testPassed` labels. Observed ML-DSA-65 byte lengths matched the isolated `cryptography==48.0.0` runtime observations: public key `1952` bytes and signature `3309` bytes.
+
+Overall result:
+PARTIAL. The vector format appears suitable for later isolated compatibility testing, but official compatibility remains unproven until vector execution is explicitly approved and recorded.
+
+This is format inspection only. It does not execute vectors, adopt dependencies, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the format inspection commit.
+
+Not implemented:
+official vector execution, repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, real signature verification, permanent runtime integration, signing-key generation in the repository, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Decide whether to run an isolated `/tmp` ML-DSA-65 `sigVer` compatibility test against the inspected NIST ACVP-Server FIPS204 JSON files.
