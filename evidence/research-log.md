@@ -737,3 +737,39 @@ official vector execution, repository dependency adoption, package installation 
 
 Next step:
 Decide whether to run an isolated `/tmp` ML-DSA-65 `sigVer` compatibility test against the inspected NIST ACVP-Server FIPS204 JSON files.
+
+## Entry 107
+
+Date: 2026-06-06
+
+Type: Signature test-vector execution result
+
+Summary: Recorded isolated ML-DSA-65 sigVer compatibility result.
+
+Files:
+Added `docs/signature-test-vector-execution-results-cryptography-48.0.0-mldsa65-sigver.md` and updated this evidence log.
+
+Result:
+An isolated ML-DSA-65 `sigVer` compatibility result was recorded for Python `cryptography==48.0.0` against NIST ACVP-Server ML-DSA FIPS204 `sigVer` JSON files.
+
+The test ran outside the repository under `/tmp/aaid-mldsa-sigver-compat`. The package and vector files were used only in the isolated temporary environment. No package was installed into the repository virtual environment and no vector files were copied into the repository.
+
+The first broad external run selected two ML-DSA-65 external groups and executed 30 cases. It matched 27 cases and had 3 mismatches, all in `tgId` 4. The mismatches were expected-valid cases observed as invalid: `tcId` 48, `tcId` 49, and `tcId` 51.
+
+Follow-up classification showed that `tgId` 4 contains test-level `hashAlg` values on all 15 cases. The first script selected external groups by group-level metadata only, so those test-level `hashAlg` cases were incorrectly treated as ordinary message-mode verification cases.
+
+The corrected run executed only direct external ML-DSA-65 `sigVer` cases excluding test-level `hashAlg` and internal-interface cases. It executed 15 cases and matched all 15 expected `testPassed` labels.
+
+Overall result:
+PARTIAL. Direct external non-hash ML-DSA-65 `sigVer` compatibility passed for the selected subset, while test-level `hashAlg`, internal-interface, and `mu` cases remain untested or require further mapping research.
+
+This is isolated test-vector execution evidence only. It does not adopt `cryptography`, approve dependency adoption, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, implement real passport signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the execution-result commit.
+
+Not implemented:
+repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, full official vector execution, test-level `hashAlg` handling, internal-interface vector execution, `mu` interface vector execution, real passport signature verification, signing-key generation in the repository, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Research the correct ML-DSA `hashAlg` and internal-interface mapping before expanding official vector execution beyond direct external non-hash `sigVer` cases.
