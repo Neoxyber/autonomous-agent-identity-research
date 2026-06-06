@@ -937,3 +937,48 @@ documentation file moves, documentation file renames, `docs/references.md` move,
 
 Next step:
 Add a central `docs/README.md` that gives readers a clear map of the research areas and the recommended reading order before moving any files.
+
+## Entry 113
+
+Date: 2026-06-06
+
+Type: Documentation file organization
+
+Summary: Organized documentation files into topic folders.
+
+Files:
+Added `docs/README.md`, moved topic documentation files into docs topic folders, updated internal documentation path references, and updated this evidence log.
+
+Result:
+The documentation directory is now organized around a central index and topic folders.
+
+The docs root now contains only:
+
+- `docs/README.md`
+- `docs/references.md`
+
+Topic documentation was moved into:
+
+- `docs/00-foundation/`
+- `docs/10-models/`
+- `docs/20-threat-boundaries/`
+- `docs/30-canonicalization/`
+- `docs/40-signature-verification/`
+- `docs/50-standards-positioning/`
+
+The documentation organization plan was moved into `docs/00-foundation/` so the docs root remains focused on the central index and reference register.
+
+`docs/references.md` remains at the docs root. Evidence files remain unchanged. Specs remain unchanged.
+
+Internal documentation path references were updated in the same migration commit. A markdown link check found no broken markdown links after the move.
+
+This is documentation organization only. It does not change source code, tests, specs, evidence structure, dependencies, verifier behavior, real signature verification, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the documentation organization commit.
+
+Not implemented:
+source changes, test changes, spec moves, evidence file moves, reference-register move, dependency adoption, verifier behavior changes, real signature verification, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Run final tests and push the documentation organization milestone.
