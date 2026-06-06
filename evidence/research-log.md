@@ -509,3 +509,32 @@ real signature verification, dependency adoption, package installation, requirem
 
 Next step:
 Review candidate sources and exact reference entries before running any isolated runtime experiment.
+
+## Entry 100
+
+Date: 2026-06-06
+
+Type: Signature runtime reference candidates
+
+Summary: Added signature runtime and test-vector reference candidates.
+
+Files:
+Updated `docs/references.md` and this evidence log.
+
+Result:
+The reference register now includes pending-review reference candidates for signature runtime and test-vector research.
+
+New entries cover NIST ACVP ML-DSA validation-style material, NIST CAVP / ACVP final JSON vector location, Python `cryptography` ML-DSA documentation, pyca/cryptography backend-support boundary, Open Quantum Safe `liboqs`, Open Quantum Safe ML-DSA documentation, RFC 9881 ML-DSA X.509 algorithm identifiers, and RFC 9882 ML-DSA in CMS.
+
+All new references remain marked `Pending review` with `Accessed` set to `Not recorded`. No reference was promoted to `Verified`.
+
+This is reference-candidate documentation only. It does not complete source verification, approve dependency adoption, run isolated runtime experiments, install packages, change requirements or lockfiles, change verifier source, change schema, implement signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the reference-candidate commit.
+
+Not implemented:
+source verification completion, reference promotion to Verified, dependency adoption, package installation, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, ML-DSA runtime integration, signing key generation, real ML-DSA public-key or signature material, test-vector execution, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Review the exact source identity, publisher identity, access date, and relevance of the new signature runtime references before any isolated runtime experiment.
