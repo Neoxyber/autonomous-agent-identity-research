@@ -124,6 +124,7 @@ Evidence logs stay outside `docs/`:
 
 - `../evidence/research-log-archive-001.md`
 - `../evidence/research-log-archive-002.md`
+- `../evidence/research-log-archive-003.md`
 - `../evidence/research-log.md`
 
 Evidence is chronological and should not be reorganized by topic.

@@ -157,13 +157,15 @@ The migration should avoid leaving broken links or ambiguous reading paths.
 
 ## Evidence handling
 
-Evidence logs should remain in `evidence/`.
+Evidence logs remain in `evidence/` and keep their chronological archive pattern.
 
-The active evidence log and archives should not be moved into topic folders at
-this stage because they are chronological audit records, not topic documents.
+The documentation structure has now been organized. Readers should use
+`docs/README.md` as the living documentation index and reading guide.
 
-Future evidence scaling can be handled with an `evidence/README.md` if needed,
-but the current evidence files should remain unchanged.
+This plan should not be updated for every future archive, file move, or research
+milestone. Ongoing navigation updates should happen in `docs/README.md`. This
+plan remains a historical organization plan unless a new organization migration
+is needed.
 
 ## Non-goals
 
