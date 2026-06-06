@@ -342,7 +342,7 @@ identity that has not completed onboarding has no `active` passport and fails
 closed under default deny.
 
 This is documentation alignment only. The forward-looking documents
-(`ROADMAP.md`, `docs/research-questions.md`, `docs/scope.md`) still list
+(`ROADMAP.md`, `docs/00-foundation/research-questions.md`, `docs/00-foundation/scope.md`) still list
 `rotated` and `pending_verification` and are deferred to a later reconciliation
 pass, so this change does not claim repo-wide lifecycle consistency.
 

@@ -28,8 +28,8 @@ This comparison is evidence review only. It does not:
 
 | Reference | Result record |
 | --- | --- |
-| REF-014 | `docs/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md` |
-| REF-015 | `docs/canonicalization-evaluation-results-ref015-jcs-0.2.1.md` |
+| REF-014 | `docs/30-canonicalization/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md` |
+| REF-015 | `docs/30-canonicalization/canonicalization-evaluation-results-ref015-jcs-0.2.1.md` |
 | REF-016 | Staged `cyberphone/json-canonicalization` vectors under `/tmp` |
 
 ## Summary comparison

@@ -7,8 +7,8 @@ will be recorded later. It standardizes the fields, tables, and checklists so
 that any future evaluation produces comparable, reviewable evidence.
 
 It records no live evaluation results in this step. Every value below is a
-placeholder. It builds on `docs/canonicalization-candidate-matrix.md` and
-`docs/canonicalization-isolated-evaluation-plan.md`, which list the candidates
+placeholder. It builds on `docs/30-canonicalization/canonicalization-candidate-matrix.md` and
+`docs/30-canonicalization/canonicalization-isolated-evaluation-plan.md`, which list the candidates
 and define the planned isolated process.
 
 ## Current boundary

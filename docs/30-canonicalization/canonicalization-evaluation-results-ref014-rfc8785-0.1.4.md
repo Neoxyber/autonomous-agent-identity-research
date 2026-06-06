@@ -4,7 +4,7 @@
 
 This document records the results of one isolated canonicalization candidate
 evaluation, following the structure defined in
-`docs/canonicalization-evaluation-results-template.md`. It captures observed
+`docs/30-canonicalization/canonicalization-evaluation-results-template.md`. It captures observed
 evidence from a temporary environment outside the repository. It does not select
 or adopt the candidate and does not change the verifier.
 

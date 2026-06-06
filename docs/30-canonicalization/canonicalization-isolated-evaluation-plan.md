@@ -6,7 +6,7 @@ This document defines the planned isolated evaluation process for canonicalizati
 candidates before any package execution, dependency adoption, or verifier change.
 
 It is a plan only. It does not install, execute, select, or adopt any package.
-It builds on `docs/canonicalization-candidate-matrix.md` and
+It builds on `docs/30-canonicalization/canonicalization-candidate-matrix.md` and
 `specs/canonicalization-candidate-evaluation.md`, which list the candidates and
 define the evaluation framework. Its goal is to describe how a later evaluation
 would run safely and what it would record, so that any adoption decision is based
