@@ -387,3 +387,32 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Decide whether to defer REF-014 adoption and move to real signature-verification planning, or first record an explicit REF-014 adoption/defer decision.
+
+## Entry 096
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate adoption decision
+
+Summary: Deferred REF-014 adoption after isolated evidence collection.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+REF-014 adoption remains deferred. The collected evidence is sufficient to inform future canonicalizer adoption, but the repository will not replace the current helper, add REF-014 as a dependency, update requirements or lockfiles, or promote REF-014 to Verified without a separate adoption decision.
+
+Real signature-verification planning may proceed while runtime canonicalizer adoption remains separate.
+
+This decision follows earlier REF-014 evidence covering artifact provenance, Apache-2.0 license and attribution evidence, dependency and maintenance-risk evidence, build-provenance status, verifier-boundary evidence, numeric-domain evidence, golden-vector comparison, and isolated verifier integration execution.
+
+This is an adoption-deferral decision only. It does not adopt REF-014, install REF-014 into the repository, change requirements or lockfiles, replace the canonicalizer, change verifier source, migrate golden vectors, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, artifact rebuild, reproducible-build verification, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, permanent REF-014 verifier integration tests, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Begin real signature-verification planning while keeping canonicalizer adoption separate.
