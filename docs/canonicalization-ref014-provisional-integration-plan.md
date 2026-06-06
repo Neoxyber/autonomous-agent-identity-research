@@ -242,8 +242,12 @@ requirements changes, lockfile changes, canonicalizer replacement, real
 signature verification, post-quantum signing, issuer trust, revocation, policy,
 audit, gateway, cloud, or external integrations.
 
-## Next step
+## Current decision
 
-Pause before any REF-014 execution. The next step should be an explicit decision
-on whether to run REF-014 integration-test execution in isolation, continue
-golden-vector migration review, or defer REF-014 adoption.
+REF-014 adoption remains deferred. The collected evidence is sufficient to
+inform future canonicalizer adoption, but the repository will not replace the
+current helper, add REF-014 as a dependency, update requirements or lockfiles, or
+promote REF-014 to Verified without a separate adoption decision.
+
+Real signature-verification planning may proceed while keeping runtime
+canonicalizer adoption separate.
