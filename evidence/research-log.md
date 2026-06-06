@@ -598,3 +598,39 @@ package execution, package installation in the repository, dependency adoption, 
 
 Next step:
 Review and approve the isolated `/tmp` runtime experiment command plan before any package execution.
+
+## Entry 103
+
+Date: 2026-06-06
+
+Type: Signature runtime isolated evaluation
+
+Summary: Recorded isolated cryptography ML-DSA runtime evaluation.
+
+Files:
+Added `docs/signature-runtime-evaluation-results-cryptography-48.0.0.md` and updated this evidence log.
+
+Result:
+The first isolated ML-DSA runtime evaluation was recorded for Python `cryptography` version `48.0.0`.
+
+The evaluation ran outside the repository environment under `/tmp/aaid-mldsa-runtime-eval` using a temporary virtual environment. The package was not installed into the repository virtual environment.
+
+The isolated runtime exposed the ML-DSA module and the `MLDSA65PrivateKey` and `MLDSA65PublicKey` classes. The observed backend signal was `OpenSSL 4.0.0 14 Apr 2026`.
+
+Disposable ML-DSA-65 key generation, signing, verification, raw public-key export, and raw public-key import passed in the isolated environment. Observed sizes were raw public key `1952` bytes, private seed `32` bytes, and signature `3309` bytes.
+
+Negative checks passed for modified message, modified signature, wrong context, malformed-length public keys, mutated same-length public key verification, and malformed signatures. The observed failure behavior used `InvalidSignature` or `ValueError` in the tested cases.
+
+Overall result:
+PARTIAL. The candidate showed strong isolated ML-DSA-65 runtime behavior, but adoption readiness remains partial until official test-vector compatibility, artifact provenance, dependency-risk review, encoding decision, and verifier integration planning are completed.
+
+This is isolated runtime evidence only. It does not adopt `cryptography`, approve dependency adoption, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, add real passport signature material, execute official test vectors, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the evaluation result commit.
+
+Not implemented:
+repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, official test-vector execution, artifact provenance verification, real passport signature verification, signing-key generation in the repository, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review official ML-DSA test-vector compatibility and package artifact evidence before any repository dependency adoption or verifier integration proposal.
