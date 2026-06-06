@@ -476,3 +476,36 @@ real signature verification, dependency adoption, package installation, requirem
 
 Next step:
 Review candidate ML-DSA runtime support, key encoding, signature encoding, and test-vector sources before any implementation proposal.
+
+## Entry 099
+
+Date: 2026-06-06
+
+Type: Signature runtime research planning
+
+Summary: Added signature runtime research plan.
+
+Files:
+Added `docs/signature-verification-runtime-research.md` and updated this evidence log.
+
+Result:
+A focused signature runtime research plan now defines how the project will evaluate runtime support for real passport signature verification before any implementation proposal.
+
+The plan records ML-DSA-65 as the first passport signature research target, keeps SLH-DSA as a backup signature-family direction, and keeps ML-KEM outside passport signature scope as future secure key-establishment work.
+
+The plan defines candidate runtime paths for later review, including Python `cryptography` ML-DSA support, Open Quantum Safe `liboqs` and appropriate language bindings, and other maintained ML-DSA-capable libraries only after source, license, maintenance, dependency, and security review.
+
+It records runtime-support questions, encoding questions, test-vector questions, an evidence matrix, isolated evaluation rules, a security and responsible-disclosure boundary, and findings that would be useful to industry.
+
+The plan preserves the current boundary: candidate evaluation does not mean adoption, candidate experiments must run outside the repository environment unless separately approved, and the repository must not accidentally adopt a candidate through requirements, lockfiles, imports, copied source, generated artifacts, or example data.
+
+This is runtime research planning only. It does not adopt a dependency, install packages, change requirements or lockfiles, change verifier source, change schema, add real signature material, run test vectors, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the runtime research plan commit.
+
+Not implemented:
+real signature verification, dependency adoption, package installation, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, ML-DSA runtime integration, signing key generation, real ML-DSA public-key or signature material, test-vector execution, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review candidate sources and exact reference entries before running any isolated runtime experiment.
