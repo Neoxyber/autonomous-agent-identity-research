@@ -470,6 +470,35 @@ canonicalizer, verify signatures, change requirements, change the schema, update
 golden vectors, implement policy evaluation, implement audit storage, or add
 post-quantum signing.
 
+## Real signature-verification planning boundary
+
+Real signature-verification planning may proceed after the REF-014 adoption
+deferral decision, while runtime canonicalizer adoption remains separate.
+
+The first real signature-verification design should stay narrow:
+
+- verify only the already prepared canonical passport payload bytes;
+- preserve proof exclusion from the signed input;
+- use the selected public key after key selection, key validity, and
+  `proof.verification_method` to key `kid` binding have passed;
+- keep the algorithm allowlist explicit and narrow;
+- fail closed for unsupported algorithms, malformed keys, malformed signatures,
+  unsupported encodings, and verifier-library errors;
+- keep dependency adoption separate from the verifier behavior decision;
+- keep the passport verifier unable to return `ALLOW` until the complete
+  signature, revocation, policy, audit, and enforcement gates are intentionally
+  connected.
+
+Planning notes:
+ML-DSA-65 remains the current research target for the first passport signature
+path. A future implementation should not write custom cryptography. It should
+use a reviewed library only after dependency, runtime-support, encoding, test
+vector, and rollback decisions are recorded.
+
+This section does not implement signature verification, add dependencies, change
+requirements or lockfiles, change verifier source, adopt REF-014, or create an
+`ALLOW` path.
+
 ## Verifier canonicalization-boundary decision
 
 Canonicalization should remain behind the verifier's existing parse and schema
