@@ -43,14 +43,14 @@ Retired means the source is no longer used by this repository.
 | REF-017 | Alternative canonical JSON implementation | canonicaljson | Matrix.org | Pending review | Not recorded | Used as excluded comparison because it targets Matrix canonical JSON rather than RFC 8785/JCS |
 | REF-018 | Legacy/low-maintenance JCS candidate | json-canonical | AnasMK | Pending review | Not recorded | Used as excluded or low-priority comparison candidate |
 | REF-019 | Incomplete JSON canonicalization candidate | jsoncanon | sveinugu | Pending review | Not recorded | Used as excluded comparison because floating-point support appears incomplete |
-| REF-020 | ML-DSA validation interface | ACVP ML-DSA JSON Specification | NIST | Pending review | Not recorded | Used for ML-DSA validation-style test planning |
-| REF-021 | ML-DSA final test-vector source | CAVP / ACVP final JSON vector location | NIST | Pending review | Not recorded | Used to avoid draft-era ML-DSA vector confusion |
-| REF-022 | ML-DSA Python runtime candidate | Python cryptography ML-DSA documentation | Python Cryptographic Authority | Pending review | Not recorded | Used for candidate ML-DSA runtime review |
-| REF-023 | Python cryptography backend boundary | State of OpenSSL for pyca/cryptography | Python Cryptographic Authority | Pending review | Not recorded | Used for backend-support review for ML-DSA APIs |
-| REF-024 | Post-quantum runtime candidate | Open Quantum Safe liboqs | Open Quantum Safe | Pending review | Not recorded | Used for candidate PQC runtime and test-harness review |
-| REF-025 | ML-DSA runtime candidate details | Open Quantum Safe ML-DSA documentation | Open Quantum Safe | Pending review | Not recorded | Used for ML-DSA-specific size and algorithm-support review |
-| REF-026 | ML-DSA X.509 encoding | RFC 9881 ML-DSA X.509 algorithm identifiers | IETF | Pending review | Not recorded | Used for ML-DSA public-key and algorithm-identifier encoding research |
-| REF-027 | ML-DSA CMS encoding | RFC 9882 ML-DSA in CMS | IETF | Pending review | Not recorded | Used for ML-DSA signature-container and algorithm-identifier encoding research |
+| REF-020 | ML-DSA validation interface | ACVP ML-DSA JSON Specification | NIST | Pending review | 2026-06-06 | Source identity and publisher checked against NIST Pages; used for ML-DSA validation-style JSON test planning |
+| REF-021 | ML-DSA final test-vector source | NIST PQC Archive / CAVP ACVP-Server JSON vector location | NIST | Pending review | 2026-06-06 | Source identity and publisher checked against NIST CSRC; used to avoid draft-era ML-DSA vector confusion |
+| REF-022 | ML-DSA Python runtime candidate | Python cryptography ML-DSA documentation | Python Cryptographic Authority | Pending review | 2026-06-06 | Source identity checked against cryptography documentation; used for candidate ML-DSA runtime API review |
+| REF-023 | Python cryptography backend boundary | State of OpenSSL for pyca/cryptography | Python Cryptographic Authority | Pending review | 2026-06-06 | Source identity checked against cryptography documentation; used for ML-DSA backend-support boundary review |
+| REF-024 | Post-quantum runtime candidate | Open Quantum Safe liboqs | Open Quantum Safe | Pending review | 2026-06-06 | Source identity and publisher checked against Open Quantum Safe; used for candidate PQC runtime and test-harness review |
+| REF-025 | ML-DSA runtime candidate details | Open Quantum Safe ML-DSA documentation | Open Quantum Safe | Pending review | 2026-06-06 | Source identity and publisher checked against Open Quantum Safe; used for ML-DSA-specific size and algorithm-support review |
+| REF-026 | ML-DSA X.509 encoding | RFC 9881 ML-DSA X.509 algorithm identifiers | IETF | Pending review | 2026-06-06 | Source identity checked against RFC Editor / IETF datatracker; used for ML-DSA public-key and algorithm-identifier encoding research |
+| REF-027 | ML-DSA CMS encoding | RFC 9882 ML-DSA in CMS | IETF | Pending review | 2026-06-06 | Source identity checked against RFC Editor / IETF datatracker; used for ML-DSA signature-container and algorithm-identifier encoding research |
 
 ## Use policy
 
