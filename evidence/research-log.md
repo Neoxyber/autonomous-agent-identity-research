@@ -838,3 +838,37 @@ additional vector execution, repository dependency adoption, package installatio
 
 Next step:
 Review FIPS 204 and ACVP ML-DSA mapping details more closely before deciding whether to keep passport signature verification scoped to pure direct external ML-DSA message-mode verification for the first implementation plan.
+
+## Entry 110
+
+Date: 2026-06-06
+
+Type: Signature proof profile initial scope
+
+Summary: Added initial signature proof profile scope.
+
+Files:
+Added `docs/signature-proof-profile-initial-scope.md` and updated this evidence log.
+
+Result:
+A focused profile-scope document now records the initial passport signature-verification boundary before any verifier implementation, dependency adoption, schema change, or passport-verifier `ALLOW` path.
+
+The document scopes the first passport signature-verification profile to ML-DSA-65 pure direct external message-mode verification, with canonical passport payload bytes as the signed message. It records that context handling, raw public-key encoding, and raw signature encoding still require explicit profile decisions before implementation.
+
+The document explicitly leaves test-level `hashAlg`, HashML-DSA, internal-interface cases, `externalMu`, `mu` input handling, reconstructed internal ML-DSA values, signing operations, generated passport test signatures, and verifier `ALLOW` behavior out of scope.
+
+The document records required implementation preconditions, fail-closed behavior for unsupported signature modes, the narrow research position, non-goals, and the next step.
+
+Overall result:
+PARTIAL. The initial profile scope is now recorded, but real signature verification remains unimplemented and implementation preconditions remain unresolved.
+
+This is a profile-scope decision only. It does not execute vectors, adopt dependencies, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the profile-scope commit.
+
+Not implemented:
+additional vector execution, repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, real passport signature verification, full official vector compatibility, test-level `hashAlg` handling implementation, internal-interface vector execution, `mu` interface vector execution, permanent runtime integration, signing-key generation in the repository, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Plan the first implementation boundary for pure direct external ML-DSA-65 message-mode verification without changing verifier behavior yet.
