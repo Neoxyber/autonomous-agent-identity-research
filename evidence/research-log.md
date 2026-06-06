@@ -670,3 +670,34 @@ repository dependency adoption, package installation in the repository environme
 
 Next step:
 Review official ML-DSA test-vector compatibility, provenance options, and dependency-risk evidence before any repository dependency adoption or verifier integration proposal.
+
+## Entry 105
+
+Date: 2026-06-06
+
+Type: Signature test-vector compatibility planning
+
+Summary: Added ML-DSA test-vector compatibility plan.
+
+Files:
+Added `docs/signature-test-vector-compatibility-plan.md` and updated this evidence log.
+
+Result:
+A focused compatibility plan now defines how official or authoritative ML-DSA-65 test-vector material should be reviewed before any repository dependency adoption, verifier integration, or real signature-verification implementation.
+
+The plan records that final-version ML-DSA material from NIST CAVP / ACVP sources should be preferred, and that draft-era or intermediate post-quantum vectors must not be treated as final ML-DSA compatibility evidence unless the limitation is explicitly recorded.
+
+The plan records compatibility questions for message bytes, public-key bytes, signature bytes, JSON encoding, ML-DSA-65 parameter-set coverage, deterministic test material, runtime API compatibility, invalid-vector behavior, fail-closed exception mapping, and API limitations.
+
+The plan also records planned compatibility categories, isolated execution rules, evidence to capture later, stop conditions, non-goals, and the next step.
+
+This is test-vector compatibility planning only. It does not download official vectors, execute vectors, adopt dependencies, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, add real passport signature material, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the compatibility plan commit.
+
+Not implemented:
+official vector download, official vector execution, repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, real passport signature verification, signing-key generation in the repository, permanent runtime integration, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review exact NIST CAVP / ACVP ML-DSA vector files and decide whether an isolated `/tmp` vector-format inspection should be approved.
