@@ -906,3 +906,34 @@ dependency adoption, package installation in the repository environment, require
 
 Next step:
 Review this boundary against the existing verifier code and tests before deciding whether to create adapter-interface tests without importing a cryptographic runtime.
+
+## Entry 112
+
+Date: 2026-06-06
+
+Type: Documentation organization planning
+
+Summary: Added documentation organization plan.
+
+Files:
+Added `docs/documentation-organization-plan.md` and updated this evidence log.
+
+Result:
+A focused documentation organization plan now records how the repository documentation should be organized as the research grows.
+
+The plan keeps `docs/references.md` at the docs root, keeps evidence files unchanged, keeps specs unchanged, avoids numeric prefixes on existing filenames, and recommends folder-level README files for reading order.
+
+The plan proposes future topic folders for foundation documents, research models, threat boundaries, canonicalization, signature verification, and standards positioning. It also records that future folders should be added only when they reduce confusion and have enough material to justify them.
+
+The plan records a staged migration order: add the organization plan, add a central `docs/README.md`, add folder README files without moving documents, run a link-impact check, then move topic documents in small reviewable stages using `git mv` with link updates in the same commit.
+
+This is organization planning only. It does not move files, rename files, update references, change source code, change tests, change specs, adopt dependencies, change verifier behavior, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the organization-plan commit.
+
+Not implemented:
+documentation file moves, documentation file renames, `docs/references.md` move, evidence file moves, specs moves, numeric filename prefixes, reference updates, source changes, test changes, dependency adoption, verifier behavior changes, real signature verification, folder README files, central docs README, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Add a central `docs/README.md` that gives readers a clear map of the research areas and the recommended reading order before moving any files.
