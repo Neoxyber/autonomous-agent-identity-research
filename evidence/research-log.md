@@ -567,3 +567,34 @@ source verification completion, reference promotion to Verified, dependency adop
 
 Next step:
 Plan the isolated ML-DSA runtime experiment in a temporary environment before any package execution or repository dependency adoption.
+
+## Entry 102
+
+Date: 2026-06-06
+
+Type: Signature runtime isolated experiment planning
+
+Summary: Added isolated ML-DSA runtime experiment plan.
+
+Files:
+Added `docs/signature-verification-isolated-experiment-plan.md` and updated this evidence log.
+
+Result:
+A focused isolated experiment plan now defines how future ML-DSA runtime evaluation should run before any package execution, repository dependency adoption, or signature-verification implementation.
+
+The plan records that future runtime experiments must run outside the repository environment, preferably under `/tmp/aaid-mldsa-runtime-eval`, and must not install packages into the repository virtual environment.
+
+The plan defines candidate order, allowed experiment actions, disallowed experiment actions, evidence to capture, result categories, stop conditions, responsible-disclosure handling, non-goals, and the next review step.
+
+The plan preserves the current boundary: real signature verification is still not implemented; the verifier still records `signature_verification_not_implemented`, returns `DENY`, and cannot return `ALLOW`.
+
+This is experiment planning only. It does not execute packages, install dependencies, change requirements or lockfiles, change verifier source, change schema, update example passport values, generate signing keys in the repository, run test vectors, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the experiment plan commit.
+
+Not implemented:
+package execution, package installation in the repository, dependency adoption, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, real signature verification, signing-key generation in the repository, permanent runtime integration, test-vector execution in the repository, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review and approve the isolated `/tmp` runtime experiment command plan before any package execution.
