@@ -872,3 +872,37 @@ additional vector execution, repository dependency adoption, package installatio
 
 Next step:
 Plan the first implementation boundary for pure direct external ML-DSA-65 message-mode verification without changing verifier behavior yet.
+
+## Entry 111
+
+Date: 2026-06-06
+
+Type: Signature implementation boundary planning
+
+Summary: Added signature verification implementation boundary plan.
+
+Files:
+Added `docs/signature-verification-implementation-boundary-plan.md` and updated this evidence log.
+
+Result:
+A focused implementation-boundary plan now defines the smallest future boundary for pure direct external ML-DSA-65 message-mode verification before changing verifier behavior.
+
+The plan records the current boundary: the verifier already prepares canonical passport payload bytes, records `signature_input_prepared`, records `signature_verification_not_implemented`, returns `DENY`, and cannot return `ALLOW`.
+
+The plan defines a future small internal signature-verification adapter that should accept only prepared canonical passport payload bytes, selected public-key metadata, selected proof metadata, and configured signature-profile information. The adapter must not perform parsing, canonicalization, issuer trust, revocation, authorization, approval, audit, enforcement, gateway, or MCP decisions.
+
+The plan records the first supported profile, explicitly unsupported modes, proposed adapter result model, proposed verifier checks, fail-closed behavior, required tests, dependency blocker, non-goals, and the next step.
+
+Overall result:
+PARTIAL. The implementation boundary is now planned, but real signature verification remains unimplemented and dependency adoption remains blocked.
+
+This is planning only. It does not adopt dependencies, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the boundary-plan commit.
+
+Not implemented:
+dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, new passport signatures, real signature verification, signing-key generation, full official vector compatibility, test-level `hashAlg` handling, internal-interface vector execution, `mu` interface vector execution, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Review this boundary against the existing verifier code and tests before deciding whether to create adapter-interface tests without importing a cryptographic runtime.
