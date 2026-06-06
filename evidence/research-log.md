@@ -416,3 +416,32 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Begin real signature-verification planning while keeping canonicalizer adoption separate.
+
+## Entry 097
+
+Date: 2026-06-06
+
+Type: Signature verification planning boundary
+
+Summary: Recorded real signature-verification planning boundary.
+
+Files:
+Updated `docs/agent-passport-threat-model-and-trust-boundaries.md` and this evidence log.
+
+Result:
+The threat model now records that real signature-verification planning may proceed after the REF-014 adoption deferral decision while runtime canonicalizer adoption remains separate.
+
+The first signature-verification design is constrained to the already prepared canonical passport payload bytes, proof exclusion from the signed input, selected public key after key selection and key validity checks, exact `proof.verification_method` to key `kid` binding, explicit algorithm allowlisting, and fail-closed handling for unsupported algorithms, malformed keys, malformed signatures, unsupported encodings, and verifier-library errors.
+
+ML-DSA-65 remains the current research target for the first passport signature path. A future implementation should not write custom cryptography and should use a reviewed library only after dependency, runtime-support, encoding, test-vector, and rollback decisions are recorded.
+
+This is planning-boundary evidence only. It does not implement signature verification, add dependencies, change requirements or lockfiles, change verifier source, adopt REF-014, replace the canonicalizer, or create a passport-verifier `ALLOW` path.
+
+Tests:
+Not run for this evidence-only entry yet. No source, test, requirement, or lockfile files were changed.
+
+Not implemented:
+signature verification, dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, ML-DSA runtime integration, test-vector execution, key encoding decisions, rollback handling, real cryptographic verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Inspect ML-DSA runtime support, key encoding, and test-vector options before any signature-verification implementation.
