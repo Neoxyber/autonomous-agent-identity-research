@@ -804,3 +804,37 @@ additional vector execution, repository dependency adoption, package installatio
 
 Next step:
 Review FIPS 204, the ACVP ML-DSA JSON specification, and the candidate runtime documentation to decide whether `hashAlg`, internal-interface, and `mu` cases can be executed safely in isolation or should remain explicitly out of scope.
+
+## Entry 109
+
+Date: 2026-06-06
+
+Type: Signature hashAlg source review
+
+Summary: Recorded ML-DSA hashAlg source-review findings.
+
+Files:
+Added `docs/signature-test-vector-hashalg-source-review.md` and updated this evidence log.
+
+Result:
+A focused source-review document now records findings for ML-DSA `hashAlg`, internal-interface, `externalMu`, and `mu` mapping before expanding isolated ML-DSA-65 `sigVer` vector execution beyond the direct external non-hash subset.
+
+The document records the current boundary: Python `cryptography==48.0.0` passed the direct external non-hash ML-DSA-65 `sigVer` subset with 15 executed cases, 15 matches, and 0 mismatches. The earlier broader external run remains PARTIAL because 3 mismatches occurred in `tgId` 4 where follow-up inspection showed test-level `hashAlg` values on all 15 cases.
+
+The source-review findings record that future ML-DSA compatibility work must not treat pure ML-DSA, HashML-DSA, internal-interface inputs, and `mu` inputs as interchangeable. ACVP vector fields require explicit mapping before execution, and candidate runtime documentation and issue history must be reviewed before attempting `hashAlg`, internal-interface, or `mu` cases.
+
+The document records mapping risks, research questions, evaluation classification, non-goals, and the next step. Additional vector execution remains blocked until mapping review.
+
+Overall result:
+NEEDS_RESEARCH. Direct external non-hash ML-DSA-65 `sigVer` remains the only passing official-vector subset recorded so far. `hashAlg`, HashML-DSA runtime support, internal-interface mapping, `mu` mapping, and passport proof-profile decisions remain unresolved.
+
+This is source review only. It does not execute more vectors, adopt dependencies, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the source-review commit.
+
+Not implemented:
+additional vector execution, repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, real passport signature verification, full official vector compatibility, test-level `hashAlg` handling implementation, internal-interface vector execution, `mu` interface vector execution, permanent runtime integration, signing-key generation in the repository, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review FIPS 204 and ACVP ML-DSA mapping details more closely before deciding whether to keep passport signature verification scoped to pure direct external ML-DSA message-mode verification for the first implementation plan.
