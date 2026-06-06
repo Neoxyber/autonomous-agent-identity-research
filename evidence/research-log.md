@@ -445,3 +445,34 @@ signature verification, dependency adoption, package installation into the repos
 
 Next step:
 Inspect ML-DSA runtime support, key encoding, and test-vector options before any signature-verification implementation.
+
+## Entry 098
+
+Date: 2026-06-06
+
+Type: Signature verification planning
+
+Summary: Added focused signature-verification planning document.
+
+Files:
+Added `docs/signature-verification-planning.md` and updated this evidence log.
+
+Result:
+A focused signature-verification planning document now records the first planning boundary for real passport signature verification.
+
+The document separates signature-verification planning from canonicalization planning, post-quantum readiness, issuer trust, revocation, authorization, approval, audit, and enforcement.
+
+It records the current repository boundary: the verifier prepares canonical passport payload bytes, excludes the envelope wrapper and detached proof material from the signed input, records `signature_verification_not_implemented`, returns `DENY`, and cannot return `ALLOW`.
+
+The document also records the implemented gates that must run before any future signature step, the current ML-DSA-65 research direction, SLH-DSA backup direction, runtime-support boundary, unresolved key and signature encoding questions, initial raw-byte base64url encoding position, test-vector requirements, failure semantics, adapter boundary, and adoption blockers.
+
+This is planning evidence only. It does not implement real signature verification, adopt a cryptographic dependency, install packages, change requirements or lockfiles, change verifier source, change schema, update example passport values, add signing key generation, add test-vector execution, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the planning commit.
+
+Not implemented:
+real signature verification, dependency adoption, package installation, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, ML-DSA runtime integration, signing key generation, real ML-DSA public-key or signature material, test-vector execution, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review candidate ML-DSA runtime support, key encoding, signature encoding, and test-vector sources before any implementation proposal.
