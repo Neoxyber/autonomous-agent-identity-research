@@ -356,3 +356,34 @@ dependency adoption, package installation into the repository, requirements chan
 
 Next step:
 Review whether to run REF-014 verifier integration-test execution in isolation or defer REF-014 adoption before moving to real signature-verification planning.
+
+## Entry 095
+
+Date: 2026-06-05
+
+Type: Canonicalization candidate verifier integration execution
+
+Summary: Recorded isolated REF-014 verifier integration execution.
+
+Files:
+Updated `docs/canonicalization-ref014-provisional-integration-plan.md` and this evidence log.
+
+Result:
+An isolated REF-014 verifier integration execution was run without editing repository source, tests, requirements, or lockfiles. The script monkeypatched the verifier canonicalization boundary in memory so REF-014 supplied canonical bytes and payload hashes during the run.
+
+The first attempt failed because the test script expected unsupported proof canonicalization to reach `signature_canonicalization_supported`; the mutated value was instead rejected earlier at schema validation. The corrected execution treated this as schema-gated fail-closed behavior.
+
+The corrected execution passed. It verified REF-014 byte/hash parity, the verifier DENY invariant, raw JSON duplicate-key parse boundary, schema-before-canonicalization behavior, payload-hash behavior, proof exclusion, signature-input reuse, and candidate-canonicalizer error failure semantics. Unsupported canonicalization mutation was handled at `schema_valid`.
+
+Earlier REF-014 entries already recorded artifact provenance, Apache-2.0 license and attribution evidence, dependency and maintenance-risk evidence, build-provenance status, verifier-boundary evidence, numeric-domain evidence, golden-vector comparison, and verification-result failure semantics.
+
+This is isolated verifier integration execution evidence only. It does not adopt REF-014, install REF-014 into the repository, change requirements or lockfiles, replace the canonicalizer, change verifier source, migrate golden vectors, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+Repository baseline before the isolated execution passed with 594 tests. Full tests should be run again before push.
+
+Not implemented:
+dependency adoption, package installation into the repository, requirements changes, lockfile changes, canonicalizer replacement, verifier source changes, artifact rebuild, reproducible-build verification, minimal example update, payload-hash update, golden-vector migration, future numeric payload-field support, numeric-domain enforcement, permanent REF-014 verifier integration tests, real signature verification, reference promotion to Verified, passport-verifier `ALLOW` path, Civo, Supabase, MCP, gateway, storage, cloud deployment, or production use.
+
+Next step:
+Decide whether to defer REF-014 adoption and move to real signature-verification planning, or first record an explicit REF-014 adoption/defer decision.
