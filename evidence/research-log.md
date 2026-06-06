@@ -773,3 +773,34 @@ repository dependency adoption, package installation in the repository environme
 
 Next step:
 Research the correct ML-DSA `hashAlg` and internal-interface mapping before expanding official vector execution beyond direct external non-hash `sigVer` cases.
+
+## Entry 108
+
+Date: 2026-06-06
+
+Type: Signature hashAlg and internal-interface mapping planning
+
+Summary: Added ML-DSA hashAlg and internal-interface mapping plan.
+
+Files:
+Added `docs/signature-test-vector-hashalg-internal-mapping-plan.md` and updated this evidence log.
+
+Result:
+A focused mapping plan now defines the next research boundary for ML-DSA test-vector compatibility after the isolated direct external non-hash `sigVer` subset passed.
+
+The plan records that the direct external non-hash ML-DSA-65 `sigVer` subset passed with 15 executed cases, 15 matches, and 0 mismatches, while the first broader external run produced 3 mismatches in `tgId` 4 where follow-up inspection showed test-level `hashAlg` values on all 15 cases.
+
+The plan defines the next research question as how ACVP `hashAlg`, internal-interface, `externalMu`, and `mu` test cases should be interpreted, and whether the candidate runtime exposes the required interface clearly enough for later isolated execution.
+
+The plan records mapping topics, source review targets, possible outcomes, non-goals, and the next step.
+
+This is mapping research planning only. It does not execute more vectors, adopt dependencies, install packages into the repository environment, change requirements or lockfiles, change verifier source, change schema, implement real signature verification, or create a passport-verifier `ALLOW` path.
+
+Tests:
+`python -m pytest -q` passed with 594 tests after the mapping plan commit.
+
+Not implemented:
+additional vector execution, repository dependency adoption, package installation in the repository environment, requirements changes, lockfile changes, verifier source changes, schema changes, example passport updates, real passport signature verification, full official vector compatibility, test-level `hashAlg` handling, internal-interface vector execution, `mu` interface vector execution, permanent runtime integration, signing-key generation in the repository, issuer trust registry, signed revocation evidence, authorization policy changes, approval enforcement changes, audit storage, gateway integration, MCP integration, Civo, Supabase, cloud deployment, production readiness, legal compliance, certification, reference promotion to Verified, or passport-verifier `ALLOW` path.
+
+Next step:
+Review FIPS 204, the ACVP ML-DSA JSON specification, and the candidate runtime documentation to decide whether `hashAlg`, internal-interface, and `mu` cases can be executed safely in isolation or should remain explicitly out of scope.
