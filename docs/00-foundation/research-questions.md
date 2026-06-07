@@ -38,7 +38,7 @@ The research must consider portable credentials, decentralized identifiers, publ
 
 How can revocation work in both online and offline environments?
 
-The research must consider active, suspended, revoked, expired, compromised, rotated, and pending verification states.
+The research must consider active, suspended, revoked, expired, compromised, and retired lifecycle states. Rotation should be treated as a transition or reason, and pending review should be handled outside `lifecycle_status` unless a later schema decision changes that boundary.
 
 ### RQ6. Post-quantum readiness
 

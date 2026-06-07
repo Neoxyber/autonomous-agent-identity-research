@@ -341,10 +341,7 @@ pending state would require a separate later schema decision; until then, an
 identity that has not completed onboarding has no `active` passport and fails
 closed under default deny.
 
-This is documentation alignment only. The forward-looking documents
-(`ROADMAP.md`, `docs/00-foundation/research-questions.md`, `docs/00-foundation/scope.md`) still list
-`rotated` and `pending_verification` and are deferred to a later reconciliation
-pass, so this change does not claim repo-wide lifecycle consistency.
+This is documentation alignment only. The reader-facing foundation documents now align with the current lifecycle vocabulary while preserving the evidence history that recorded the earlier mismatch.
 
 ## Revocation and freshness verifier-boundary decision
 
@@ -527,34 +524,18 @@ This decision does not adopt REF-014, install packages, change requirements,
 replace the canonicalizer, migrate golden vectors, implement numeric-domain
 enforcement, or add real signature verification.
 
-## Canonical payload preparation decision
+## Canonical payload preparation status
 
-Before any REF-014 runtime integration or signature-verification planning, the
-verifier should make canonical payload preparation an explicit verifier check.
+Canonical payload preparation is now an explicit verifier boundary.
 
-The planned check name is `canonical_payload_prepared`. It should run after
-`proof_selected` and before `payload_hash_valid`. Its purpose is to prepare the
-canonical payload bytes once, fail closed on canonicalization or
-candidate-canonicalizer errors, and make later payload-hash and signature-input
-checks use the same canonical bytes.
+The verifier records `canonical_payload_prepared` after `proof_selected` and before `payload_hash_valid`. It prepares canonical payload bytes once, fails closed on canonicalization or candidate-canonicalizer errors, and makes later payload-hash and signature-input checks use the same canonical bytes.
 
-Canonicalization errors should not be reported as hash mismatches, unsupported
-canonicalization schemes, or signature-input failures. They should fail the
-`canonical_payload_prepared` check and return `DENY`.
+Canonicalization errors are not reported as hash mismatches, unsupported canonicalization schemes, or signature-input failures. They fail the `canonical_payload_prepared` check and return `DENY`.
 
-The future implementation should be testable without REF-014 adoption by
-simulating canonicalization failures in verifier tests. It should preserve the
-never-`ALLOW` invariant and should not change parser behavior, schema behavior,
-numeric-domain enforcement, dependency configuration, golden vectors, or real
-signature verification.
-
-This decision records implementation planning only. It does not implement the
-check, adopt REF-014, install packages, change requirements, replace the
-canonicalizer, execute REF-014 tests, migrate golden vectors, or add signature
-verification.
+This status does not adopt REF-014, install packages, change requirements, replace the canonicalizer, execute REF-014 tests, migrate golden vectors, or add signature verification.
 
 ## Next step
 
-Implement fail-closed canonical payload preparation after review, before any
-REF-014 runtime integration, adoption proposal, or signature-verification
-planning.
+Review the existing verifier and tests against the signature implementation-boundary plan before adding signature adapter-interface tests.
+
+The next step should not adopt dependencies, import a cryptographic runtime, change requirements or lockfiles, implement real signature verification, or create a passport-verifier `ALLOW` path.

@@ -42,7 +42,7 @@ The first phase will distinguish between automatically allowed actions, actions 
 
 The research will define basic lifecycle states for agent identity.
 
-Initial states include active, suspended, revoked, expired, compromised, rotated, and pending verification.
+Current lifecycle states are active, suspended, revoked, expired, compromised, and retired. Rotation is treated as a transition or reason, and pending review is handled outside `lifecycle_status` unless a later schema decision changes that boundary.
 
 ### Global verification
 

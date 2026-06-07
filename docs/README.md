@@ -18,7 +18,6 @@ Read these first:
 4. `00-foundation/research-questions.md`
 5. `00-foundation/limitations.md`
 6. `50-standards-positioning/standards-positioning.md`
-7. `00-foundation/documentation-organization-plan.md`
 
 ## Chapters
 

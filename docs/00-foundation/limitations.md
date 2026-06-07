@@ -56,13 +56,15 @@ Algorithm choices, parameter sets, proof formats, libraries, and deployment guid
 
 The system must remain cryptographically agile.
 
-## Canonicalization compatibility limit
+## Canonicalization and signature boundary
 
 The declared canonicalization scheme names the JSON Canonicalization Scheme as the long-term target, but the current research helper is not a complete independent RFC 8785 implementation.
 
-The current canonicalization tests document the helper's deterministic behaviour for the current research passport profile only. They do not establish full RFC 8785 or JSON Canonicalization Scheme compliance.
+The current canonicalization tests document deterministic behaviour for the current research passport profile only. They do not establish full RFC 8785 or JSON Canonicalization Scheme compliance.
 
-Real signature verification is blocked until this canonicalization compatibility is resolved. The decision is recorded in specs/canonicalization.md.
+REF-014 adoption remains deferred. Canonicalizer replacement, requirements changes, lockfile changes, and golden-vector migration remain separate future decisions.
+
+Signature planning and adapter-interface research may proceed while canonicalizer adoption remains separate. Real signature verification remains blocked until proof-profile, dependency, canonicalization-boundary, and verifier-integration decisions are complete.
 
 ## DID and decentralized verification limits
 
@@ -108,9 +110,7 @@ Retention rules require legal and operational review.
 
 ## Evaluation limits
 
-The evaluation method defines how tests should be recorded, but the tests have not yet been implemented.
-
-Future results may show that some parts of the model are incomplete, too complex, too expensive, too slow, or unsuitable for certain environments.
+The evaluation method defines how tests and research results should be recorded. The repository now includes automated tests, but future results may still show that parts of the model are incomplete, too complex, too expensive, too slow, or unsuitable for certain environments.
 
 Failures should be recorded and used to improve the model.
 
