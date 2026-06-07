@@ -1,109 +1,230 @@
 # Autonomous Agent Identity Research
 
-This repository studies a standards-aligned identity layer for autonomous AI agents.
+## Purpose
 
-The central position is simple: an autonomous agent should not be able to act anonymously inside a digital system. Before an agent performs protected actions, a verifier should be able to check what the agent is, who is responsible for it, what it is allowed to do, what it is not allowed to do, whether it is still trusted, and what evidence should be recorded.
+This repository is the first research layer of the wider Quantum-Secure Autonomous Gateway research direction.
 
-The work is research-stage. It does not claim production readiness, legal compliance, standards compliance, or replacement of existing identity standards.
+The project studies how autonomous AI agents can present verifiable identity and action-decision evidence before they are trusted to perform protected actions.
 
-## Research focus
+The central rule is simple:
 
-The project studies how verifiable agent passports, operator accountability, scoped permissions, explicit prohibitions, revocation, human oversight, audit evidence, decentralized or offline verification, and post-quantum readiness can work together in a fail-closed reference model.
+No verified identity and authority evidence, no protected action.
 
-The research is intended to align with and learn from existing and emerging work in verifiable credentials, decentralized identifiers, workload identity, delegated authority, agentic identity and access management, agent security guidance, and post-quantum signature systems.
+This work is research-stage. It does not claim production readiness, legal compliance, standards compliance, certification, or replacement of existing identity standards.
 
-## Problem
+## Research motivation
 
-Autonomous agents can call tools, access systems, make decisions, and act across organizational boundaries. Existing identity systems are mainly designed for humans, service accounts, applications, workloads, and devices.
+We are moving closer to more capable artificial intelligence systems, including the possibility of artificial general intelligence and artificial superintelligence. At the same time, quantum-computing timelines and post-quantum migration deadlines are moving closer.
 
-Autonomous agents need a clearer identity model because they can perform actions with real consequences. If an agent is hidden behind a shared account, generic API key, or unlabelled workload, it becomes difficult to know which agent acted, who was responsible, what authority it had, whether the action was allowed, and whether the agent should still be trusted.
+Autonomous AI agents are also becoming more capable, more advanced, and more widely deployed. They can reason, plan, call tools, interact with software systems, coordinate workflows, and act across organizational boundaries. Future AI systems may become increasingly capable of assisting in the improvement of other systems with less direct human involvement.
 
-## Research questions
+This makes autonomous-agent research important now.
 
-The initial research questions are:
+Across industry, experts, researchers, professionals, standards bodies, governments, and companies are already working to secure, study, govern, and improve AI systems, autonomous agents, identity, authorization, auditability, and post-quantum cryptography. Many organizations have already achieved important milestones and are actively closing parts of the gap.
 
-1. What identity attributes are required for autonomous agents?
+This research aims to learn from existing industry and standards work, use it where appropriate, and contribute focused research where it can be useful.
 
-2. How can agent identity be bound to a responsible operator?
+The wider research direction is Quantum-Secure Autonomous Gateway research. It starts from the identity layer because identity is the first trust boundary. Before an autonomous agent can be trusted to act, a verifier should be able to check what the agent is, who is responsible for it, what it is allowed to do, whether it is still trusted, whether the evidence is valid, and what should be recorded.
 
-3. How can permissions and prohibitions be encoded into an agent passport?
+This first layer studies autonomous-agent identity and action-decision evidence. It includes canonicalization research, signature research, fail-closed verifier behavior, revocation freshness, permission scope, human approval, and audit evidence.
 
-4. How can an agent passport be verified globally without depending on one central service?
+The wider goal is to understand autonomous AI agents step by step, in public, with disciplined research, testing, and evidence. As AI systems become faster and more capable, more people will need to work together to understand how these systems should be verified, governed, and safely connected to real digital systems.
 
-5. How can revocation work in both online and offline environments?
+## Why identity is the first layer
 
-6. How can post-quantum signatures support long-term trust in agent identities?
+Identity is not the whole problem, but it is the first trust layer.
 
-7. What audit evidence is needed to prove that an agent acted within or outside its authority?
+Before an autonomous agent performs a protected action, a verifier should be able to ask:
 
-## Design principles
+- which agent is acting;
+- who operates or controls it;
+- which issuer or authority is trusted for it;
+- which key or proof is bound to it;
+- whether the agent is active, expired, suspended, revoked, or compromised;
+- what action is requested;
+- whether the action is allowed, prohibited, approval-required, or unclear;
+- whether revocation evidence is fresh enough;
+- whether human approval is valid;
+- what audit evidence should be recorded.
 
-The research is guided by the following principles:
+The research gap is not basic identity alone. Existing identity systems already support humans, applications, workloads, services, and devices.
 
-1. No verified identity, no protected action.
+The research gap is verifier-side action trust:
 
-2. Every agent should have a visible and verifiable identity.
+What evidence must be checked before an autonomous AI agent action is trusted?
 
-3. Every agent should be linked to an accountable operator.
+## QSAG Layer 1
 
-4. Every permission should be explicit.
+This repository focuses on Layer 1 of the QSAG research program:
 
-5. Every prohibition should be explicit.
+Agent Identity and Action-Decision Evidence.
 
-6. The default decision should be denial.
+This layer will research and use existing industry standards over time, including:
 
-7. High-risk or uncertain actions should support human approval or human review.
+- OAuth/OIDC for delegated access and identity flows;
+- SPIFFE/WIMSE for workload identity and workload/delegation thinking;
+- DID/VC for portable and verifiable claims;
+- JOSE/COSE for signed data formats;
+- RFC 9964 for ML-DSA in JOSE and COSE;
+- NIST/ACVP for test-vector evidence;
+- OWASP/NIST/AIIM for threat and governance alignment.
 
-8. Agent passports should support verification outside the issuing system.
+The goal is to build with existing industry standards and emerging research, to help the industry and contribute focused evidence.
 
-9. The system should avoid unnecessary dependence on one central service.
+## Agent passport as a research envelope
 
-10. The model should support long-term cryptographic change, including post-quantum readiness.
+The current repository uses an agent passport as a research envelope.
 
-11. Important decisions should produce audit evidence.
+The passport is used to study what evidence may need to travel together for autonomous-agent verification.
+
+The research envelope helps test:
+
+- agent identity fields;
+- operator binding;
+- issuer trust assumptions;
+- lifecycle status;
+- key material and key status;
+- permissions and prohibitions;
+- approval requirements;
+- revocation freshness assumptions;
+- payload hash checks;
+- signature proof metadata;
+- audit-relevant decision evidence.
+
+Future work should map this research envelope to existing industry standards, workload identity systems, signed data formats, portable credential formats, or other standards-aligned formats where appropriate.
+
+## Canonicalization and signature research
+
+Canonicalization and signature verification are part of Layer 1 because signed evidence must be stable and verifiable.
+
+Canonicalization asks:
+
+What exact bytes are signed and verified?
+
+Signature research asks:
+
+Was the identity and action-decision evidence modified, and was it signed under a supported proof profile?
+
+The repository has researched canonicalization, payload hashing, proof/key binding, signature metadata, ML-DSA runtime evidence, NIST/ACVP vector evidence, and signature implementation boundaries.
+
+Future work should evaluate whether the proof profile should align with JOSE/COSE and RFC 9964 so the project remains close to industry formats.
 
 ## Current status
 
-The repository is in the research and reference-implementation foundation stage.
+The repository currently includes:
 
-The project currently includes research models, an initial agent passport schema and example, deterministic current-profile canonicalization helpers, payload hash checks, verifier pipeline checks, verification result models, and tests.
+- research models for identity, permissions, human oversight, revocation, decentralized verification, audit evidence, and post-quantum readiness;
+- an initial agent passport schema and example;
+- deterministic current-profile canonicalization helpers;
+- payload hash checks;
+- verifier pipeline checks;
+- verification result models;
+- fail-closed verifier behavior;
+- raw JSON parsing with duplicate-key rejection;
+- lifecycle and expiry checks;
+- issuer trust and revocation freshness boundaries;
+- proof selection and key binding checks;
+- canonical payload preparation;
+- signature verification planning and isolated ML-DSA research;
+- automated tests.
 
-The local verifier remains fail-closed. Real signature verification, issuer trust, revocation enforcement, policy evaluation, audit implementation, post-quantum signing, gateway logic, cloud deployment, and external integrations are not implemented yet.
+The local verifier remains fail-closed.
 
-The current roadmap focuses on standards positioning, canonicalization closure, signature verification foundation, issuer trust, revocation, permission evaluation, human oversight, audit evidence, post-quantum research, and a local dummy demo.
+Real signature verification, dependency adoption, issuer trust registry, live revocation service, production policy engine, audit storage, gateway logic, cloud deployment, and external integrations are not implemented.
 
-## Repository structure
+## What this repository should produce
 
-`docs/` contains the research models and supporting documents.
+This repository should produce:
 
-`specs/` contains machine-readable schemas, examples, and specification notes.
+1. a clear agent identity and action-decision evidence model;
+2. fail-closed verifier semantics;
+3. negative tests for malformed, expired, revoked, stale, unsupported, and mismatched evidence;
+4. proof/key binding checks;
+5. canonicalization and signed-byte research;
+6. signature proof-profile research aligned with industry formats;
+7. audit-minimization rules;
+8. simulated cross-organization verification scenarios using dummy data only.
 
-`src/` contains the research reference implementation.
+The strongest contribution is a testable verifier-side model for autonomous-agent action trust.
 
-`tests/` contains the current automated tests.
+This is a large research area, and mistakes or incomplete assumptions may exist. The project is expected to improve step by step through testing, review, evidence, and feedback from researchers, security professionals, standards communities, and industry contributors.
 
-`evidence/` contains the active research log, archived research log entries, and future evidence records.
+## What this repository does not do
 
-`ROADMAP.md` defines the staged research and implementation path.
+This repository does not currently build:
 
-## Scope
+- a production gateway;
+- a commercial identity service;
+- an MCP replacement;
+- a full policy language;
+- a live multi-organization network;
+- a production revocation service;
+- a cryptographic library;
+- a real-agent execution system;
+- a cloud deployment;
+- a compliance framework.
 
-This repository focuses first on the identity layer for autonomous agents.
+MCP, A2A, APIs, workflow engines, cloud platforms, and future agent protocols should be treated as integration layers, not trust foundations.
 
-The initial scope includes agent identity, operator binding, allowed actions, prohibited actions, human approval, revocation, global verification, decentralized verification, post-quantum readiness, audit evidence, and a fail-closed local verifier.
+## Documentation
 
-The scope does not include a production service, commercial platform, legal compliance claim, standards-compliance claim, real-user deployment, or production credential handling.
+Start with:
 
-## References
+- `docs/README.md`
 
-External references are maintained in `docs/references.md`.
+External references are maintained in:
 
-Research documents may refer to reference identifiers from that file. Implementation files should not contain citations, legal claims, or research references.
+- `docs/references.md`
 
-## Limitations
+The staged research direction is maintained in:
 
-This repository is experimental research.
+- `ROADMAP.md`
 
-It does not claim production readiness, legal compliance, standards compliance, final standardization, or complete security.
+Evidence logs are maintained in:
 
-The purpose is to develop and evaluate a disciplined identity model and reference verifier for autonomous agents.
+- `evidence/`
+
+## Current active focus
+
+The current active focus is Layer 1:
+
+Agent identity and action-decision evidence.
+
+The immediate technical focus is signature verification boundary review.
+
+The next technical work should inspect the existing verifier and tests against the signature implementation-boundary plan, then define the smallest signature adapter-interface tests without importing a cryptographic runtime.
+
+## Research direction and community input
+
+This research direction may change over time.
+
+Autonomous AI agents, identity standards, post-quantum cryptography, AI governance, and gateway security are all moving quickly. As new standards, guidance, research, attacks, mitigations, and industry practices emerge, the project should adapt carefully.
+
+Changes should be based on evidence, tests, references, and review, not hype or assumptions.
+
+Community, industry, academic, government, and standards-body feedback is welcome. Useful contributions include threat-model review, standards mapping, negative test cases, verifier failure cases, revocation and approval evidence review, audit-minimization review, post-quantum proof-profile review, and cross-organization dummy scenarios.
+
+The goal is to keep the research aligned with real-world needs while staying narrow, testable, and honest about what has and has not been proven.
+
+## Research discipline
+
+The project should stay narrow and evidence-based.
+
+From this point:
+
+- `docs/README.md` is the living documentation index;
+- `docs/references.md` is the source register;
+- `evidence/research-log.md` records short milestone entries only;
+- detailed experiment evidence belongs in focused result documents;
+- no new broad documents should be added unless they reduce confusion;
+- dependency adoption requires a separate decision;
+- real signature verification requires proof-profile and adoption decisions;
+- legal, compliance, certification, and production claims must be avoided.
+
+## Final position
+
+This repository is useful if it remains focused on one verifier-side question:
+
+What must be checked before an autonomous AI agent action is trusted?
+
+That question supports the wider QSAG research direction and can help industry by complementing existing identity standards and emerging autonomous-agent security work.
