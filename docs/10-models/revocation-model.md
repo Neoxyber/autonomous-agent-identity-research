@@ -2,134 +2,109 @@
 
 ## Purpose
 
-This document defines the first revocation model for autonomous agent identity.
+This document defines the revocation model for autonomous-agent identity.
 
-Revocation is the process of removing an agent from trust. It is required when an agent should no longer be allowed to act, verify, delegate, or continue a workflow.
+Revocation explains how an agent identity, passport, key, or status evidence can
+be removed from trust.
+
+This model may change as the research develops and as standards, tests, and
+review feedback improve the project.
+
+## Why it matters
+
+Autonomous agents may act quickly, repeatedly, and across systems.
+
+If an agent is compromised, expired, suspended, revoked, or retired, verifiers
+need a clear way to stop trusting that identity before further action decisions
+continue.
+
+The gap is:
+
+How can a verifier know whether an autonomous-agent identity is still trusted
+enough for action-decision evaluation to continue?
 
 ## Core rule
 
 Revocation is part of identity.
 
-An autonomous agent identity is incomplete unless it can be suspended, revoked, expired, marked compromised, or retired.
+A valid-looking passport is not enough. The verifier must also evaluate lifecycle
+status, expiry, issuer trust, and revocation freshness.
 
-A revoked agent must not be allowed to act.
+Only `active` allows verification to continue. Other lifecycle states fail
+closed.
 
 ## Lifecycle states
 
-The lifecycle states are the schema lifecycle_status values:
+Current schema lifecycle states are:
 
-1. active
+1. `active` means the identity may continue to later checks, subject to trust,
+   revocation, permission, approval, audit, and enforcement boundaries.
+2. `suspended` means the identity is temporarily removed from trust.
+3. `revoked` means the identity is removed from trust and should not act unless a
+   new valid identity or later governance process is defined.
+4. `expired` means the identity is outside its validity window.
+5. `compromised` means the agent, key material, operator binding, runtime, or
+   environment may no longer be trustworthy.
+6. `retired` means the passport identity has been superseded or intentionally
+   withdrawn and must not be used for action.
 
-2. suspended
+A retired passport identity is different from retired public-key material. The
+first applies to `lifecycle_status`; the second applies to public key status.
 
-3. revoked
+Rotation and onboarding are not `lifecycle_status` values in the current schema.
+Rotation is a transition or reason. Onboarding and review happen before an
+identity becomes active.
 
-4. expired
+## Revocation evidence
 
-5. compromised
+Revocation evidence may include:
 
-6. retired
+1. caller-provided status evidence;
+2. signed status evidence;
+3. signed revocation lists;
+4. cached status records;
+5. short-lived passport validity;
+6. future registry or status-service responses.
 
-These states should be visible to verifiers and enforcement systems. Only active allows verification to continue; the others fail closed.
+Current verifier behavior uses caller-provided revocation status evidence. It
+does not perform network lookup, registry lookup, signed status verification, or
+replay protection beyond the freshness window.
 
-## State meanings
+## Freshness
 
-active means the agent identity is currently valid, subject to policy and permission checks.
+Revocation status must be fresh enough for the decision being made.
 
-suspended means the agent is temporarily removed from trust and should not act until restored.
+Stale, missing, malformed, mismatched, unknown, or non-active status evidence
+should fail closed.
 
-revoked means the agent is permanently removed from trust unless a new identity is issued.
-
-expired means the identity is no longer valid because its validity period has ended.
-
-compromised means the agent, key material, operator account, runtime, or environment may no longer be trustworthy.
-
-retired means the passport identity has been superseded or intentionally withdrawn and must not be used for action. A retired passport identity (lifecycle_status) is distinct from a retired public key (public_key.status), which marks superseded key material.
-
-Rotation and onboarding are not lifecycle_status values. Rotation is a transition process and a revocation or audit reason: superseded identity or key material is recorded as retired, newly issued material is active, and the rotation is captured as a reason. Onboarding and review happen before an identity becomes active; operator-level onboarding is represented by operator.verification_status, including pending_review.
-
-## Revocation reasons
-
-A revocation or suspension should include a reason.
-
-Example reasons include:
-
-1. Operator request.
-
-2. Key compromise.
-
-3. Policy violation.
-
-4. Suspicious behaviour.
-
-5. Expired identity.
-
-6. Incorrect identity data.
-
-7. Unauthorized tool use.
-
-8. Audit failure.
-
-9. Regulatory or administrative action.
-
-10. Research test condition.
-
-Reason codes help later audit, investigation, and evaluation.
-
-## Online revocation
-
-Online revocation checks allow a verifier to ask for current status.
-
-An online status check may answer whether an agent is active, suspended, revoked, expired, compromised, or retired.
-
-Online checks are useful when live trust information is available, but they should not be the only verification method.
-
-## Offline revocation
-
-Offline environments may not be able to contact a live status service.
-
-The model should support offline evidence such as signed revocation lists, cached status records, short-lived passports, and warning modes.
-
-Offline verification can check signatures, structure, expiry, and cached status. It may not know the newest revocation state unless updated revocation evidence is available.
-
-## Short-lived passports
-
-Short-lived passports reduce the risk of stale trust.
-
-If revocation status cannot always be checked live, shorter passport validity periods can limit how long an agent identity remains usable without fresh verification.
+Short-lived passports may reduce stale-trust risk, but they do not replace
+revocation evidence when current status is required.
 
 ## Emergency stop
 
-The model should support emergency stop behaviour.
+Emergency stop is future research.
 
-Emergency stop may pause or block an agent when there is evidence of compromise, unsafe behaviour, unauthorized action, or policy violation.
+It may be needed when there is evidence of compromise, unsafe behavior,
+unauthorized action, or policy violation.
 
-Emergency stop should be recorded as audit evidence and should explain why the agent was stopped.
-
-## Kill switch research
-
-Future research will study kill switch behaviour for autonomous agents.
-
-This includes when an agent should be paused, suspended, revoked, prevented from continuing a workflow, or blocked from calling tools.
-
-The research should record what passes, what fails, and what needs improvement.
-
-## Enforcement rule
-
-Before an action is allowed, the verifier or gateway should check lifecycle status.
-
-If the agent is revoked, expired, suspended, compromised, or retired, the action should be denied. Only active allows the action to continue.
-
-Rotation and onboarding are not lifecycle_status values. Rotation is handled as a transition and a reason: superseded identity or key material is recorded as retired and a newly issued identity or key is used. Onboarding and review happen before an identity becomes active and are represented by operator.verification_status, including pending_review, not by lifecycle_status.
-
-## Audit evidence
-
-Revocation events should produce audit evidence.
-
-The audit record should include the agent, operator, lifecycle state, reason, timestamp, authority that changed the status, revocation reference, and any related incident or investigation reference.
+Emergency stop behavior should be recorded as evidence and should not silently
+erase the reason an agent was paused, suspended, revoked, or blocked.
 
 ## Current boundary
 
-This document defines the initial revocation model.
+The repository includes caller-provided revocation freshness checks in the local
+passport verifier.
 
-It does not define the final schema, registry, status endpoint, signed revocation list format, user interface, or implementation. Those will be developed later through specifications, reference implementation, controlled tests, and recorded evaluation results.
+Current revocation research does not define a live status service, registry,
+signed revocation-list format, emergency stop system, storage system, gateway
+integration, or production revocation process.
+
+## Future work
+
+Future revocation research may include signed status evidence, signed revocation
+lists, replay protection, registry or status-service design, emergency stop
+behavior, key-rotation evidence, cross-organization dummy scenarios, and later
+gateway enforcement integration.
+
+These areas should be researched in small steps and recorded through tests,
+focused evidence, and review.
