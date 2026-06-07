@@ -1,251 +1,300 @@
 # Roadmap
 
-This roadmap describes the staged research path for the autonomous agent identity project.
+## Purpose
 
-The project studies how autonomous agents can be given verifiable, accountable, permission-scoped, revocable, auditable, and post-quantum-ready identities.
+This roadmap defines the technical research path for the Autonomous Agent Identity Research repository.
 
-The work is research-stage. It does not claim production readiness, legal compliance, standards compliance, or replacement of existing identity standards.
+The README explains the wider QSAG research direction. This roadmap focuses on the Layer 1 work: agent identity and action-decision evidence.
 
-The roadmap connects the research models, reference implementation, tests, and evidence record into a clear order of work. It is intended to keep the project focused as the repository grows.
+The roadmap may change as the research develops. Changes should be based on evidence, tests, standards review, and community or industry feedback.
 
-## Research direction
+## Current focus
 
-The project follows a standards-aligned research direction.
+The current research focus is:
 
-It treats the agent passport as a research envelope for studying autonomous agent identity. The passport is not presented as a new industry standard. Future work may map the model to established or emerging approaches such as verifiable credentials, decentralized identifiers, workload identity, delegated authority, agentic identity and access management, and post-quantum signature systems.
+Agent identity and action-decision evidence.
 
-The central research question is how these areas can work together in a fail-closed identity layer for autonomous agents.
+The central technical question is:
 
-The project focuses on the following properties:
+What must be checked before an autonomous AI agent action is trusted?
 
-1. An autonomous agent should have a visible and verifiable identity.
+The current verifier remains fail-closed. It does not return `ALLOW`.
 
-2. The agent should be linked to a responsible operator.
+## Current technical baseline
 
-3. The agent should have explicit permissions and explicit prohibitions.
+The repository currently includes research and tests for:
 
-4. The default decision should be denial.
+1. agent passport structure;
+2. schema validation;
+3. duplicate JSON key rejection;
+4. canonical payload preparation;
+5. payload hash checks;
+6. issuer trust input boundaries;
+7. revocation freshness input boundaries;
+8. lifecycle and expiry checks;
+9. proof and key binding checks;
+10. signature planning and isolated ML-DSA research;
+11. local authorization, approval, audit, and enforcement composition models;
+12. automated tests.
 
-5. High-risk or uncertain actions should support human approval or human review.
+The following areas are not implemented yet:
 
-6. A revoked, expired, suspended, or compromised agent should not be allowed to act.
+1. real signature verification;
+2. cryptographic runtime dependency adoption;
+3. issuer trust registry;
+4. live revocation service;
+5. production policy engine;
+6. audit storage;
+7. gateway enforcement;
+8. cloud deployment;
+9. MCP or external integration;
+10. verifier `ALLOW` behavior.
 
-7. Important decisions should produce audit evidence.
+## Technical principle
 
-8. Verification should not depend unnecessarily on one central service.
+Identity alone is not enough to trust an autonomous agent action.
 
-9. The model should support long-term cryptographic change, including post-quantum readiness.
+A signature alone is not enough to authorize an action.
 
-## Foundation rule
+The research will continue toward a verifier model where protected actions depend on valid evidence. That evidence may include identity, issuer trust, key validity, signature proof, lifecycle status, revocation freshness, permission scope, approval requirements, and audit context.
 
-No verified identity, no protected action.
+The default posture remains fail closed.
 
-An autonomous agent may reason, plan, and prepare a request. Protected external action depends on identity verification, issuer trust, lifecycle status, revocation status, permission scope, human oversight requirements, and audit evidence.
+## Stage 1: Verifier boundary review
 
-Tool access alone is not authority.
+This stage will review the existing verifier and tests to understand where future signature verification may connect.
 
-## Research method
+The research will examine:
 
-The project records research claims through documents, tests, and evidence.
+1. how the verifier prepares canonical payload bytes;
+2. how the selected key is identified;
+3. how proof metadata is selected and checked;
+4. how unsupported or malformed proof metadata fails closed;
+5. which checks already exist;
+6. which adapter-interface tests may be missing;
+7. how the verifier continues to avoid `ALLOW`.
 
-Research results should distinguish between:
+This stage will not adopt dependencies, import a cryptographic runtime, change requirements, change lockfiles, or implement real signature verification.
 
-1. What has passed.
+Research output:
 
-2. What has failed.
+This stage should produce a short finding on the verifier boundary, missing adapter-interface tests, unresolved questions, and whether the next stage is ready, blocked, or needs more research.
 
-3. What is partially supported.
+## Stage 2: Signature adapter-interface tests
 
-4. What is blocked.
+This stage will test the future signature verification boundary without adding real cryptography.
 
-5. What needs more research.
+The research will use fake or stub verification behavior to test:
 
-Implementation should remain small and testable. Larger system features should be introduced only after the identity, verification, trust, revocation, policy, oversight, and audit boundaries are clear.
+1. unsupported signature profile failure;
+2. unsupported algorithm failure;
+3. malformed public-key value failure;
+4. malformed signature value failure;
+5. wrong public-key length failure;
+6. wrong signature length failure;
+7. runtime-unavailable failure;
+8. invalid-signature failure;
+9. runtime-exception fail-closed behavior;
+10. verified-signature result without action authorization;
+11. continued prevention of accidental verifier `ALLOW`.
 
-## Phase 0. Research foundation and project hygiene
+Research output:
 
-This phase establishes the repository as a disciplined research project.
+This stage should show whether fake or stub adapter tests can cover the future signature boundary without importing a cryptographic runtime, and whether any boundary assumptions need to change.
 
-Current status: mostly complete.
+## Stage 3: Proof-profile alignment
 
-This phase includes the project scope, principles, problem statement, research questions, evidence process, reference handling, and repository hygiene.
+This stage will research how future signatures should be represented and verified.
 
-The evidence log records meaningful milestones. Longer empirical results should later be recorded in dedicated testing logs rather than expanding the active research log indefinitely.
+The research will evaluate:
 
-Exit condition: the project has a clear research foundation, passing tests, a clean working tree after milestones, and a roadmap that reflects the current direction.
+1. whether the future proof profile should align with JOSE/COSE;
+2. how RFC 9964 affects ML-DSA signature representation;
+3. whether signatures should verify over canonical JSON bytes or standard signed-data bytes;
+4. how the current canonicalization path fits the long-term direction;
+5. which public-key format should be accepted;
+6. which signature format should be accepted;
+7. which unsupported modes must fail closed.
 
-## Phase 1. Standards positioning
+Research output:
 
-This phase explains how the research model relates to existing and emerging identity work.
+This stage should record proof-profile options, unresolved questions, standards-alignment considerations, and whether a direction is selected, deferred, or blocked.
 
-The goal is not to claim compliance. The goal is to avoid isolated invention and to make the research understandable to reviewers familiar with identity standards and agent security work.
+## Stage 4: Dependency adoption review
 
-This phase should map the agent passport concepts to relevant areas such as verifiable credentials, decentralized identifiers, workload identity, delegated authority, agentic identity and access management, agent security risks, and post-quantum signature standards.
+This stage will research whether a cryptographic runtime can be adopted responsibly.
 
-The mapping should explain where the research aligns with existing work, where it deliberately remains experimental, and which questions remain unresolved.
+The research will review:
 
-Exit condition: the README and a concise standards-positioning document describe the project as standards-aligned research without claiming certification, compliance, or production readiness.
+1. candidate runtime support for the selected proof profile;
+2. package source and release artifacts;
+3. license and attribution requirements;
+4. maintenance and security posture;
+5. version-pinning approach;
+6. rollback approach;
+7. impact on requirements and lockfiles;
+8. handling of test keys, signatures, and generated materials.
 
-## Phase 2. Verifier trust boundaries
+Research output:
 
-This phase hardens verifier trust boundaries before real signature verification.
+This stage should record whether dependency adoption is justified, blocked, or deferred, with the reasons and rollback considerations.
 
-The research should cover issuer trust, key selection, key status, key validity,
-verification-method binding, lifecycle checks, caller-provided revocation
-freshness, and proof-selection hardening.
+## Stage 5: Real signature verification
 
-The system should not treat any syntactically valid issuer, key, proof, or status
-record as trusted by default.
+This stage will research the first real signature verification path only after proof-profile and dependency decisions are complete.
 
-Exit condition: issuer trust, active-key selection, selected-key validity,
-verification-method binding, revocation freshness, and single-proof enforcement
-fail closed and are recorded as verifier checks.
+The research will test:
 
-## Phase 3. Canonicalization closure
+1. public-key decoding;
+2. signature decoding;
+3. public-key length validation;
+4. signature length validation;
+5. supported proof-profile checks;
+6. verification over selected signed bytes;
+7. invalid-signature failure;
+8. runtime-error failure;
+9. unsupported-mode failure;
+10. modified-payload failure;
+11. wrong-key failure;
+12. preservation of existing verifier checks.
 
-This phase settles canonicalization before real signature verification.
+Research output:
 
-The current helper remains useful for local research regression tests, but real
-signature verification requires a reviewed canonicalization path, external
-conformance evidence, fail-closed input handling, and a deliberate golden-vector
-migration if canonical bytes change.
+This stage should show whether the selected signature path verifies valid cases and fails closed for invalid, malformed, unsupported, or runtime-error cases. Signature validity remains separate from action authorization.
 
-Exit condition: the selected canonicalization path is recorded, external vectors
-pass for the accepted input domain, ambiguous inputs fail safely, and the
-minimal passport has a stable canonical representation.
+## Stage 6: Action-decision evidence
 
-## Phase 4. Signature verification foundation
+This stage will connect verified identity evidence to action-decision evidence.
 
-This phase adds the first real signature verification path only after verifier
-trust boundaries and canonicalization are settled.
+The research will define the minimum evidence needed for decisions such as denial, approval required, review required, and future allowed outcomes.
 
-Signature verification should be performed over canonical passport bytes. The
-implementation should use reviewed cryptographic libraries and should remain
-algorithm-agile.
+Evidence areas include:
 
-A valid signature should not by itself authorize action. It only proves that the
-passport payload has not been modified and that it was signed by a key that is
-evaluated through issuer trust, lifecycle, revocation, and policy rules.
+1. agent identity;
+2. operator or controller binding;
+3. issuer trust;
+4. key validity;
+5. signature result;
+6. lifecycle status;
+7. revocation freshness;
+8. requested action;
+9. permission scope;
+10. prohibition match;
+11. approval requirement;
+12. approval validation;
+13. audit context;
+14. final decision reason.
 
-Exit condition: valid signatures verify, modified passports fail, unsupported
-algorithms fail closed, and the verifier still denies protected action until
-permission, approval, and audit policy checks are implemented.
+Research output:
 
-## Phase 5. Permission and policy evaluation
+This stage should clarify which evidence fields are needed for action decisions, which fields are unnecessary, and which parts remain unresolved.
 
-This phase separates verified identity from action authority.
+## Stage 7: Dummy cross-organization scenarios
 
-A verified passport does not mean the agent may perform every action. The requested action must be evaluated against allowed actions, prohibited actions, approval-required actions, lifecycle status, revocation status, and policy context.
+This stage will test Layer 1 with simulated organizations and dummy agents.
 
-The default decision remains denial.
+The research will use only dummy data. It will not use real users, real organizations, real secrets, production credentials, live systems, or external execution.
 
-Exit condition: allowed actions can proceed only after all earlier gates pass, prohibited actions always deny, approval-required actions return the correct approval outcome, unclear actions return denial or review according to policy, and decision reasons are recorded.
+Example scenarios include:
 
-## Phase 6. Human oversight
+1. valid identity but expired passport;
+2. valid signature but revoked agent;
+3. valid signature but stale revocation evidence;
+4. valid signature but prohibited action;
+5. approval-required action without approval;
+6. approval cannot override prohibition;
+7. malformed signature;
+8. unsupported algorithm;
+9. missing issuer trust;
+10. changed payload after signing;
+11. wrong key for valid signature;
+12. suspended or compromised agent status.
 
-This phase studies how human approval, review, escalation, pause, and intervention should work.
+Research output:
 
-Human approval is not unlimited authority. It should be specific, attributable, time-bounded, and auditable. It should not override prohibited actions, revocation, expiry, suspension, compromise, or audit requirements.
+This stage should show how the verifier behaves in dummy cross-organization scenarios and identify any gaps before later gateway research.
 
-The research should also study emergency stop behavior and the conditions under which an agent should be paused or prevented from continuing a workflow.
+## Deferred research
 
-Exit condition: approval and review outcomes are tested, approval cannot override core safety boundaries, approval records expire, replay is prevented, and oversight decisions produce audit evidence.
+The following areas are important but deferred until Layer 1 is clearer and better tested:
 
-## Phase 7. Audit evidence
+1. agent behavior evidence;
+2. runtime drift detection;
+3. delegation and multi-agent chains;
+4. child-agent scope narrowing;
+5. gateway enforcement;
+6. MCP, A2A, cloud, and workflow integration;
+7. live demo deployment;
+8. audit storage;
+9. transparency logs;
+10. real multi-organization deployment.
 
-This phase records identity, policy, lifecycle, and oversight decisions in a reviewable form.
+Deferred work may become future QSAG layers or future repositories.
 
-Audit evidence should explain what happened, why it happened, which evidence was available at the time, and which decision was made. It should support later review, incident response, research evaluation, and future governance mapping.
+## Evidence and research records
 
-The audit model should minimize sensitive data and prefer identifiers, hashes, scopes, references, and decision reasons over raw operational content.
+Evidence records support the research timeline and help readers understand why technical decisions were made.
 
-Exit condition: allowed actions, denied actions, approval decisions, review decisions, revocation events, and lifecycle changes produce audit evidence; tampered audit evidence can be detected; and unnecessary sensitive data is avoided.
+The evidence log is reserved for meaningful milestones, such as new technical behavior, new tests, isolated experiment results, dependency decisions, proof-profile decisions, security-relevant findings, important failures, and blocked research results.
 
-## Phase 8. Post-quantum research
+Small wording updates, navigation changes, and routine documentation cleanup do not normally require evidence-log entries unless they change a research boundary.
 
-This phase studies long-term cryptographic readiness.
+Detailed experiment evidence should remain in focused result documents, while the evidence log should stay concise and chronological.
 
-The project treats post-quantum readiness as a research and design requirement, not a readiness claim. The first research direction includes ML-DSA for signatures, SLH-DSA as an independent backup signature family, and ML-KEM later for key establishment when secure communication becomes in scope.
+## Simplification and review
 
-The project should not implement cryptographic primitives from scratch.
+The repository will grow as the research continues.
 
-Exit condition: controlled experiments record key sizes, signature sizes, verification latency, passport size impact, failure behavior, key rotation, algorithm migration, and the limits of the current implementation.
+Some evidence logs are already long, and some documents may need to be reviewed again as the research direction becomes clearer. This is expected for a research project in a fast-moving field.
 
-## Phase 9. Local research demo
+The project will periodically review existing documents and classify them as:
 
-This phase demonstrates the model in a controlled local setting using dummy data only.
+1. keep;
+2. update;
+3. merge;
+4. defer;
+5. archive.
 
-The demo should show a complete decision path: issue a dummy passport, verify it, check issuer trust, check revocation, evaluate permissions, require approval where appropriate, deny prohibited actions, deny after revocation, and record audit evidence.
+The goal is to make the research easier to understand, not larger for its own sake.
 
-The demo should not use real users, real secrets, production systems, or production data.
+The roadmap may change as the research develops. Guidance, review, and contribution from the community, academia, standards bodies, and industry are welcome.
 
-Exit condition: a reviewer can run the demo locally and see allowed, denied, approval-required, review-required, and revoked-agent outcomes with audit evidence.
+## QSAG layers
 
-## Phase 10. Controlled deployment research
+The wider QSAG research direction is layered.
 
-This phase may begin only after the local research demo is stable.
+This repository covers Layer 1.
 
-The goal is to study whether the local model can be exposed safely in a controlled demo environment without weakening the research boundaries.
+```text
+QSAG Research Program
+│
+├── Layer 1: Agent Identity and Action-Decision Evidence
+│   Current repository
+│   Studies identity, authority evidence, fail-closed verification, signatures,
+│   revocation freshness, approval requirements, and audit context.
+│
+├── Layer 2: Agent Behavior Evidence
+│   Future work
+│   Studies declared purpose, observed action requests, drift, and escalation.
+│
+├── Layer 3: Delegation and Multi-Agent Chains
+│   Future work
+│   Studies parent and child agents, delegated authority, scope narrowing,
+│   and chain evidence.
+│
+├── Layer 4: Gateway Enforcement
+│   Future work
+│   Studies how a gateway denies, allows, or requires approval before tools,
+│   APIs, MCP, workflows, or cloud calls.
+│
+├── Layer 5: Audit and Evidence Replay
+│   Future work
+│   Studies replayable decision records, tamper evidence, and
+│   privacy-minimized audit.
+│
+└── Layer 6: Post-Quantum Migration
+    Cross-cutting work
+    Studies ML-DSA, SLH-DSA, algorithm agility, key rotation,
+    and long-term evidence.
 
-This phase may consider local APIs, separated demo configuration, controlled hosting, external protocol boundaries, and secret-handling rules. It should not introduce production claims.
-
-Exit condition: deployment scope is documented, secrets remain outside the repository, local tests pass, and no production, legal, or standards-compliance claim is made.
-
-## Deferred research topics
-
-The following topics are important, but should not drive near-term implementation before the core identity and verifier path is stable.
-
-1. Continuous identity heartbeat and runtime state monitoring.
-
-2. Runtime isolation and abuse control.
-
-3. Operator verification and legal-entity binding.
-
-4. Delegation and agent-to-agent verification.
-
-5. Scope narrowing for child or delegated agents.
-
-6. Cell-based trust and scale models.
-
-7. Tool identity and supply-chain binding.
-
-8. Model, tool, dependency, and runtime attestation.
-
-9. External protocol boundaries.
-
-10. Managed demo storage.
-
-11. Transparency logs and timestamp anchoring.
-
-12. Multi-organization verification.
-
-13. Controlled live researcher demo.
-
-These topics should be introduced through small, reviewed research steps after the core verifier, trust, revocation, policy, oversight, and audit path is working.
-
-## Near-term focus
-
-The near-term work should stay narrow.
-
-1. Keep the README aligned with the current research stage.
-
-2. Keep standards positioning concise and evidence-based.
-
-3. Maintain verifier trust-boundary checks before any `ALLOW` path.
-
-4. Close canonicalization through isolated candidate evaluation and external
-   conformance evidence.
-
-5. Record any canonicalizer adoption decision before requirements, lockfile,
-   canonicalizer, or golden-vector changes.
-
-6. Plan real signature verification only after canonicalization is settled.
-
-7. Add permission, approval, and audit evaluation after identity verification
-   boundaries are complete.
-
-8. Add audit evidence for each important decision.
-
-9. Build the local dummy demo.
-
-Each step should keep the repository clean, the tests passing, and the research claims limited to what has been implemented, tested, and recorded.
+```
