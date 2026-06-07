@@ -2,142 +2,161 @@
 
 ## Purpose
 
-This document defines the first permission model for autonomous agent identity.
+This document defines the permission model for autonomous-agent identity.
 
-An autonomous agent identity should not only prove who the agent is. It should also define what authority is attached to that identity.
+Identity says which agent is acting. Permission says what that agent is allowed
+to request.
+
+This model may change as the research develops and as standards, tests, and
+review feedback improve the project.
+
+## Why it matters
+
+Autonomous agents may call tools, access services, request data, or trigger
+workflow steps at high speed.
+
+A valid identity is not enough. An agent may be real, signed, active, and still
+not authorized for a specific action.
+
+The gap is:
+
+How can a verifier decide whether an autonomous-agent action request is within
+scope, needs approval, requires review, or must be denied?
 
 ## Core rule
 
 The default decision is deny.
 
-An agent should only be allowed to perform an action when the action is explicitly allowed, the agent identity is valid, the agent is not expired or revoked, and any required human approval has been completed.
+An action should continue only when the required identity, trust, lifecycle,
+revocation, permission, approval, audit, and enforcement conditions are
+intentionally checked.
+
+Permission must not be inferred from tool access, credentials, API tokens,
+runtime capability, or network reachability.
 
 ## Permission categories
 
-The model uses three categories:
+The model uses three action categories:
 
-1. Allowed actions.
+1. allowed actions;
+2. approval-required actions;
+3. prohibited actions.
 
-2. Approval-required actions.
+### Allowed actions
 
-3. Prohibited actions.
+Allowed actions are actions the agent may request when all required checks pass.
 
-## Allowed actions
+Allowed actions should be specific and limited. Broad permissions such as all
+tools, all data, full access, or administrator access should be avoided unless a
+later policy model explicitly justifies them.
 
-Allowed actions are actions the agent may perform when all identity and policy checks pass.
+### Approval-required actions
 
-Examples include:
+Approval-required actions are actions that may be possible, but should not
+continue without valid human approval evidence.
 
-1. Read public data.
+Approval should be specific to the agent, action, resource scope, purpose, and
+time window where possible.
 
-2. Summarize operator-owned documents.
+Approval evidence does not override identity failure, revocation, expiry,
+compromise, prohibited actions, or missing trust evidence.
 
-3. Call approved APIs.
-
-4. Generate draft reports.
-
-5. Classify low-risk data.
-
-6. Answer internal knowledge questions.
-
-7. Execute approved workflow steps.
-
-Allowed actions should be specific and limited. Broad permissions such as full access, all tools, or all data should be avoided.
-
-## Approval-required actions
-
-Approval-required actions are actions that may be possible, but should not execute until an authorized human approves them.
-
-Examples include:
-
-1. Sending external communications.
-
-2. Changing customer records.
-
-3. Accessing sensitive internal data.
-
-4. Making configuration changes.
-
-5. Initiating financial or contractual steps within a defined limit.
-
-Approval should record who approved the action, what was approved, when approval was granted, and how long the approval remains valid.
-
-## Prohibited actions
+### Prohibited actions
 
 Prohibited actions are actions the agent must not perform.
 
 Examples include:
 
-1. Hide its identity.
+1. hiding its identity;
+2. impersonating a human;
+3. using shared human credentials;
+4. accessing data outside scope;
+5. modifying its own permissions;
+6. disabling audit evidence;
+7. creating child agents without authority;
+8. delegating authority without evidence;
+9. calling unapproved tools;
+10. exfiltrating secrets;
+11. bypassing future enforcement controls;
+12. operating after revocation.
 
-2. Impersonate a human.
-
-3. Use shared human credentials.
-
-4. Access data outside scope.
-
-5. Modify its own permissions.
-
-6. Disable audit logging.
-
-7. Create child agents without permission.
-
-8. Delegate authority without a delegation credential.
-
-9. Call unapproved tools.
-
-10. Exfiltrate secrets.
-
-11. Bypass gateway enforcement.
-
-12. Operate after revocation.
-
-A prohibited action should remain denied even if the agent has technical access to a tool or environment that could perform it.
+A prohibited action should remain denied even if the agent has technical access
+to a tool or environment that could perform it.
 
 ## Decision outcomes
 
-The first model uses four decision outcomes:
+The permission model uses these decision outcomes:
 
-1. ALLOW
+1. `DENY`;
+2. `REQUIRE_HUMAN_APPROVAL`;
+3. `REQUIRE_HUMAN_REVIEW`;
+4. `ALLOW` inside the local authorization model only.
 
-2. DENY
+The passport verifier currently does not return `ALLOW`.
 
-3. REQUIRE_HUMAN_APPROVAL
-
-4. REQUIRE_HUMAN_REVIEW
-
-Each denial, approval requirement, or review requirement should include a reason, such as invalid identity, expired passport, revoked agent, action outside scope, prohibited action, approval required, approval expired, unknown action, unclear evidence, or review required.
-
-## Relationship to the agent passport
-
-The agent passport should include or reference the permission model that applies to the agent.
-
-The passport should express allowed actions, approval-required actions, prohibited actions, the default decision, policy version, and audit requirement.
+A local authorization result of `ALLOW` does not authorize execution by itself.
+Future end-to-end allow behavior requires the required signature, issuer trust,
+revocation freshness, permission, approval, audit, and enforcement gates to be
+connected and tested.
 
 ## Evaluation order
 
-A gateway or verifier should evaluate a request in this order:
+A permission decision should evaluate a request in this order:
 
-1. Verify the agent identity.
+1. reject malformed request or permission data;
+2. confirm the default decision is `DENY`;
+3. check prohibited actions first;
+4. check approval-required actions;
+5. check explicitly allowed actions;
+6. apply the unknown-action policy;
+7. record the decision reason.
 
-2. Check expiry and lifecycle status.
+Prohibited actions should take priority over allowed or approval-required
+actions.
 
-3. Check revocation status.
+Unknown actions should fail closed to `DENY` unless a later policy explicitly
+routes them to `REQUIRE_HUMAN_REVIEW`.
 
-4. Check whether the action is prohibited.
+## Relationship to the agent passport
 
-5. Check whether the action is allowed.
+The agent passport may include or reference permission evidence.
 
-6. Check whether human approval is required.
+That evidence may include:
 
-7. Check whether human review is required.
+1. allowed actions;
+2. approval-required actions;
+3. prohibited actions;
+4. default decision;
+5. unknown-action policy;
+6. policy identifier;
+7. policy version;
+8. audit requirement.
 
-8. Record the decision.
-
-9. Return ALLOW, DENY, REQUIRE_HUMAN_APPROVAL, or REQUIRE_HUMAN_REVIEW.
+The passport is not permanent authority. Permission evidence must be evaluated
+with current identity, lifecycle, revocation, trust, approval, and audit context.
 
 ## Current boundary
 
-This document defines the initial permission model.
+The repository includes a local deterministic authorization evaluator.
 
-It does not define the final schema, policy language, user interface, or implementation. Those will be developed later through specifications, reference implementation, and controlled tests.
+That evaluator is separate from passport verification, approval validation, audit
+preparation, enforcement composition, gateway behavior, and tool execution.
+
+Current permission research does not define a final policy language, production
+policy engine, user interface, gateway integration, storage system, or live
+multi-organization enforcement model.
+
+## Future work
+
+Future permission research may include:
+
+1. richer policy language;
+2. delegation and child-agent scope narrowing;
+3. approval expiry and replay protection;
+4. policy-version binding;
+5. cross-organization dummy scenarios;
+6. enforcement composition;
+7. gateway integration after Layer 1 is better tested.
+
+These areas should be researched in small steps and recorded through tests,
+focused evidence, and review.
