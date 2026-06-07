@@ -2,220 +2,112 @@
 
 ## Purpose
 
-This document defines the first decentralized verification model for autonomous agent identity.
+This document explains where decentralized verification fits in the autonomous
+agent identity research.
 
-The goal is to make agent passports verifiable outside one central runtime system while still allowing governed services for registration, revocation, and trust status.
+Decentralized verification is not the current implementation focus. It is a
+future research direction that becomes important when agent identity evidence
+needs to be checked across organizations, systems, gateways, and trust domains.
 
-## Core position
+This model may change as the research develops and as standards, tests, and
+review feedback improve the project.
 
-The system should be decentralized where useful and centralized where necessary.
+## Why it matters
 
-Decentralized verification does not mean that every part of the system must use blockchain.
+Autonomous agents may act across more than one system or organization.
 
-The first goal is portable verification. A verifier should be able to inspect an agent passport, verify signatures, check expiry, understand issuer trust, and evaluate available status evidence without depending unnecessarily on one live gateway.
+A verifier should not always need to depend on one live central service to
+understand basic identity evidence. Some evidence should be portable,
+inspectable, and reviewable across trust boundaries.
 
-## What decentralized verification means
+The research gap is not blockchain or decentralization for its own sake.
 
-For this research, decentralized verification means:
+The gap is:
 
-1. Agent passports can be verified outside the issuing service.
+How can another organization verify enough agent identity and action-decision
+evidence to make a fail-closed decision?
 
-2. Verification material can be resolved from portable or public trust records.
+## Fit in the roadmap
 
-3. Revocation evidence can be checked online when available and partially offline when needed.
+Decentralized verification supports QSAG Layer 1:
 
-4. Important evidence can be signed, hashed, timestamped, or anchored for later review.
+Agent identity and action-decision evidence.
 
-5. The system avoids unnecessary single points of trust.
+It connects to the current roadmap through:
 
-## What must be verifiable
+1. portable agent identity evidence;
+2. issuer trust boundaries;
+3. public-key and proof metadata;
+4. lifecycle and expiry checks;
+5. revocation freshness evidence;
+6. audit and decision evidence;
+7. future cross-organization dummy scenarios.
 
-A verifier should be able to check:
+The current repository does not implement a live decentralized registry,
+blockchain system, DID method, transparency service, or multi-organization
+deployment.
 
-1. Agent identity.
+## What should be portable
 
-2. Issuer identity.
+Future decentralized verification research may study how a verifier can inspect
+or resolve:
 
-3. Operator binding.
+1. agent identity;
+2. issuer identity;
+3. operator or controller reference;
+4. public-key metadata;
+5. proof metadata;
+6. lifecycle status;
+7. expiry and validity windows;
+8. revocation or status evidence;
+9. permission and prohibition references;
+10. audit or decision evidence references.
 
-4. Public keys.
+Portable evidence must still fail closed when it is missing, stale, malformed,
+unsupported, or untrusted.
 
-5. Passport signature.
+## Trust boundary
 
-6. Passport expiry.
+Decentralized verification does not remove trust decisions.
 
-7. Permission and prohibition references.
+A verifier still needs to know:
 
-8. Revocation or lifecycle status.
+1. which issuer is trusted;
+2. which key is valid;
+3. which proof format is supported;
+4. whether status evidence is fresh enough;
+5. whether the action is within scope;
+6. whether approval or review is required;
+7. what evidence should be recorded.
 
-9. Policy version.
+A valid portable credential or signed object should not automatically authorize
+an action.
 
-10. Audit or evidence references.
+## Possible future mechanisms
 
-## Verification modes
+Future research may evaluate:
 
-The model supports three verification modes.
+1. signed issuer metadata;
+2. signed status or revocation evidence;
+3. portable credential formats;
+4. decentralized identifiers such as practical DID methods;
+5. transparency logs;
+6. timestamp or hash anchoring;
+7. replicated registries;
+8. cross-organization verifier scenarios.
 
-### Offline verification
-
-Offline verification checks the passport structure, signatures, public keys, expiry, hashes, and cached or signed status evidence.
-
-Offline verification is useful when the verifier cannot contact the issuing service.
-
-Offline verification may not know the latest revocation state unless fresh status evidence or a signed revocation list is available.
-
-### Online verification
-
-Online verification checks live issuer status, revocation status, key rotation status, and current trust information.
-
-Online verification is useful when live network access is available.
-
-### Hybrid verification
-
-Hybrid verification combines local verification with online checks.
-
-A verifier may accept the passport structure and signature offline, then strengthen the decision with live revocation or issuer checks when available.
-
-## Trust material
-
-The identity model should support more than one way to resolve trust material.
-
-Examples include:
-
-1. A published issuer public key.
-
-2. A signed issuer metadata file.
-
-3. A decentralized identifier document.
-
-4. A trusted issuer registry.
-
-5. A transparency log or signed statement service.
-
-6. A signed revocation or status list.
-
-The first implementation should start simple and avoid unnecessary infrastructure.
-
-## DID research direction
-
-Decentralized identifiers may be useful for resolving verification material.
-
-DID support is a research direction, not a first-version dependency.
-
-The first implementation should support portable verification using signed passports, issuer public keys, signed issuer metadata, and signed status evidence.
-
-Later research should evaluate did:web because it can use an existing domain as a trust anchor.
-
-Later research should also evaluate did:key because it can support simple key-derived identifiers for offline verification.
-
-The project should not depend on a blockchain-based DID method until the identity, revocation, audit, and verification models have been tested.
-
-## Revocation and status
-
-Revocation is a key part of decentralized verification.
-
-The model should support:
-
-1. Online status endpoint.
-
-2. Signed revocation list.
-
-3. Cached status record.
-
-4. Short-lived passport.
-
-5. Offline warning mode.
-
-A verifier should record which revocation evidence was available at the time of verification.
-
-## Evidence anchoring
-
-Evidence anchoring can help prove that a passport, revocation list, policy version, or audit summary existed before a certain point in time.
-
-The system should anchor hashes, not private data.
-
-Examples of evidence that may be hashed and anchored include:
-
-1. Agent passport hash.
-
-2. Revocation list hash.
-
-3. Policy version hash.
-
-4. Audit summary hash.
-
-5. Issuer metadata hash.
-
-## Bitcoin timestamping research
-
-Bitcoin timestamping is considered only as an evidence anchoring mechanism.
-
-The system should not place agent passports, personal data, secrets, or operational details on a public blockchain.
-
-Future research may test OpenTimestamps or similar timestamping methods to anchor hashes of passports, revocation lists, policy versions, or audit summaries.
-
-This can help prove that a document or state existed before a certain point in time without exposing the underlying content.
-
-## Blockchain boundary
-
-Blockchain is optional for this research.
-
-The first implementation should not require running a blockchain, issuing a token, paying transaction fees, or storing sensitive data on-chain.
-
-Blockchain-based anchoring, decentralized registries, or transparency mechanisms may be researched later if funding, testing time, and security review are available.
-
-## Implementation direction
-
-The first practical implementation should be simple.
-
-It should test whether the system can:
-
-1. Create an agent passport.
-
-2. Canonicalize the passport.
-
-3. Sign the passport.
-
-4. Verify the passport offline.
-
-5. Detect passport tampering.
-
-6. Check expiry.
-
-7. Check a signed or cached revocation status.
-
-8. Record what verification evidence was available.
-
-Later research can add decentralized identifiers, transparency services, timestamp proofs, and multi-organization verification.
-
-## Research and testing direction
-
-The research should record what passes, what fails, and what needs improvement.
-
-Future tests should evaluate:
-
-1. Offline passport verification.
-
-2. Online revocation checks.
-
-3. Signed revocation list verification.
-
-4. Timestamp proof verification.
-
-5. Key rotation handling.
-
-6. Issuer metadata verification.
-
-7. did:web verification.
-
-8. did:key verification.
-
-9. Verification under network failure.
-
-10. Multi-organization verification.
+Blockchain-based anchoring is optional future research only. The project should
+not place agent passports, secrets, personal data, private documents, or
+operational details on a public blockchain.
 
 ## Current boundary
 
-This document defines the initial decentralized verification model.
+This document defines a future research model.
 
-It does not define the final DID method, registry, transparency service, blockchain anchoring system, timestamping provider, or implementation. Those will be developed later through specifications, reference implementation, controlled tests, and recorded evaluation results.
+It does not define a final DID method, registry, transparency service,
+blockchain anchoring system, timestamping provider, production trust network, or
+implementation.
+
+Current Layer 1 work should stay focused on fail-closed verifier semantics,
+signature-boundary research, evidence minimization, and dummy-data-only
+cross-organization scenarios.
