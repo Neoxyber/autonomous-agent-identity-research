@@ -2,226 +2,152 @@
 
 ## Purpose
 
-This document defines the first post-quantum readiness model for autonomous agent identity.
+This document explains where post-quantum readiness fits in the autonomous
+agent identity research.
 
-The model explains how the project will prepare agent identity, verification, revocation, and audit evidence for long-term cryptographic change.
+Post-quantum readiness is a cross-cutting research direction. It affects agent
+identity evidence, signatures, key rotation, long-term audit evidence, and future
+migration planning.
 
-## Core position
+This model may change as the research develops and as standards, tests, and
+review feedback improve the project.
 
-Post-quantum readiness is a design requirement, not a marketing claim.
+## Why it matters
 
-Autonomous agent identities may need to remain verifiable for many years. The identity layer should therefore be able to support post-quantum signatures, key rotation, algorithm migration, and cryptographic agility.
+Autonomous agents may eventually operate in large numbers, across many systems,
+at machine speed.
 
-The project will not implement cryptographic algorithms from scratch.
+If agent identity evidence is expected to remain verifiable over time, the
+research must consider cryptographic migration early. A passport, signature,
+revocation record, approval record, or audit record may need to be reviewed long
+after it was created.
 
-The project will use respected and maintained cryptographic libraries for research and testing.
+The gap is not only choosing a post-quantum algorithm.
 
-## Initial algorithm direction
+The gap is:
 
-The first research direction is:
+How can autonomous-agent identity evidence remain verifiable, reviewable, and
+migratable when cryptographic algorithms, libraries, proof formats, and threat
+models change?
 
-1. ML-DSA as the primary candidate for signing agent passports.
+## Fit in the roadmap
 
-2. SLH-DSA as an independent backup signature family.
+Post-quantum readiness supports QSAG Layer 1:
 
-3. ML-KEM as a future candidate for secure key establishment.
+Agent identity and action-decision evidence.
 
-4. Hybrid transition support where classical and post-quantum mechanisms need to coexist.
+It connects to the current roadmap through:
 
-5. Cryptographic agility so algorithms, parameter sets, proof formats, and key material can change over time.
+1. proof and key metadata;
+2. signed-byte and canonicalization research;
+3. future signature verification;
+4. key validity and key rotation;
+5. long-term audit evidence;
+6. proof-profile alignment;
+7. dependency adoption review;
+8. failure handling for unsupported algorithms or proof formats.
 
-## Agent passport signatures
-
-Agent passports need signatures so verifiers can detect tampering and confirm issuer authority.
-
-The first research implementation should evaluate ML-DSA for passport signing and verification.
-
-The research should record:
-
-1. Key generation behaviour.
-
-2. Signature size.
-
-3. Verification time.
-
-4. Passport payload size.
-
-5. Failure when a signed field is modified.
-
-6. Failure when an unsupported algorithm is used.
-
-7. Failure when a signature is missing or invalid.
-
-## Backup signature family
-
-The model should support an independent backup signature family.
-
-SLH-DSA is treated as the first backup candidate because it is a hash-based signature family and gives algorithm diversity.
-
-The project should research whether a passport should support:
-
-1. A primary signature only.
-
-2. A backup signature only for high-risk passports.
-
-3. Dual signatures during migration.
-
-4. Separate signatures for identity, policy, and revocation evidence.
-
-The first model should not assume that every passport must always carry every possible signature.
-
-## ML-KEM direction
-
-ML-KEM is not a passport signature algorithm.
-
-It is considered for future secure key establishment between agents, gateways, verifiers, and supporting services.
-
-The first research phase should focus on signatures for identity verification. ML-KEM experiments should come later when secure channels, key exchange, or encrypted transport are in scope.
-
-## Hybrid transition
-
-The transition to post-quantum cryptography will not happen everywhere at the same time.
-
-The model should support hybrid transition where needed.
-
-Hybrid transition may include:
-
-1. Classical and post-quantum verification during migration.
-
-2. Dual-signature passports.
-
-3. Policy rules that define acceptable algorithms.
-
-4. Key rotation from classical keys to post-quantum keys.
-
-5. Verifier behaviour for older passports.
-
-Hybrid mode should be tested, not assumed.
-
-## Cryptographic agility
-
-Cryptographic agility is mandatory.
-
-The system should be able to change:
-
-1. Algorithms.
-
-2. Parameter sets.
-
-3. Key identifiers.
-
-4. Proof formats.
-
-5. Signature containers.
-
-6. Verification policies.
-
-7. Rotation rules.
-
-The system should not permanently bind the identity model to one algorithm, library, parameter set, or proof format.
-
-## Library direction
-
-The project should use respected cryptographic libraries for research and testing.
-
-The first research library direction is Open Quantum Safe, including liboqs and its language bindings where appropriate.
-
-The purpose is controlled experimentation, not a production security claim.
-
-The project should not use unknown or unmaintained cryptographic packages for core research results.
-
-The project should not write custom implementations of ML-DSA, SLH-DSA, ML-KEM, or any other cryptographic primitive.
-
-## Verification evidence
-
-Post-quantum verification should produce audit evidence.
-
-The audit record should be able to capture:
-
-1. Algorithm used.
-
-2. Parameter set.
-
-3. Key identifier.
-
-4. Signature identifier.
-
-5. Verification result.
-
-6. Verification time.
-
-7. Passport hash.
-
-8. Policy hash.
-
-9. Failure reason, if verification fails.
-
-This helps later review, migration planning, and performance evaluation.
-
-## Key rotation
-
-The model should support key rotation.
-
-Key rotation may be required because of:
-
-1. Scheduled lifecycle management.
-
-2. Algorithm migration.
-
-3. Key compromise.
-
-4. Operator change.
-
-5. Issuer policy change.
-
-6. Research test condition.
-
-A rotated agent or issuer should clearly indicate which key material is current and which key material is retired.
-
-## What the project should test
-
-The first post-quantum tests should evaluate:
-
-1. ML-DSA key generation.
-
-2. ML-DSA passport signing.
-
-3. ML-DSA passport verification.
-
-4. SLH-DSA backup signing.
-
-5. SLH-DSA backup verification.
-
-6. Dual-signature passport verification.
-
-7. Signature size comparison.
-
-8. Verification latency.
-
-9. Passport payload size.
-
-10. Key rotation.
-
-11. Algorithm migration.
-
-12. Failure when a signature is modified.
-
-13. Failure when passport claims are modified.
-
-14. Failure when the verifier does not support the algorithm.
-
-15. ML-KEM experiments when secure key establishment becomes in scope.
-
-## EU and long-term transition note
-
-This model is designed to support long-term cryptographic migration and post-quantum readiness.
-
-It does not claim legal compliance, production readiness, or final standardization.
-
-Post-quantum migration requires legal, technical, operational, and security review. The project will treat post-quantum readiness as a research and testing requirement and will record what passes, what fails, what is costly, and what needs improvement.
+Post-quantum work is also cross-cutting because it may affect later QSAG layers,
+including gateway enforcement, delegation, evidence replay, and long-term
+migration.
 
 ## Current boundary
 
-This document defines the initial post-quantum readiness model.
+This repository does not implement real signature verification.
 
-It does not define the final proof suite, signature container, key management system, secure channel design, deployment architecture, or production cryptographic policy. Those will be developed later through specifications, reference implementation, controlled tests, and recorded evaluation results.
+It does not adopt a cryptographic runtime dependency, generate production keys,
+define a production key-management system, or claim post-quantum security.
+
+The current technical focus remains verifier-boundary research and future
+signature adapter-interface tests. Any real signature path requires proof-profile
+decisions, dependency review, test-vector evidence, encoding decisions, and
+fail-closed verifier integration.
+
+## Current research direction
+
+The current post-quantum signature research direction is:
+
+1. ML-DSA-65 as the first passport signature research target;
+2. SLH-DSA as an independent backup signature-family direction;
+3. ML-KEM as future key-establishment research, not a passport signature
+   algorithm;
+4. algorithm agility so the model is not permanently tied to one algorithm,
+   parameter set, proof format, or library;
+5. migration planning so old and new evidence can be handled safely during
+   transition periods.
+
+Hybrid or multi-signature approaches may be researched later, but they should
+not be assumed until tested.
+
+## Runtime and vector evidence
+
+Runtime and vector research is evidence-gathering, not adoption.
+
+Candidate runtime paths include:
+
+1. Python `cryptography` ML-DSA support;
+2. Open Quantum Safe `liboqs` and appropriate bindings;
+3. other maintained ML-DSA-capable runtimes only after source, license,
+   maintenance, dependency, and security review.
+
+Current research has recorded isolated ML-DSA-65 runtime and test-vector work.
+That evidence helps decide whether a future verifier integration is practical,
+but it does not approve dependency adoption or real signature verification.
+
+NIST/ACVP-style vector material is important because future signature work should
+be tested against authoritative or well-understood vectors before it is trusted.
+
+## What future research should test
+
+Future post-quantum research may test:
+
+1. supported proof profiles;
+2. public-key encoding;
+3. signature encoding;
+4. signed-byte selection;
+5. valid and invalid ML-DSA verification cases;
+6. unsupported-algorithm failure;
+7. malformed-key failure;
+8. malformed-signature failure;
+9. wrong-key failure;
+10. modified-payload failure;
+11. runtime-unavailable failure;
+12. runtime-exception fail-closed behavior;
+13. key rotation and algorithm migration;
+14. audit evidence for signature results.
+
+These tests should use dummy data and isolated environments until the project
+records a separate adoption decision.
+
+## Future work
+
+Future post-quantum readiness work may include:
+
+1. proof-profile alignment with signed-data standards;
+2. dependency adoption review;
+3. expanded NIST/ACVP vector compatibility;
+4. SLH-DSA backup-profile research;
+5. hybrid migration research;
+6. long-term evidence replay;
+7. key rotation and retirement policy;
+8. migration guidance for later QSAG layers.
+
+These areas should be researched in small steps and recorded through tests,
+focused evidence, and review.
+
+## Non-goals
+
+This document does not define:
+
+1. a production cryptographic policy;
+2. a final proof suite;
+3. a final signature container;
+4. a key-management system;
+5. a secure-channel design;
+6. dependency adoption;
+7. real signature verification;
+8. production post-quantum security;
+9. legal, compliance, or certification readiness.
+
+The model should remain narrow, testable, and aligned with the README, ROADMAP,
+tests, and evidence records.
