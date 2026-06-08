@@ -2,136 +2,100 @@
 
 ## Purpose
 
-This document records the current limitations of the autonomous agent identity research.
+This document records current limitations of the autonomous agent identity research.
 
-The purpose is to keep the project honest, reviewable, and clear about what has been defined, what has not been implemented, and what still needs research and testing.
+The goal is to keep the research honest about what is implemented, what is planned, what is experimental, what is deferred, and what remains unresolved.
 
-## Research-stage work
+This research is expected to improve over time. Mistakes, incomplete assumptions, outdated wording, or missed issues can happen during research. Review and guidance from the community, academia, standards groups, and industry are helpful so the work can be corrected and improved responsibly.
 
-This repository is currently in the research model stage.
+## Research stage
 
-The documents define initial models for identity, permissions, human oversight, revocation, decentralized verification, audit evidence, post-quantum readiness, and evaluation.
+This is research-stage work.
 
-The repository does not yet provide a production system.
+The repository contains research models, specifications, focused planning documents, deterministic local helpers, verifier-boundary checks, and automated tests.
 
-## No production readiness claim
+It is not a production system.
 
-This project does not currently claim production readiness.
+## No production readiness
 
-The current work should not be used as a production identity service, authorization gateway, compliance system, revocation registry, audit system, or post-quantum security product.
+The research is not ready to be used as a production identity service, authorization gateway, revocation registry, audit system, cryptographic library, cloud deployment, or post-quantum security product.
 
-A production system would require implementation, testing, security review, operational controls, incident response processes, deployment hardening, and independent review.
+Production use would need separate maturity work, security review, operational controls, incident response planning, deployment hardening, and independent review.
 
-## No legal compliance claim
+## No legal or compliance status
 
-This repository does not claim compliance with the EU AI Act, GDPR, UK law, cybersecurity regulation, financial regulation, healthcare regulation, or any other legal framework.
+The research does not establish compliance with any legal, regulatory, certification, or governance framework.
 
-The research may discuss concepts that are relevant to governance, traceability, human oversight, logging, accountability, and post-quantum transition.
+It may study accountability, transparency, human oversight, logging, revocation, and long-term cryptographic migration, but legal or regulatory use needs separate professional review.
 
-Legal compliance requires separate legal, technical, organizational, and operational review.
+## No final standard
 
-## No final standardization claim
+The models, schemas, field names, proof profiles, decision outcomes, and implementation boundaries may change as the research develops.
 
-The models in this repository are not standards.
+The research aims to build with existing standards and emerging work where appropriate. It does not claim to replace them.
 
-They are research models intended to be tested, refined, and compared with relevant standards, guidance, and industry practice.
+## Current verifier boundary
 
-Future work may change field names, decision outcomes, schemas, algorithms, verification methods, and implementation details.
+The local verifier remains fail-closed.
 
-## No custom cryptography
+Real signature verification, cryptographic runtime dependency adoption, live issuer registry, live revocation service, production policy engine, audit storage, gateway enforcement, cloud deployment, external integrations, and passport verifier `ALLOW` behavior are not implemented.
 
-The project will not design or implement custom cryptographic algorithms.
+## Canonicalization boundary
 
-Post-quantum research should use respected and maintained cryptographic libraries.
+The current canonicalization helper is research-stage and current-profile focused.
 
-Any cryptographic experiment in this repository should be treated as research until reviewed and tested.
+REF-014 adoption is deferred. Canonicalizer replacement, requirements changes, lockfile changes, golden-vector migration, and full RFC 8785/JCS conformance remain separate future decisions.
+
+## Signature boundary
+
+Signature planning and isolated ML-DSA research have been recorded, but real passport signature verification is not implemented.
+
+Future signature work needs proof-profile decisions, dependency review, encoding decisions, test-vector evidence, and fail-closed verifier integration.
 
 ## Post-quantum uncertainty
 
-Post-quantum readiness is a design goal, not a guarantee.
+Post-quantum readiness is a research direction, not a security assurance.
 
-The project currently treats ML-DSA, SLH-DSA, and ML-KEM as research candidates based on current post-quantum standardization direction.
+ML-DSA, SLH-DSA, ML-KEM, runtime support, parameter choices, proof formats, and deployment guidance may change over time. The research needs to remain cryptographically agile.
 
-Algorithm choices, parameter sets, proof formats, libraries, and deployment guidance may change over time.
+## Decentralized verification limits
 
-The system must remain cryptographically agile.
+Decentralized verification is future research.
 
-## Canonicalization and signature boundary
-
-The declared canonicalization scheme names the JSON Canonicalization Scheme as the long-term target, but the current research helper is not a complete independent RFC 8785 implementation.
-
-The current canonicalization tests document deterministic behaviour for the current research passport profile only. They do not establish full RFC 8785 or JSON Canonicalization Scheme compliance.
-
-REF-014 adoption remains deferred. Canonicalizer replacement, requirements changes, lockfile changes, and golden-vector migration remain separate future decisions.
-
-Signature planning and adapter-interface research may proceed while canonicalizer adoption remains separate. Real signature verification remains blocked until proof-profile, dependency, canonicalization-boundary, and verifier-integration decisions are complete.
-
-## DID and decentralized verification limits
-
-DID support is a research direction, not a first-version dependency.
-
-The project may evaluate did:web and did:key first because they are practical for early testing.
-
-The project does not currently depend on a blockchain-based DID method.
-
-Blockchain anchoring, transparency services, and decentralized registries require further funding, testing, security review, and operational design.
-
-## Blockchain boundary
-
-Blockchain is not treated as a required foundation.
-
-The project may research timestamping or anchoring hashes of passports, policies, revocation lists, or audit summaries.
-
-The project should not place agent passports, secrets, personal data, private documents, or operational details on a public blockchain.
+The repository does not implement a live DID method, decentralized registry, transparency service, blockchain anchoring system, or multi-organization trust network.
 
 ## Human oversight limits
 
-The human oversight model is an initial research model.
+Human oversight research does not define a final user interface, approval workflow, escalation process, emergency stop system, or governance process.
 
-It does not define the final user interface, approver workflow, escalation process, training requirement, organizational role model, or kill switch implementation.
-
-Future research must test whether humans are given enough context, authority, and time to make meaningful decisions.
+Approval evidence is currently local and inert. It does not execute actions, store approvals, enforce expiry, prevent replay, or create a passport verifier `ALLOW` path.
 
 ## Revocation limits
 
-The revocation model does not yet define the final registry, status endpoint, signed revocation list format, cache policy, or offline freshness rules.
+The verifier currently supports caller-provided revocation freshness evidence.
 
-Offline verification may not know the latest revocation state unless fresh evidence is available.
-
-This limitation must be tested and documented.
+It does not perform network lookup, registry lookup, signed status verification, signed revocation-list verification, emergency stop handling, or replay protection beyond the freshness window.
 
 ## Audit limits
 
-The audit model does not yet define the final schema, storage system, retention policy, access control model, evidence export format, or tamper-evidence mechanism.
+The audit builder is deterministic and in-memory.
 
-Audit evidence must avoid unnecessary sensitive data.
+It prepares limited audit evidence from already-produced results. It does not store records, write files, use a database, transmit events, hash events, sign events, chain events, call gateways, execute tools, or create a passport verifier `ALLOW` path.
 
-Retention rules require legal and operational review.
+## Data limits
 
-## Evaluation limits
+Research tests use dummy data unless a later decision records why another approach is needed.
 
-The evaluation method defines how tests and research results should be recorded. The repository now includes automated tests, but future results may still show that parts of the model are incomplete, too complex, too expensive, too slow, or unsuitable for certain environments.
+The repository is not intended to contain real users, real organization secrets, private keys, production credentials, live agent logs, or confidential operational data.
 
-Failures should be recorded and used to improve the model.
+## Documentation limits
 
-## Documentation security limits
+Documentation can become outdated as the research changes.
 
-Documentation can contain mistakes, outdated assumptions, hidden characters, unsafe commands, or misleading instructions.
-
-Future work should add documentation security checks using reputable tools where possible and small custom checks where necessary.
-
-Documentation should be treated as part of the attack surface.
-
-## Implementation boundary
-
-Implementation should begin only after the core research model has enough structure to test.
-
-The first implementation should be minimal and should focus on creating, signing, verifying, revoking, and evaluating an agent passport in a controlled research setting.
-
-Databases, deployment, user interfaces, production infrastructure, and commercial service features should come later.
+The research will try to keep documents short, aligned, and easy to review, but missed issues can happen. Documents need periodic review for repetition, stale statements, unsafe commands, broken links, unsupported production language, and mismatch with tests or evidence.
 
 ## Current boundary
 
-This document records the current known limitations.
+This document can be updated when meaningful research boundaries change.
 
-It should be updated as the research model, specifications, implementation, tests, and evidence records evolve.
+Small wording cleanup does not need an evidence-log entry unless it changes a research boundary.

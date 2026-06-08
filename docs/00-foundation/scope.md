@@ -1,105 +1,98 @@
 # Scope
 
-This document defines the initial scope of the autonomous agent identity research.
+## Purpose
 
-The scope is intentionally narrow for the first phase. The repository begins with the identity layer because later work on enforcement, revocation, policy, audit, and implementation depends on a clear identity model.
+This document defines the current scope of the autonomous agent identity research.
+
+The research is focused on QSAG Layer 1:
+
+Agent identity and action-decision evidence.
+
+This scope may change as the research develops and as standards, tests, and review feedback improve the work.
 
 ## In scope
 
-The first phase includes the following areas.
+### Agent identity evidence
 
-### Agent identity
+The research studies what evidence an autonomous agent identity should contain.
 
-The research will define what an autonomous agent identity should contain.
+This includes agent identifier, purpose, risk class, issuer reference, operator reference, public-key metadata, proof metadata, lifecycle status, issue time, expiry time, and passport metadata.
 
-This includes the agent identifier, purpose, risk class, public keys, issue time, expiry time, lifecycle status, and passport metadata.
+### Action-decision evidence
 
-### Operator accountability
+The research studies what evidence is needed before an autonomous-agent action can be trusted.
 
-The research will define how an agent identity can be linked to a responsible operator.
+This includes issuer trust, key validity, proof selection, payload hash, canonical payload preparation, revocation freshness, permission scope, approval requirements, audit context, and decision reason.
 
-The operator may be a person, organization, legal entity, research group, or system owner. The first phase focuses on the structure of the binding, not on production identity proofing.
+### Fail-closed verification
 
-### Allowed actions
+The research studies verifier behavior for malformed, missing, stale, mismatched, unsupported, expired, revoked, compromised, or ambiguous evidence.
 
-The research will define how an agent passport can describe actions the agent is allowed to perform.
+The verifier should not return `ALLOW` until the required signature, trust, revocation, permission, approval, audit, and enforcement gates are intentionally connected and tested.
 
-Allowed actions should be explicit, limited, and understandable.
+### Permission and prohibition
 
-### Prohibited actions
+The research studies how an agent passport can include or reference allowed actions, approval-required actions, prohibited actions, default decision, unknown-action handling, and audit requirements.
 
-The research will define how an agent passport can describe actions the agent is not allowed to perform.
+### Human oversight
 
-Prohibited actions should remain denied even if the agent has access to a tool or environment that could technically perform them.
+The research studies when actions should require human approval, review, escalation, pause, or intervention.
 
-### Human approval
+Human approval must not override prohibited actions, failed identity, missing issuer trust, expired or revoked status, stale revocation evidence, or missing audit and enforcement boundaries.
 
-The research will define how an identity model can indicate that some actions require human approval.
+### Revocation and lifecycle
 
-The first phase will distinguish between automatically allowed actions, actions requiring approval, and actions that are never allowed.
+The research studies active, suspended, revoked, expired, compromised, and retired lifecycle states.
 
-### Revocation and status
+Only `active` allows verification to continue. Rotation and onboarding remain outside `lifecycle_status` in the current schema.
 
-The research will define basic lifecycle states for agent identity.
+### Canonicalization and signed bytes
 
-Current lifecycle states are active, suspended, revoked, expired, compromised, and retired. Rotation is treated as a transition or reason, and pending review is handled outside `lifecycle_status` unless a later schema decision changes that boundary.
+The research studies canonical payload preparation, payload hashing, canonicalization boundaries, and signed-byte decisions.
 
-### Global verification
+Canonicalizer adoption and golden-vector migration remain separate decisions.
 
-The research will study how an agent passport can be verified outside the original issuing system.
+### Signature proof-profile research
 
-This includes portable credentials, public keys, expiry, signatures, and verification evidence.
+The research studies future ML-DSA-65 verification boundaries, proof-profile scope, key encoding, signature encoding, runtime candidates, and NIST/ACVP-style test-vector evidence.
 
-### Decentralized verification
+Real signature verification and dependency adoption are not implemented.
 
-The research will study how identity verification can avoid unnecessary dependence on a single central service.
+### Audit minimization
 
-The first phase focuses on the model and requirements, not on deploying a decentralized registry.
+The research studies how decision evidence can be useful for later review while avoiding unnecessary sensitive data.
 
-### Post-quantum readiness
+### Dummy cross-organization scenarios
 
-The research will study how post-quantum signatures can support long-term verification of agent identity.
+The research may use simulated organizations, dummy agents, and dummy data to test portable verification and action-decision evidence.
 
-The first phase focuses on cryptographic design requirements and algorithm agility, not on claiming final standardization.
+## Out of scope for the current phase
 
-### Audit evidence
+The current phase does not include:
 
-The research will define what evidence should be produced when an agent requests or performs an important action.
+1. production deployment;
+2. commercial platform development;
+3. legal or compliance certification;
+4. production identity proofing;
+5. live issuer registry;
+6. live revocation service;
+7. real signature verification;
+8. cryptographic runtime dependency adoption;
+9. production policy engine;
+10. audit storage;
+11. gateway enforcement;
+12. cloud deployment;
+13. MCP, A2A, workflow, or tool integration;
+14. live multi-organization operation;
+15. payment execution;
+16. autonomous child-agent creation.
 
-Audit evidence should support review of identity, operator responsibility, requested action, policy decision, and denial reason.
+These areas may become future QSAG layers or later research phases after Layer 1 is clearer and better tested.
 
-## Out of scope for the first phase
+## Current boundary
 
-The following areas are not part of the first phase.
+The current work should remain narrow, testable, and verifier-side.
 
-1. Production deployment.
+Small implementation steps are acceptable when they support the research model, negative tests, fail-closed behavior, and evidence recording.
 
-2. Commercial platform development.
-
-3. Legal compliance claims.
-
-4. Full identity proofing of human or legal entity operators.
-
-5. Runtime workload attestation.
-
-6. Agent-to-agent delegation.
-
-7. Reputation scoring.
-
-8. Formal verification.
-
-9. Payment execution.
-
-10. Autonomous creation of child agents.
-
-11. Production governance registry.
-
-12. User interface design.
-
-These areas may be considered in later phases after the identity model is documented and tested.
-
-## First milestone
-
-The first milestone is to define the complete identity model for autonomous agents.
-
-The milestone is complete when the repository contains clear documents for principles, problem statement, research questions, scope, references, and the initial research log.
+Broad product architecture, deployment design, and integration work should stay deferred until the Layer 1 trust boundaries are better understood.

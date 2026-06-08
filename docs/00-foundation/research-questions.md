@@ -1,59 +1,59 @@
 # Research Questions
 
-This document defines the initial research questions for the autonomous agent identity project.
+## Purpose
 
-The questions are focused on the first research area: the complete identity layer for autonomous agents.
+This document records the main research questions for QSAG Layer 1:
+
+Agent identity and action-decision evidence.
+
+These questions may change as the research develops and as standards, tests, and review feedback improve the work.
 
 ## Primary question
 
-How can autonomous agents be given globally verifiable, revocable, permission-scoped, and post-quantum-ready identities that make them accountable for their actions without forcing trust in a single central system?
+What must be checked before an autonomous AI agent action is trusted?
 
 ## Supporting questions
 
-### RQ1. Identity attributes
+### RQ1. Agent identity
 
-What identity attributes are required for an autonomous agent?
+What identity attributes are needed for an autonomous agent?
 
-This includes the agent's identifier, purpose, risk class, operator binding, public keys, status, expiry, permissions, prohibitions, and audit references.
+This includes agent identifier, purpose, risk class, operator reference, issuer reference, lifecycle status, validity window, public-key metadata, proof metadata, permissions, revocation reference, and audit references.
 
 ### RQ2. Operator accountability
 
-How can agent identity be bound to a responsible operator?
+How can an agent be linked to a responsible operator or controller without exposing unnecessary personal or sensitive data?
 
-The operator may be a person, organization, legal entity, research group, or system owner. The research must consider how to express responsibility without exposing unnecessary personal or sensitive information.
+### RQ3. Permission and prohibition
 
-### RQ3. Permissions and prohibitions
+How can action scope be represented so a verifier can distinguish allowed, approval-required, review-required, unknown, and prohibited actions?
 
-How can permissions and prohibitions be encoded into an agent passport?
+### RQ4. Revocation and freshness
 
-The identity model should describe what an agent is allowed to do, what it is not allowed to do, and which actions require human approval.
+How can a verifier decide whether status evidence is fresh, bound to the right passport and issuer, and active enough for verification to continue?
 
-### RQ4. Global verification
+### RQ5. Signed evidence
 
-How can an agent passport be verified globally without depending on one central service?
-
-The research must consider portable credentials, decentralized identifiers, public keys, expiry, revocation references, and offline verification.
-
-### RQ5. Revocation
-
-How can revocation work in both online and offline environments?
-
-The research must consider active, suspended, revoked, expired, compromised, and retired lifecycle states. Rotation should be treated as a transition or reason, and pending review should be handled outside `lifecycle_status` unless a later schema decision changes that boundary.
+Which bytes should be signed, which proof profile should be supported, and how should malformed, unsupported, mismatched, or invalid proof evidence fail closed?
 
 ### RQ6. Post-quantum readiness
 
-How can post-quantum signatures support long-term trust in agent identities?
+How should the research prepare for ML-DSA, SLH-DSA, key rotation, algorithm agility, and long-term migration without adopting dependencies too early?
 
-The research must consider primary signatures, backup signatures, key rotation, algorithm agility, and future key establishment.
+### RQ7. Human oversight
 
-### RQ7. Audit evidence
+When should an action require approval, review, escalation, pause, or intervention, and what evidence proves that oversight was context-bound?
 
-What audit evidence is needed to prove that an agent acted within or outside its authority?
+### RQ8. Audit minimization
 
-The research must consider signed audit events, policy decisions, action records, passport hashes, operator binding, and denial reasons.
+What evidence is needed to review decisions later without collecting unnecessary sensitive data, secrets, prompts, or operational content?
+
+### RQ9. Cross-organization verification
+
+How can dummy cross-organization scenarios test whether identity and action-decision evidence remains understandable outside the issuing system?
 
 ## Current boundary
 
-These questions define the first research phase.
+These questions guide the current Layer 1 research.
 
-Later phases may study runtime identity, agent-to-agent delegation, supply-chain binding, reputation, decentralized registries, and formal verification.
+Later QSAG layers may study behavior evidence, delegation chains, gateway enforcement, audit replay, cloud deployment, MCP or workflow integration, and live multi-organization operation.
