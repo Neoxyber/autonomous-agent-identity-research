@@ -2,25 +2,29 @@
 
 ## Purpose
 
-This document defines how the project evaluates autonomous-agent identity research.
+This document explains how the research uses tests and evidence.
 
-The goal is to keep the research testable, evidence-based, and easy to review.
+The goal is simple: learn carefully, record what happened, find mistakes, and
+improve the work over time.
 
-Detailed test evidence belongs in focused result documents, test files, or evidence-log milestones.
+Evaluation is not a finished benchmark or security assessment. It is the way
+this research stays testable and easier to review.
 
-## Core position
+## Research approach
 
-Research findings should be tested and reviewed before they guide implementation.
+The research uses small steps.
 
-The project should record:
+Each meaningful step records:
 
-1. what passed;
-2. what failed;
-3. what worked only partly;
-4. what was blocked;
-5. what still needs research.
+1. what was tested or reviewed;
+2. what passed;
+3. what failed;
+4. what worked only partly;
+5. what was blocked;
+6. what still needs more research.
 
-The current repository includes automated tests. Future work should continue using small, focused tests before adding wider implementation behavior.
+This helps future work connect to earlier work instead of guessing why a
+decision was made.
 
 ## Result categories
 
@@ -31,82 +35,94 @@ Research and test results use these categories:
 | PASS | The test or review met the expected result. |
 | FAIL | The test or review did not meet the expected result. |
 | PARTIAL | The result worked in some conditions but not all. |
-| BLOCKED | The work could not continue because a dependency, decision, environment, or implementation was missing. |
-| NEEDS_RESEARCH | The result raised a question that needs more study before implementation continues. |
+| BLOCKED | The work could not continue because something was missing. |
+| NEEDS_RESEARCH | The result raised a question that needs more study. |
 
-A PARTIAL or BLOCKED result is useful when it explains what still needs to be understood.
+`PARTIAL`, `BLOCKED`, and `NEEDS_RESEARCH` are useful results. They show what is
+still unclear and what needs better tests or review.
 
-## Evidence discipline
+## Evidence records
 
-The project uses two levels of evidence.
+The research uses two kinds of evidence records.
 
-The research log records meaningful milestones. A milestone entry should usually record the date, type, summary, affected files, result, tests or checks run, important limitations, not-implemented areas, and next step.
+The research log records meaningful milestones in chronological order. It is for
+short summaries, important results, tests run, limitations, and next steps.
 
-Focused result documents may record deeper experiment detail. When useful, they should include the test purpose, input or scenario, expected result, observed result, result category, environment, limitations, and follow-up work.
+Focused result documents record deeper experiment detail when a topic needs more
+space. These documents can include the test purpose, input, expected result,
+observed result, environment, limitation, and follow-up work.
 
-This separation keeps the research log chronological and readable while allowing technical experiments to remain detailed.
-
-As the research matures, the evidence format, test records, and result documents may be improved. The goal is to keep them aligned with the README, ROADMAP, tests, industry expectations, and reviewer needs while making the work easier to understand.
+This keeps the evidence log readable while still preserving technical detail.
 
 ## Current evaluation focus
 
-The current evaluation focus is QSAG Layer 1:
+The current focus is QSAG Layer 1:
 
 Agent identity and action-decision evidence.
 
-The most important test areas are:
+The main test areas are:
 
 1. fail-closed verifier behavior;
-2. malformed and duplicate-key JSON rejection;
-3. schema and lifecycle validation;
+2. malformed and duplicate-key JSON handling;
+3. schema, time, and lifecycle validation;
 4. issuer trust and revocation freshness boundaries;
 5. proof selection and proof/key binding;
 6. canonical payload preparation and payload-hash consistency;
 7. signature adapter-interface planning;
-8. authorization, approval, audit, and enforcement composition boundaries;
-9. sensitive-data minimization in audit and approval evidence;
+8. authorization, approval, audit, and enforcement composition;
+9. sensitive-data minimization;
 10. dummy cross-organization scenarios.
 
-The verifier should not return `ALLOW` until the required signature, trust, revocation, policy, audit, and enforcement gates are intentionally connected and tested.
+The passport verifier cannot return `ALLOW` until signature, trust, revocation,
+permission, approval, audit, and enforcement gates are intentionally connected
+and tested.
 
 ## Negative testing
 
-Negative tests are central to this project.
+Negative tests are important because they show how the verifier behaves when
+something is wrong or unclear.
 
-The project should test malformed, missing, stale, mismatched, unsupported, expired, revoked, compromised, and ambiguous evidence.
+Useful negative tests cover malformed, missing, stale, mismatched, unsupported,
+expired, revoked, compromised, and ambiguous evidence.
 
-Useful negative tests show that unsafe or unclear inputs fail closed instead of being silently accepted.
+The expected direction is fail closed, not silent acceptance.
 
-## Data and isolation rules
+## Data and isolation
 
-Research tests should use dummy data only unless a later decision explicitly justifies another approach.
+Research tests use dummy data unless a later recorded decision explains another
+approach.
 
-The repository should not include real users, real organization secrets, private keys, production credentials, live agent logs, or confidential operational data.
+The repository is not intended to contain real users, real organization secrets,
+private keys, production credentials, live agent logs, or confidential
+operational data.
 
-Isolated package, vector, and runtime experiments should run outside the repository environment unless separately approved. Temporary experiment files should be summarized in evidence documents instead of being copied into the repository.
+Package, vector, and runtime experiments run outside the repository environment
+unless a later decision records why repository changes are needed. Temporary
+experiment files are summarized in evidence documents instead of copied into the
+repository.
 
-Mistakes and incomplete assumptions can happen during research. Community, academic, standards, and industry review are welcome so that issues can be found, corrected, and recorded responsibly.
+## Documentation review
 
-## Documentation and review
+Documentation is part of the research.
 
-Documentation is part of the research surface.
+Review looks for:
 
-Documentation should be reviewed for:
-
-1. outdated statements;
+1. outdated wording;
 2. repeated explanations;
 3. unsafe commands;
 4. hidden assumptions;
-5. unsupported production, compliance, or certification language;
+5. wording that sounds more complete than the evidence supports;
 6. broken links;
 7. mismatch with README, ROADMAP, tests, or evidence records.
 
-The goal is to keep the project understandable as it grows.
+The aim is to keep the research understandable as it grows.
 
 ## Current boundary
 
-This document defines evaluation discipline for the research project.
+This document describes the evaluation discipline used by the research today.
 
-It does not define a final benchmark suite, production certification process, compliance process, deployment test plan, or complete security assessment.
+It can change as testing improves, mistakes are found, and the research direction
+becomes clearer.
 
-The evaluation method may change as the research matures, but changes should keep the project narrow, evidence-based, and reviewable.
+Small wording cleanup does not need an evidence-log entry unless it changes a
+research boundary.
