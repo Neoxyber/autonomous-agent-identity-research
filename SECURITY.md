@@ -55,3 +55,12 @@ Research documents may discuss regulatory and governance requirements, but those
 The purpose of this research is to improve accountability, verification, permission control, revocation, and auditability for autonomous agents.
 
 The project should not be used to hide agent activity, impersonate users, bypass access control, or weaken audit trails.
+
+## Local secret and public-risk scan
+
+A local secret and public-risk scan has been added as an additional research
+safety guard.
+
+This is an early layer. It will improve over time as the research continues,
+and additional safety layers will be reviewed and added through small,
+careful changes.

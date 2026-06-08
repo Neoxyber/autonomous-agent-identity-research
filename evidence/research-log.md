@@ -46,3 +46,32 @@ source changes, test changes, spec changes, documentation restructuring, depende
 
 Next step:
 Resume technical research from the signature verification implementation-boundary gate.
+
+## Entry 115
+
+Date: 2026-06-08
+
+Type: Safety guard implementation
+
+Summary: Added a local secret and public-risk scanner.
+
+Files:
+Added `tools/secret_scan.py`, `tools/install_git_hooks.sh`, and `tests/test_secret_scan.py`. Updated `SECURITY.md` to note the scanner as an additional research safety guard.
+
+Result:
+The repository now includes a stdlib-only local scanner for obvious private keys, known token patterns, secret-like assignments, embedded URL credentials, private local paths, private remotes, private IPs, and high-entropy values in secret-like context.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_secret_scan.py -q` passed with 8 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Markdown link check found no broken links.
+
+Not implemented:
+external secret-scanning dependency adoption, CI configuration, network scanning, GitHub settings changes, verifier behavior changes, real signature verification, gateway integration, MCP integration, Civo, Supabase, cloud deployment, or passport-verifier `ALLOW` behavior.
+
+Next step:
+Review and commit the local scanner milestone, then continue improving privacy and secret-safety layers through small reviewed changes.
