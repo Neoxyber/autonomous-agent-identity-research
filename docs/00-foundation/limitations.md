@@ -88,11 +88,11 @@ Research tests use dummy data unless a later decision records why another approa
 
 The repository is not intended to contain real users, real organization secrets, private keys, production credentials, live agent logs, or confidential operational data.
 
-## Documentation limits
+## Research record limits
 
-Documentation can become outdated as the research changes.
+Research documents, tests, code, schemas, references, and recorded results can contain mistakes, outdated assumptions, incomplete wording, weak tests, missed edge cases, or missing context.
 
-The research will try to keep documents short, aligned, and easy to review, but missed issues can happen. Documents need periodic review for repetition, stale statements, unsafe commands, broken links, unsupported production language, and mismatch with tests or evidence.
+The research will improve over time through review, testing, simplification, and correction. Documents should stay short, aligned, and easy to review, and outdated or unclear material should be corrected when found.
 
 ## Current boundary
 
