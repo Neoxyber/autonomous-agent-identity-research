@@ -31,7 +31,7 @@ Any future runtime experiment must run outside the repository environment.
 
 The preferred temporary location is:
 
-`/tmp/aaid-mldsa-runtime-eval`
+`$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
 
 The experiment must not install packages into the repository virtual environment.
 
@@ -54,14 +54,14 @@ Candidate evaluation does not mean adoption.
 
 A future isolated experiment may:
 
-1. create a temporary directory under `/tmp`;
+1. create a temporary directory under `$AAID_SIGNATURE_SANDBOX`;
 2. create a temporary virtual environment outside the repository;
 3. inspect package metadata and versions;
 4. check whether ML-DSA-65 APIs are available;
 5. check backend or native-library requirements;
-6. generate disposable research keys only inside `/tmp`;
-7. sign disposable test messages only inside `/tmp`;
-8. verify disposable signatures only inside `/tmp`;
+6. generate disposable research keys only inside the signature sandbox;
+7. sign disposable test messages only inside the signature sandbox;
+8. verify disposable signatures only inside the signature sandbox;
 9. test malformed public-key and signature handling;
 10. record sanitized findings for later documentation review.
 
@@ -117,7 +117,7 @@ A candidate may pass one category and remain blocked for adoption.
 
 The experiment should stop if:
 
-1. the candidate cannot be installed or inspected safely in `/tmp`;
+1. the candidate cannot be installed or inspected safely in the signature sandbox;
 2. the candidate requires repository dependency changes;
 3. ML-DSA-65 support is unavailable in the observed runtime;
 4. backend requirements are unclear;
@@ -157,9 +157,10 @@ This document does not cover:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification.
 
 ## Next step
 
-Review this plan before approving any isolated `/tmp` runtime experiment.
+Review this plan before approving any isolated signature-sandbox runtime
+experiment.

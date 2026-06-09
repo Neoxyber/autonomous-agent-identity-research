@@ -6,7 +6,7 @@ This document records isolated package artifact evidence for Python
 `cryptography` version `48.0.0`.
 
 The evidence was collected outside the repository environment in a temporary
-directory.
+signature artifact workspace.
 
 This is package artifact evidence only. It does not adopt a dependency, install
 packages into the repository environment, change requirements or lockfiles,
@@ -17,15 +17,16 @@ create a passport-verifier `ALLOW` path.
 
 Repository state before the artifact evidence run:
 
-- repository path: `~/projects/autonomous-agent-identity-research`
+- repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `91418e0`
 - repository virtual environment: `.venv`
-- isolated artifact path: `/tmp/aaid-cryptography-48-artifact-evidence`
-- isolated virtual environment: `/tmp/aaid-cryptography-48-artifact-evidence/.venv`
+- isolated artifact workspace: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts`
+- isolated virtual environment: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts/.venv`
 - Python version: `3.12.3`
 - pip version after upgrade: `26.1.2`
 
-The artifact inspection was performed only in the isolated `/tmp` environment.
+The artifact inspection was performed only in the isolated signature artifact
+workspace.
 
 ## Downloaded artifacts
 
@@ -40,7 +41,7 @@ No artifact was copied into the repository.
 
 Observed SHA-256 hashes:
 
-| Artifact | SHA-256 |
+| Artifact | SHA-256 digest |
 | --- | --- |
 | `cryptography-48.0.0.tar.gz` | `5c3932f4436d1cccb036cb0eaef46e6e2db91035166f1ad6505c3c9d5a635920` |
 | `cryptography-48.0.0-cp311-abi3-manylinux_2_34_x86_64.whl` | `bd72e68b06bb1e96913f97dd4901119bc17f39d4586a5adf2d3e47bc2b9d58b5` |
@@ -108,20 +109,20 @@ Result: PASS for repository environment non-adoption check.
 
 ## Evaluation classification
 
-| Area | Result |
-| --- | --- |
-| Isolated artifact directory | PASS |
-| Wheel artifact captured in `/tmp` | PASS |
-| Source distribution captured in `/tmp` | PASS |
-| SHA-256 hashes captured | PASS |
-| Wheel metadata inspected | PASS |
-| Source-distribution metadata inspected | PASS |
-| License expression captured | PASS |
-| License files observed | PASS |
-| Runtime dependency surface captured | PARTIAL |
-| Build/provenance verification | NOT TESTED |
-| Vulnerability/security advisory review | NOT TESTED |
-| Repository dependency adoption | NOT APPROVED |
+| Evaluation area | Result | Finding / boundary observation |
+| --- | --- | --- |
+| Isolated artifact workspace | PASS | Confirmed outside the repository tree. |
+| Wheel artifact captured | PASS | Staged under `$AAID_SIGNATURE_SANDBOX`. |
+| Source distribution captured | PASS | Staged under `$AAID_SIGNATURE_SANDBOX`. |
+| SHA-256 hashes captured | PASS | Artifact hashes were recomputed and recorded. |
+| Wheel metadata inspected | PASS | Name, version, Python requirement, dependency, and wheel metadata recorded. |
+| Source-distribution metadata inspected | PASS | Source metadata matched the selected wheel metadata. |
+| License expression captured | PASS | `Apache-2.0 OR BSD-3-Clause` recorded from metadata. |
+| License files observed | PASS | `LICENSE`, `LICENSE.APACHE`, and `LICENSE.BSD` observed. |
+| Runtime dependency surface captured | PARTIAL | `cffi>=2.0.0`, non-pure wheel, and native build surface recorded. |
+| Build/provenance verification | NOT TESTED | Deferred to separate provenance review. |
+| Vulnerability/security advisory review | NOT TESTED | Deferred to separate dependency-risk review. |
+| Repository dependency adoption | NOT APPROVED | Repository environment remained without `cryptography` installed. |
 
 Overall result: PARTIAL.
 
@@ -137,7 +138,7 @@ signatures, Sigstore attestations, maintainer identity, reproducible build
 properties, vulnerability databases, or long-term maintenance suitability.
 
 The source-distribution download prepared build metadata inside the isolated
-temporary environment. This did not modify the repository environment.
+signature artifact workspace. This did not modify the repository environment.
 
 This result is not a security audit of `cryptography`.
 
@@ -162,7 +163,7 @@ This evaluation did not implement:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 

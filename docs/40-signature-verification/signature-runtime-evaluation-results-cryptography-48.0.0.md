@@ -6,7 +6,7 @@ This document records the first isolated ML-DSA runtime evaluation result for
 Python `cryptography`.
 
 The evaluation was run outside the repository environment in a temporary
-directory.
+signature runtime workspace.
 
 This is isolated runtime evidence only. It does not adopt a dependency, install
 packages into the repository environment, change requirements or lockfiles,
@@ -18,15 +18,16 @@ passport-verifier `ALLOW` path.
 
 Repository state before the isolated test:
 
-- repository path: `~/projects/autonomous-agent-identity-research`
+- repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `03a6d09`
 - repository virtual environment: `.venv`
-- isolated experiment path: `/tmp/aaid-mldsa-runtime-eval`
-- isolated virtual environment: `/tmp/aaid-mldsa-runtime-eval/.venv`
+- isolated experiment workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
+- isolated virtual environment: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval/.venv`
 - Python version: `3.12.3`
 - pip version after upgrade: `26.1.2`
 
-The package was installed only in the isolated `/tmp` virtual environment.
+The package was installed and executed only in the isolated signature runtime
+workspace.
 
 ## Candidate
 
@@ -60,7 +61,8 @@ Result: PASS for ML-DSA-65 API availability in the isolated environment.
 
 ## Disposable sign and verify result
 
-A disposable ML-DSA-65 key pair was generated inside `/tmp`.
+A disposable ML-DSA-65 key pair was generated inside the isolated signature
+runtime workspace.
 
 Observed values:
 
@@ -120,24 +122,24 @@ Result: PASS for malformed signature rejection.
 
 ## Evaluation classification
 
-| Area | Result |
-| --- | --- |
-| Isolated install outside repository | PASS |
-| ML-DSA module availability | PASS |
-| ML-DSA-65 API availability | PASS |
-| Disposable key generation | PASS |
-| Disposable signing | PASS |
-| Disposable verification | PASS |
-| Raw public-key export/import | PASS |
-| Modified message failure | PASS |
-| Modified signature failure | PASS |
-| Wrong context failure | PASS |
-| Malformed public-key behavior | PASS |
-| Malformed signature behavior | PASS |
-| Official test-vector compatibility | NOT TESTED |
-| Artifact provenance or hash verification | NOT TESTED |
-| Repository dependency adoption | NOT APPROVED |
-| Verifier integration readiness | PARTIAL |
+| Evaluation area | Result | Finding / boundary observation |
+| --- | --- | --- |
+| Isolated install outside repository | PASS | Installed only in `$AAID_SIGNATURE_SANDBOX`. |
+| ML-DSA module availability | PASS | Runtime exposed ML-DSA classes. |
+| ML-DSA-65 API availability | PASS | `MLDSA65PrivateKey` and `MLDSA65PublicKey` were available. |
+| Disposable key generation | PASS | Disposable ML-DSA-65 key pair generated in isolation. |
+| Disposable signing | PASS | Disposable message and context were signed in isolation. |
+| Disposable verification | PASS | Valid disposable signature verified successfully. |
+| Raw public-key export/import | PASS | Exported public key bytes imported and verified successfully. |
+| Modified message failure | PASS | Modified message raised `InvalidSignature`. |
+| Modified signature failure | PASS | Modified signature raised `InvalidSignature`. |
+| Wrong context failure | PASS | Wrong context raised `InvalidSignature`. |
+| Malformed public-key behavior | PASS | Malformed lengths raised `ValueError`; same-length mutation failed verification. |
+| Malformed signature behavior | PASS | Malformed signatures raised `InvalidSignature`. |
+| Official test-vector compatibility | NOT TESTED | Deferred to official vector compatibility work. |
+| Artifact provenance or hash verification | NOT TESTED | Deferred to package artifact/provenance review. |
+| Repository dependency adoption | NOT APPROVED | Repository environment remained unchanged. |
+| Verifier integration readiness | PARTIAL | Runtime behavior is useful, but adapter design and official vectors remain open. |
 
 Overall result: PARTIAL.
 
@@ -148,11 +150,11 @@ planning are completed.
 
 ## Security notes
 
-No security-relevant flaw was observed in this isolated run.
+No runtime behavior in this isolated run changed the repository safety boundary.
 
-The observed failure behavior appears suitable for future fail-closed mapping,
-because invalid signatures and malformed signatures produced verification
-failures rather than successful verification.
+The observed failure behavior is useful for future fail-closed mapping because
+invalid signatures and malformed signatures produced verification failures
+rather than successful verification.
 
 This result is not a security audit of `cryptography`.
 
@@ -178,7 +180,7 @@ This evaluation did not implement:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 

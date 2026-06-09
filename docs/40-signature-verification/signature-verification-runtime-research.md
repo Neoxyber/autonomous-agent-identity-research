@@ -137,7 +137,7 @@ lockfiles, imports, copied source, generated artifacts, or example data.
 ## Security and disclosure boundary
 
 The research may find library bugs, unsafe defaults, unclear documentation,
-backend differences, malformed-input crashes, or encoding ambiguity.
+backend differences, malformed-input failures, or encoding ambiguity.
 
 Security-relevant findings should be reproduced in an isolated environment,
 minimized, and handled through responsible disclosure before public technical
@@ -182,7 +182,7 @@ This document does not cover:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification.
 
 ## Next step

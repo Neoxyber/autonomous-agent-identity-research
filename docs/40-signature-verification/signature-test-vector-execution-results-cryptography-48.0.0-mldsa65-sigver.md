@@ -18,21 +18,23 @@ passport signature verification, or create a passport-verifier `ALLOW` path.
 
 Repository state before the isolated test:
 
-- repository path: `~/projects/autonomous-agent-identity-research`
+- repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `0d0712a`
 - repository virtual environment: `.venv`
-- isolated test path: `/tmp/aaid-mldsa-sigver-compat`
-- isolated virtual environment: `/tmp/aaid-mldsa-sigver-compat/.venv`
+- isolated test workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
+- isolated virtual environment: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat/.venv`
 - Python version: `3.12.3`
 - candidate package: `cryptography==48.0.0`
 
-The package was installed only in the isolated `/tmp` virtual environment.
+The package was installed and executed only in the isolated signature test-vector
+workspace.
 
 No package was installed into the repository virtual environment.
 
 ## Source files
 
-The isolated run downloaded these NIST ACVP-Server files under `/tmp` only:
+The isolated run downloaded these NIST ACVP-Server files under the isolated
+signature test-vector workspace only:
 
 - `ML-DSA-sigVer-FIPS204/prompt.json`
 - `ML-DSA-sigVer-FIPS204/expectedResults.json`
@@ -54,7 +56,7 @@ Observed installed package metadata:
 - version: `48.0.0`
 - runtime dependency: `cffi==2.0.0`
 - transitive dependency: `pycparser==3.0`
-- isolated installation path: `/tmp/aaid-mldsa-sigver-compat/.venv`
+- isolated installation path: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat/.venv`
 
 ## Test scope
 
@@ -163,7 +165,7 @@ between direct external message verification and hash/pre-hash vector handling.
 
 | Area | Result |
 | --- | --- |
-| Isolated `/tmp` execution | PASS |
+| Isolated signature-sandbox execution | PASS |
 | Repository non-adoption | PASS |
 | ML-DSA-65 direct external non-hash `sigVer` | PASS |
 | Test-level `hashAlg` detection | PASS |
@@ -184,7 +186,7 @@ test-level `hashAlg` handling was not implemented in the test script.
 This should be treated as an API and vector-format mapping boundary, not as a
 library vulnerability.
 
-No security-relevant flaw was observed in this isolated run.
+No runtime behavior in this isolated run changed the repository safety boundary.
 
 This result is not a security audit of `cryptography`.
 
@@ -212,7 +214,7 @@ This evaluation did not implement:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 

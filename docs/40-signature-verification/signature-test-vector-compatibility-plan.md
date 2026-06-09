@@ -98,7 +98,7 @@ environment first.
 
 The preferred temporary location is:
 
-`/tmp/aaid-mldsa-vector-eval`
+`$AAID_SIGNATURE_SANDBOX/mldsa-vector-eval`
 
 The repository virtual environment must not receive package installs, generated
 keys, generated signatures, downloaded vectors, scripts, logs, or copied
@@ -159,11 +159,11 @@ This document does not cover:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 
 ## Next step
 
 Review exact NIST CAVP / ACVP ML-DSA vector files and decide whether an
-isolated `/tmp` vector-format inspection should be approved.
+isolated signature-sandbox vector-format inspection should be approved.

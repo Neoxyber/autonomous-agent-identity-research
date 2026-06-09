@@ -39,8 +39,8 @@ The first passport signature-verification profile should be scoped to:
 - ML-DSA-65;
 - pure direct external message-mode verification;
 - canonical passport payload bytes as the signed message;
-- explicit context handling only after a profile decision records the context
-  value;
+- context handling only after a profile decision records a fixed context
+  parameter, including whether the profile uses an explicit empty context;
 - raw public-key bytes only after key encoding is finalized;
 - raw signature bytes only after signature encoding is finalized.
 
@@ -71,7 +71,7 @@ Before implementing real signature verification, the project must still decide:
 1. exact proof algorithm identifier;
 2. exact key encoding;
 3. exact signature encoding;
-4. exact context value or explicit empty-context rule;
+4. exact fixed context value or explicit empty-context rule;
 5. exact failure check names for unsupported signature modes;
 6. exact malformed-input behavior;
 7. exact dependency adoption decision;
@@ -99,13 +99,16 @@ Examples include:
 - invalid signatures.
 
 These should be represented as named verifier checks and `DENY` results, not as
-unhandled exceptions.
+unhandled exceptions. Cryptographic runtime errors, including invalid
+signatures and malformed key or signature inputs, must be trapped by the
+signature-verification adapter and mapped to a failed `signature_valid` check
+or another explicitly named failure check.
 
 ## Research position
 
-The project should not claim full ML-DSA compatibility.
+The project should not state full ML-DSA compatibility.
 
-The project should only claim that the selected direct external non-hash
+The project should only state that the selected direct external non-hash
 ML-DSA-65 `sigVer` subset passed in isolated testing.
 
 The passport proof profile should remain narrow until additional mapping and
@@ -136,7 +139,7 @@ This document does not cover:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 

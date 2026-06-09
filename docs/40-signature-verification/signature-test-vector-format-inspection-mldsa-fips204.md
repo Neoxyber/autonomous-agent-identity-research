@@ -17,12 +17,13 @@ verification, or create a passport-verifier `ALLOW` path.
 
 Repository state before the inspection:
 
-- repository path: `~/projects/autonomous-agent-identity-research`
+- repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `5856713`
 - repository virtual environment: `.venv`
-- isolated inspection path: `/tmp/aaid-mldsa-vector-format`
+- isolated inspection workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-vector-format`
 
-The JSON files were downloaded and inspected only under `/tmp`.
+The JSON files were downloaded and inspected only under the isolated signature
+test-vector workspace.
 
 No vector files were copied into the repository.
 
@@ -185,8 +186,8 @@ identity, or external provenance for the downloaded JSON files.
 
 The inspected files were not copied into the repository.
 
-This result is not a validation claim for `cryptography`, ML-DSA, or the
-repository verifier.
+This result does not validate `cryptography`, ML-DSA, or the repository
+verifier.
 
 ## Not implemented
 
@@ -209,11 +210,11 @@ This inspection did not implement:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 
 ## Next step
 
-Decide whether to run an isolated `/tmp` ML-DSA-65 `sigVer` compatibility test
-against the inspected NIST ACVP-Server FIPS204 JSON files.
+Decide whether to run an isolated signature-sandbox ML-DSA-65 `sigVer`
+compatibility test against the inspected NIST ACVP-Server FIPS204 JSON files.

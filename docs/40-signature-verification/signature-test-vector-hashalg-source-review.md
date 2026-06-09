@@ -36,8 +36,8 @@ The current result remains PARTIAL.
 
 FIPS 204 is the final NIST standard for ML-DSA.
 
-The source-review conclusion is that any future ML-DSA compatibility claim must
-stay aligned with FIPS 204 terminology and must not treat pure ML-DSA,
+The source-review conclusion is that any future ML-DSA compatibility statement
+must stay aligned with FIPS 204 terminology and must not treat pure ML-DSA,
 HashML-DSA, internal-interface inputs, and `mu` inputs as interchangeable.
 
 ### ACVP ML-DSA JSON specification
@@ -76,7 +76,7 @@ The main mapping risks are:
 2. treating `mu` as a public protocol input without justification;
 3. treating internal-interface vectors as passport-verifier requirements;
 4. treating candidate runtime limitations as verifier behavior;
-5. overclaiming compatibility after only the direct external non-hash subset;
+5. overstating compatibility after only the direct external non-hash subset;
 6. mixing pure ML-DSA and HashML-DSA semantics without a recorded profile
    decision.
 
@@ -135,7 +135,7 @@ This document does not cover:
 - audit storage;
 - gateway, MCP, Civo, Supabase, or cloud integration;
 - production readiness;
-- legal compliance;
+- legal or compliance conclusions;
 - certification;
 - passport-verifier `ALLOW` path.
 
