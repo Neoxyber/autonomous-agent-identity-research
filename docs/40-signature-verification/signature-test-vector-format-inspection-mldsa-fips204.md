@@ -19,7 +19,7 @@ Repository state before the inspection:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `5856713`
-- repository environment: not modified
+- repository environment: unchanged
 - isolated inspection workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-vector-format`
 
 The JSON files were downloaded and inspected only under the isolated signature

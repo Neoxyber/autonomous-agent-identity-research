@@ -20,9 +20,8 @@ Repository state before the isolated test:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `0d0712a`
-- repository environment: not modified
+- repository environment: unchanged
 - isolated test workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
-- isolated environment: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
 - Python version: `3.12.3`
 - candidate package: `cryptography==48.0.0`
 
@@ -56,7 +55,7 @@ Observed installed package metadata:
 - version: `48.0.0`
 - runtime dependency: `cffi==2.0.0`
 - transitive dependency: `pycparser==3.0`
-- isolated installation environment: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
+- isolated installation workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
 
 ## Test scope
 

@@ -54,8 +54,8 @@ Candidate evaluation does not mean adoption.
 
 A future isolated experiment may:
 
-1. create a temporary directory under `$AAID_SIGNATURE_SANDBOX`;
-2. create a temporary virtual environment outside the repository;
+1. create a temporary workspace under `$AAID_SIGNATURE_SANDBOX`;
+2. create an isolated package environment inside that workspace;
 3. inspect package metadata and versions;
 4. check whether ML-DSA-65 APIs are available;
 5. check backend or native-library requirements;

@@ -20,9 +20,8 @@ Repository state before the isolated test:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `03a6d09`
-- repository environment: not modified
+- repository environment: unchanged
 - isolated experiment workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
-- isolated environment: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
 - Python version: `3.12.3`
 - pip version after upgrade: `26.1.2`
 
@@ -57,7 +56,7 @@ Observed ML-DSA-65 attributes:
 - `MLDSA65PrivateKey`: available
 - `MLDSA65PublicKey`: available
 
-Result: PASS for ML-DSA-65 API availability in the isolated environment.
+Result: PASS for ML-DSA-65 API availability in the isolated workspace.
 
 ## Disposable sign and verify result
 

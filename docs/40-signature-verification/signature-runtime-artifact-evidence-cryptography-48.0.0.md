@@ -19,9 +19,8 @@ Repository state before the artifact evidence run:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `91418e0`
-- repository environment: not modified
+- repository environment: unchanged
 - isolated artifact workspace: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts`
-- isolated environment: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts`
 - Python version: `3.12.3`
 - pip version after upgrade: `26.1.2`
 

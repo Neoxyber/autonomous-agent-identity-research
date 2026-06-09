@@ -128,7 +128,7 @@ Candidate evaluation must run outside the repository environment unless a later
 decision explicitly approves repository dependency adoption.
 
 Temporary tools, downloaded artifacts, generated keys, scripts, logs, and test
-outputs should stay outside the repository unless a specific sanitized result is
+outputs must stay outside the repository unless a specific sanitized result is
 approved for documentation.
 
 The repository must not accidentally adopt a candidate through requirements,
@@ -139,7 +139,7 @@ lockfiles, imports, copied source, generated artifacts, or example data.
 The research may find library bugs, unsafe defaults, unclear documentation,
 backend differences, malformed-input failures, or encoding ambiguity.
 
-Security-relevant findings should be reproduced in an isolated environment,
+Security-relevant findings must be reproduced in an isolated setting,
 minimized, and handled through responsible disclosure before public technical
 details are recorded.
 
