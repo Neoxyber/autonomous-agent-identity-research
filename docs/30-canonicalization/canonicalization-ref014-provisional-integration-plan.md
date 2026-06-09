@@ -31,15 +31,15 @@ isolated evaluation, reference-vector comparison, bounded number-serialization
 checks, parse-layer review, artifact provenance evidence, and verifier failure
 semantics.
 
-This position does not claim full RFC 8785/JCS conformance, production
+This position does not state full RFC 8785/JCS conformance, production
 readiness, legal compatibility, or adoption readiness.
 
 ## Evidence collected
 
 ### Artifact provenance
 
-The pinned wheel and source distribution were reviewed in isolated `/tmp`
-environments.
+The pinned wheel and source distribution were reviewed in temporary virtual
+environments outside the repository.
 
 Pinned artifacts:
 
@@ -54,7 +54,7 @@ PyPI and GitHub release artifacts matched byte-for-byte for the evaluated wheel
 and source distribution. The wheel was `py3-none-any`, pure Python, with no
 native extensions observed. Normal runtime dependency surface was empty.
 
-Sigstore 4.3.0 verified both pinned artifacts offline against their release
+The Sigstore verifier checked both pinned artifacts against their release
 bundles using the fixed OIDC issuer
 `https://token.actions.githubusercontent.com` and the fixed workflow identity
 `https://github.com/trailofbits/rfc8785.py/.github/workflows/release.yml@refs/tags/v0.1.4`.
@@ -101,10 +101,10 @@ lint, and tests.
 
 Repository metadata showed that `trailofbits/rfc8785.py` was not archived, not a
 fork, not a mirror, not private, and not empty. The default branch was `main`,
-primary language was Python, issues were enabled, and metadata showed activity
-in May 2026. The evaluated release `v0.1.4` was created and published on
-2024-09-27. One open pull request related to mypy settings was observed. The
-GitHub security-advisory query returned no entries.
+primary language was Python, issues were enabled, and metadata showed recent
+maintenance activity at the time of review. The evaluated release `v0.1.4`
+was created and published on 2024-09-27. One open pull request related to mypy
+settings was observed. The GitHub security-advisory query returned no entries.
 
 Status: PARTIAL. The runtime dependency surface is low and no immediate blocking
 repository signal was observed, but long-term maintenance suitability,
@@ -168,8 +168,10 @@ Planned categories before any runtime integration:
 10. Duplicate-key raw JSON behavior remains enforced at the parse boundary.
 11. Schema validation still runs before canonicalization-dependent verification.
 12. Unsupported canonicalization fails closed.
-13. Canonicalization and candidate-canonicalizer errors become failed verifier
-    checks and `DENY` results, not unhandled exceptions.
+13. Candidate-canonicalizer runtime errors, including domain exceptions such
+    as non-finite or unsafe-integer errors, are trapped by the verification
+    adapter and mapped to failed `canonical_payload_prepared` checks and
+    `DENY` results, not unhandled exceptions.
 14. Signature verification remains blocked until a later phase.
 
 ### Golden-vector migration planning
@@ -227,8 +229,9 @@ Remaining blockers:
 - build provenance, unless source-to-artifact reproducibility is verified or
   explicitly deferred;
 - attribution-handling decision for any future adoption or redistribution;
-- integration-test execution;
-- golden-vector migration review.
+- final adapter/wrapper design for mapping candidate runtime exceptions into
+  verifier checks and `DENY` results;
+- final adoption decision and dependency-governance review.
 
 Research-paper note: this checkpoint records the decision method, not an
 adoption result. Future research evidence should distinguish artifact evidence,

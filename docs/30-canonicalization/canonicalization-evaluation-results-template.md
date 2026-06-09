@@ -21,7 +21,7 @@ This document does not change the current state. Specifically:
 - No candidate is selected.
 - No candidate is verified.
 - No canonicalizer is replaced.
-- No full RFC 8785/JCS compatibility is claimed for any candidate or for the
+- No full RFC 8785/JCS compatibility is stated for any candidate or for the
   current helper.
 - Real signature verification remains blocked, and the verifier remains
   fail-closed.
@@ -56,8 +56,11 @@ approved evaluation fills them in.
 - Evaluation date: `TBD`
 - Evaluator: `TBD`
 - Python version: `TBD`
-- Operating system / environment: `TBD`
-- Isolated environment method: `TBD`
+- Operating system / environment: `TBD` (record generalized platform only,
+  for example `Linux x86_64`; avoid raw kernel versions or host-specific
+  environment strings)
+- Isolated environment method: `TBD` (for example, temporary virtual
+  environment outside the repository)
 - Install method: `TBD`
 - Dependency count or dependency tree summary: `TBD`
 - License review status: `TBD`
@@ -77,9 +80,9 @@ placeholders until a later, approved evaluation fills them in.
 | --- | --- | --- | --- | --- | --- |
 | RFC 8785 known-answer vector | RFC 8785 known-answer vector | Match the known-answer byte output | `TBD` | `TBD` | `TBD` |
 | cyberphone reference vectors | cyberphone reference vectors | Match the reference vector output | `TBD` | `TBD` | `TBD` |
-| Number serialization including 1e16 | Repository boundary vector | Confirm the serialization form for the `1e16` case | `TBD` | `TBD` | `TBD` |
-| UTF-16 non-BMP key ordering | Repository boundary vector | Confirm object member key ordering for non-BMP names | `TBD` | `TBD` | `TBD` |
-| Non-finite number rejection | Repository boundary vector | Reject `NaN`, `Infinity`, and `-Infinity` | `TBD` | `TBD` | `TBD` |
+| Number serialization including `10^16` | Repository boundary vector | Confirm the positional JCS form `10000000000000000` for `10^16` | `TBD` | `TBD` | `TBD` |
+| UTF-16 non-BMP key ordering | Repository boundary vector | Verify object key sorting by UTF-16 code units for non-BMP names | `TBD` | `TBD` | `TBD` |
+| Non-finite number rejection | Repository boundary vector | Reject `NaN`, `Infinity`, and `-Infinity`; record the observed exception or error type | `TBD` | `TBD` | `TBD` |
 | Duplicate-key strategy | Repository boundary vector | Apply a defined duplicate object member key strategy | `TBD` | `TBD` | `TBD` |
 | Minimal passport vector | Minimal passport payload vector | Produce deterministic output for the minimal payload | `TBD` | `TBD` | `TBD` |
 | Malformed input behavior | Malformed JSON / input | Fail explicitly without silent fallback | `TBD` | `TBD` | `TBD` |
@@ -94,7 +97,8 @@ placeholders until a later, approved evaluation fills them in.
 One environment record is completed per evaluation run. All values are
 placeholders. No environment is created in this step.
 
-- Temporary environment path: `TBD`
+- Temporary environment path: `TBD` (use a placeholder such as
+  `$AAID_EVAL_SANDBOX`; avoid absolute local host paths)
 - Package installation command used: `TBD`
 - Package version source: `TBD`
 - Network use during setup: `TBD`
@@ -134,7 +138,7 @@ This document does not cover:
 - Gateway work.
 - Cloud or deployment work.
 - Production readiness.
-- Legal or compliance claims.
+- Legal or compliance conclusions.
 
 ## Next step
 

@@ -49,7 +49,9 @@ used for the run. This includes the Fulcio root, Rekor public key, and any
 transparency-log trust material used by the verifier.
 
 Later verification steps must use this recorded trust material. Unrecorded trust
-material fetched during the run is not sufficient.
+material fetched during the run is not sufficient. Live trust-root or network
+fetching must be disabled where supported, or explicitly recorded when it is
+unavoidable.
 
 ### V1. Recompute artifact digests
 
@@ -91,7 +93,8 @@ Expected identity:
 
 The expected repository, workflow, and tag remain fixed before verification.
 Verification fails closed if the bundle identity does not match the expected
-identity.
+identity exactly. Substring matches, wildcard matches, repository-path
+relaxation, or bundle-derived expected identity matching are not accepted.
 
 ### V7. Record source-to-artifact correspondence
 
@@ -102,8 +105,8 @@ attempted, record the result.
 ## Tooling
 
 Verification should use a maintained Sigstore verifier, such as the Sigstore
-Python tool or `cosign verify-blob`, in an isolated environment outside this
-repository.
+Python tool or `cosign verify-blob`, in a temporary virtual environment outside
+this repository.
 
 The execution record must include the verifier tool name and version, trusted
 root material, artifact names and digests, verified OIDC issuer, verified

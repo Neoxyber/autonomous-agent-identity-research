@@ -28,9 +28,10 @@ The repository already includes a raw JSON parsing helper:
 
 - `src/aaid/json_parsing.py`
 
-The helper parses raw JSON text with an `object_pairs_hook` and fails closed on
-duplicate object member names, including nested objects and objects inside
-arrays.
+The helper parses raw JSON text with an `object_pairs_hook` and fails closed
+immediately on duplicate object member names, including nested objects and
+objects inside arrays. The hook is a rejection boundary, not a transformation
+or cleanup step.
 
 The repository also includes focused parser tests:
 
@@ -52,7 +53,9 @@ validation, full I-JSON conformance, or full RFC 8785/JCS conformance.
 
 The current passport schema inspection found no `number` or `integer` typed
 fields. That materially reduces the current passport profile's exposure to
-ambiguous JSON number-domain behavior.
+ambiguous JSON number-domain behavior. Future numeric, decimal, counter, or
+high-resolution timestamp fields require a separate numeric-domain policy
+before they are added to the schema profile.
 
 The current canonicalization helper also uses JSON serialization with
 `allow_nan=False`, so non-finite values such as `NaN`, `Infinity`, and
@@ -73,7 +76,9 @@ This supports the recorded verifier entry-point boundary.
 `verify_passport_json()` is the raw JSON entry point and handles duplicate-key
 rejection before schema validation. `verify_passport_envelope()` is the
 parsed-envelope entry point and assumes callers provide already parsed,
-duplicate-key-safe mappings.
+duplicate-key-safe mappings. Because Python mappings cannot represent duplicate
+object member names after normal parsing, this entry point is an internal
+boundary that depends on upstream duplicate-key rejection.
 
 ## Required constraints before adoption
 

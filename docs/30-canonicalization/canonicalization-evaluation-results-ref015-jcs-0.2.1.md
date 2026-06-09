@@ -16,7 +16,8 @@ verification.
 
 Specifically:
 
-- REF-015 was staged and evaluated in `/tmp` only.
+- REF-015 was staged and evaluated in a temporary virtual environment outside
+  the repository.
 - Repository source, tests, requirements, and lockfiles were not changed.
 - The candidate is not adopted.
 - The candidate is not selected.
@@ -34,17 +35,18 @@ Specifically:
 | Source | `titusz/jcs` |
 | Version evaluated | `0.2.1` |
 | Source pin | `6e4c7b57e027a99bc75eb65d5b2d30203263c07c` |
-| Temporary environment | `/tmp/aaid-canonicalization-eval-jcs/venv` |
+| Temporary environment | `$AAID_EVAL_SANDBOX_JCS/venv` |
 | Runtime dependency surface | No third-party runtime dependencies observed |
 | Public API observed | `canonicalize`, `ntoj` |
 | Function signature observed | `canonicalize(obj, utf8=True)` |
 | Output mode used | Default `utf8=True`, bytes output |
-| Evaluation script | `/tmp/aaid-canonicalization-eval-jcs/compare_ref015_vectors.py` |
-| Captured output | `/tmp/aaid-canonicalization-eval-jcs/observed-output-ref015-comparison.txt` |
+| Evaluation script | `$AAID_EVAL_SANDBOX_JCS/compare_ref015_vectors.py` |
+| Captured output | `$AAID_EVAL_SANDBOX_JCS/observed-output-ref015-comparison.txt` |
 
 ## Source and declared license check
 
-The REF-015 package was installed only in the temporary `/tmp` environment.
+The REF-015 package was installed only in the temporary virtual environment
+outside the repository.
 Observed package metadata reported `jcs==0.2.1`, home page
 `https://github.com/titusz/jcs`, and declared license `Apache-2.0`.
 
@@ -75,7 +77,7 @@ The run recorded 25 `PASS` checks and 6 `NEEDS_RESEARCH` checks, with no
 
 ## Exact-output and property coverage
 
-The exact-output checks covered the recorded known-answer vector, `1e16`,
+The exact-output checks covered the recorded known-answer vector, `10^16`,
 UTF-16 non-BMP key ordering, empty object, empty array, object key ordering,
 nested object ordering, array order preservation, booleans/null, and zero
 integer serialization.
@@ -122,8 +124,8 @@ review tasks before any adoption or verifier change can be discussed.
 ## Environment record
 
 - Python: 3.12.3.
-- Platform: Linux WSL2.
-- Temporary environment path: `/tmp/aaid-canonicalization-eval-jcs/venv`.
+- Platform: Linux x86_64 isolated research environment.
+- Temporary environment path: `$AAID_EVAL_SANDBOX_JCS/venv`.
 - Installation command: `python -m pip install "jcs==0.2.1"` in the temporary
   environment only.
 - `pip freeze`: `jcs==0.2.1`.
@@ -131,7 +133,7 @@ review tasks before any adoption or verifier change can be discussed.
   inspection.
 - Network use during evaluation: none.
 - Repository files changed by evaluation: none.
-- Temporary files retained under `/tmp` for review.
+- Temporary files retained under the isolated evaluation workspace for review.
 
 ## Non-goals
 

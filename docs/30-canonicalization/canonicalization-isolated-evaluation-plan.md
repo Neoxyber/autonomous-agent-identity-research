@@ -22,7 +22,7 @@ This document does not change the current state. Specifically:
 - No candidate is selected.
 - No candidate is verified.
 - No canonicalizer is replaced.
-- No full RFC 8785/JCS compatibility is claimed for any candidate or for the
+- No full RFC 8785/JCS compatibility is stated for any candidate or for the
   current helper.
 - Real signature verification remains blocked, and the verifier remains
   fail-closed.
@@ -48,15 +48,18 @@ Every finding for these references remains Pending review.
 A later evaluation must be isolated from the project source and from the
 repository's dependency state. The following requirements apply:
 
-- Use a separate temporary virtual environment or container.
+- Use a temporary virtual environment outside the repository.
 - Make no modification to project requirements.
 - Add no dependency to the repository.
 - Add no imports from candidate packages inside `src/`.
 - Do not replace `canonicalize_passport_payload`.
 - Do not integrate any candidate into the verifier.
-- Make no network calls during test execution unless explicitly approved.
+- Separate setup from test execution: network use may occur during approved
+  setup for pinned artifact retrieval, while test execution should use local
+  inputs only unless separately approved.
 - Use no secrets or credentials.
-- Keep evaluation artifacts separate from the project's research and source code.
+- Keep evaluation artifacts outside the repository source tree, using a
+  placeholder path such as `$AAID_EVAL_SANDBOX` instead of absolute local paths.
 - Record results only after review, not by assumption.
 
 ## Evaluation inputs
@@ -66,7 +69,8 @@ The planned evaluation uses the following input categories:
 - RFC 8785 known-answer vectors.
 - cyberphone reference vectors.
 - Current repository boundary vectors.
-- The `1e16` number serialization boundary.
+- The `10^16` number serialization boundary and expected positional JCS token
+  `10000000000000000`.
 - The UTF-16 non-BMP object key ordering boundary.
 - Non-finite number rejection (`NaN`, `Infinity`, `-Infinity`).
 - The duplicate-key raw JSON parsing boundary.
@@ -118,7 +122,9 @@ installation, execution, or adoption.
 3. Evaluate REF-014.
 4. Evaluate REF-015 as comparison.
 5. Use REF-016 as a reference and vector source.
-6. Compare outputs against the repository boundary vectors.
+6. Compare outputs against the repository boundary vectors, including
+   unvalidated structures, bounded deep nesting, and unexpected primitive
+   types where relevant.
 7. Record results.
 8. Review results before any adoption decision.
 9. Keep REF-017 to REF-019 as comparison or exclusion candidates unless a later
@@ -151,7 +157,7 @@ This document does not cover:
 - Gateway work.
 - Cloud or deployment work.
 - Production readiness.
-- Legal or compliance claims.
+- Legal or compliance conclusions.
 
 ## Next step
 

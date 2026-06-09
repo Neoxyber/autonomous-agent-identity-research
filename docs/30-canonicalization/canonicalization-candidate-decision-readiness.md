@@ -69,9 +69,11 @@ research concern.
 
 ## Integer-domain finding
 
-The bounded number gate produced two REF-014 `BLOCKED` results for `2**53` and
-`2**53 + 1`. These are not ordinary output mismatches. They show that REF-014
-raises `IntegerDomainError` outside its safe-integer domain.
+The bounded number gate produced two REF-014 `BLOCKED` results for
+`9,007,199,254,740,992 (2^53)` and
+`9,007,199,254,740,993 (2^53 + 1)`. These are not ordinary output
+mismatches. They show that REF-014 raises `IntegerDomainError` outside its
+safe-integer domain.
 
 This fail-closed behavior is relevant to security review. It supports treating
 REF-014 as stricter on ambiguous numeric domains, while still requiring a clear

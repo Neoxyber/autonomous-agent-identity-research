@@ -50,9 +50,9 @@ specific tested vector in the isolated environment.
 - Evaluation date: 2026-05-31
 - Evaluator: local operator, isolated temporary environment
 - Python version: 3.12.3
-- Operating system / environment: Linux 5.15.167.4-microsoft-standard-WSL2 x86_64
+- Operating system / environment: Linux x86_64 isolated research environment
 - Isolated environment method: temporary virtual environment at
-  `/tmp/aaid-canonicalization-eval-rfc8785/venv`, outside the repository
+  `$AAID_EVAL_SANDBOX_REF014/venv`, outside the repository
 - Install method: `python -m pip install "rfc8785==0.1.4"` into the temporary
   venv only
 - Dependency count or dependency tree summary: no runtime dependencies
@@ -66,7 +66,7 @@ specific tested vector in the isolated environment.
   template checks were not exercised in this run. Observations only; not adoption
   and not conformance.
 - Summary: For the small inline vector set tested, the candidate produced bytes
-  matching the recorded expected values for the known-answer vector, the `1e16`
+  matching the recorded expected values for the known-answer vector, the `10^16`
   number-serialization case, and the UTF-16 non-BMP key-ordering case, and it
   rejected non-finite numbers. The minimal passport-like payload produced
   deterministic, valid JSON across repeated runs. Duplicate-key handling was not
@@ -74,6 +74,9 @@ specific tested vector in the isolated environment.
 - Risks: narrow vector coverage; empty license metadata; pre-1.0 version;
   non-finite rejection surfaced an internal exception path
   (`rfc8785._impl.FloatDomainError`).
+- Future wrapper note: candidate exceptions should be caught by any future
+  adapter and mapped to fail-closed verifier results rather than escaping as
+  unhandled runtime errors.
 - Open questions: license and original source verification; behavior on broader
   and adversarial inputs; public exception contract; output stability across
   versions.
@@ -103,7 +106,7 @@ candidate is not selected, and real signature verification remains blocked.
 | --- | --- | --- | --- | --- | --- |
 | RFC 8785 known-answer vector | Inline known-answer vector (copied read-only from the repository test) | Match the recorded known-answer byte output | Output identical to the expected bytes | PASS | Incidentally exercised recursive object sorting, array order, booleans/null, control-character escaping, and non-ASCII output |
 | cyberphone reference vectors | cyberphone reference vectors | Match the reference vector output | Not exercised in this run | NEEDS_RESEARCH | No external vectors downloaded in this step |
-| Number serialization including 1e16 | Inline boundary vector | Confirm the serialization form for the `1e16` case | `{"n":10000000000000000}` (positional form) | PASS | Matched the expected positional form recorded for this vector; not a conformance claim |
+| Number serialization including `10^16` | Inline boundary vector | Confirm the serialization form for `10^16` | `{"n":10000000000000000}` (positional form) | PASS | Matched the expected positional form recorded for this vector; not a conformance claim |
 | UTF-16 non-BMP key ordering | Inline boundary vector (U+E000 and U+10000) | Confirm object member key ordering for non-BMP names | Non-BMP key ordered first, matching the recorded UTF-16 code-unit order | PASS | Single edge-case vector; not a conformance claim |
 | Non-finite number rejection | Inline boundary vector | Reject `NaN`, `Infinity`, and `-Infinity` | Each raised `rfc8785._impl.FloatDomainError` | PASS | Internal exception path observed; public contract not confirmed |
 | Duplicate-key strategy | Parse-layer concern | Apply a defined duplicate object member key strategy | Not exercised through the candidate | NEEDS_RESEARCH | Parse-layer concern, out of candidate canonicalization scope |
@@ -119,16 +122,16 @@ candidate is not selected, and real signature verification remains blocked.
 ## Broader isolated vector coverage
 
 A broader isolated vector suite was run under
-`/tmp/aaid-canonicalization-eval-rfc8785` using `rfc8785==0.1.4`.
+`$AAID_EVAL_SANDBOX_REF014` using `rfc8785==0.1.4`.
 The suite used inline vectors only and did not modify repository files. The
 captured output was written outside the repository to
-`/tmp/aaid-canonicalization-eval-rfc8785/observed-output-broader-vectors.txt`.
+`$AAID_EVAL_SANDBOX_REF014/observed-output-broader-vectors.txt`.
 
 Summary:
 
 | Group | PASS | NEEDS_RESEARCH | Notes |
 | --- | ---: | ---: | --- |
-| Exact-output checks | 10 | 0 | Known-answer vector, `1e16`, UTF-16 non-BMP key ordering, empty object, empty array, object ordering, nested ordering, array order, booleans/null, and zero integer |
+| Exact-output checks | 10 | 0 | Known-answer vector, `10^16`, UTF-16 non-BMP key ordering, empty object, empty array, object ordering, nested ordering, array order, booleans/null, and zero integer |
 | Property checks | 5 | 0 | Control-character escaping, Unicode/non-ASCII output, bounded depth, bounded size, and repeated deterministic output |
 | Rejection checks | 4 | 0 | Non-finite numbers, non-string object key, `set`, and `decimal.Decimal` were rejected |
 | Deferred checks | 0 | 7 | Negative zero, standalone exponent-number forms, oversized integer-domain behavior, duplicate-key parse-layer policy, cyberphone reference vectors, and broader conformance remain open |
@@ -150,7 +153,7 @@ unverified.
 ## REF-016 reference-vector comparison
 
 REF-016 `cyberphone/json-canonicalization` reference vectors were staged outside
-the repository under `/tmp/aaid-canonicalization-eval-rfc8785/ref016-vectors`
+the repository under `$AAID_EVAL_SANDBOX_REF014/ref016-vectors`
 and pinned to commit `19d51d7fe467d4706a3ff08adf8a748f29fc21e0`. The comparison
 used `rfc8785==0.1.4` in the isolated temporary environment only.
 
@@ -172,7 +175,7 @@ Result:
 The REF-016 comparison recorded 6 `PASS` vectors and no `FAIL`,
 `NEEDS_RESEARCH`, or `BLOCKED` results. The captured output remained outside the
 repository at
-`/tmp/aaid-canonicalization-eval-rfc8785/observed-output-ref016-comparison.txt`.
+`$AAID_EVAL_SANDBOX_REF014/observed-output-ref016-comparison.txt`.
 
 This is reference-vector evidence only. It does not adopt the dependency, does
 not select the candidate, does not verify full RFC 8785/JCS conformance, does
@@ -181,14 +184,14 @@ verification.
 
 ## Environment record
 
-- Temporary environment path: `/tmp/aaid-canonicalization-eval-rfc8785`
+- Temporary environment path: `$AAID_EVAL_SANDBOX_REF014`
 - Package installation command used: `python -m pip install "rfc8785==0.1.4"`
   (temporary venv only)
 - Package version source: Python package index, version 0.1.4 (latest of the
   discovered list: 0.1.4, 0.1.3, 0.1.2, 0.1.1, 0.1.0, 0.0.3, 0.0.2, 0.0.1)
 - Network use during setup: yes (version discovery and install)
 - Network use during execution: none (all vectors inline)
-- Files created outside repository: under `/tmp/aaid-canonicalization-eval-rfc8785`
+- Files created outside repository: under `$AAID_EVAL_SANDBOX_REF014`
   (venv, evaluation script, captured output, environment and dependency records)
 - Repository files changed: none from the evaluation
 - Cleanup status: temporary directory retained for review; removal pending
@@ -197,7 +200,7 @@ verification.
 ## Review checklist
 
 - [x] Results are reproducible (the evaluation script and the pinned version are
-  retained under `/tmp` for re-run).
+  retained under the isolated evaluation sandbox for re-run).
 - [x] The package was evaluated only in isolation.
 - [x] No repository dependency files changed.
 - [x] No candidate was imported from `src/`.

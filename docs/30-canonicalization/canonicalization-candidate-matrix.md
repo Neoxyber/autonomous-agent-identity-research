@@ -37,12 +37,13 @@ comparison. It is summarized here, not extended:
 - Non-finite numbers (`NaN`, `Infinity`, `-Infinity`) are rejected.
 - Duplicate object member keys are rejected at a raw JSON parsing boundary,
   before normal parsing would collapse them.
-- A UTF-16 ordering boundary is documented: the current helper's code-point
-  ordering differs from JCS UTF-16 code-unit ordering for non-BMP object member
-  names.
-- A number serialization boundary is documented: for the selected value `1e16`,
-  the current helper emits exponential notation, while the JCS form is
-  positional digits.
+- A UTF-16 ordering boundary is documented: candidate libraries must be checked
+  for RFC 8785/JCS object-key sorting by UTF-16 code units, because Python
+  code-point sorting can differ for non-BMP member names and may produce
+  different canonical bytes across runtimes.
+- A number serialization boundary is documented: for `10^16`, the current
+  helper emits exponential notation, while the JCS form is the positional
+  token `10000000000000000`.
 
 These items describe known boundaries and limitations. They do not establish
 full RFC 8785/JCS compatibility and do not unblock real signature verification.
@@ -68,7 +69,8 @@ checks. At minimum:
 
 - RFC 8785 known-answer vectors.
 - cyberphone reference vectors.
-- Number serialization behavior, including the `1e16` case.
+- Number serialization behavior, including `10^16` and the expected JCS
+  positional token `10000000000000000`.
 - UTF-16 object member key ordering, including non-BMP names.
 - Non-finite number rejection.
 - Duplicate object member key strategy.

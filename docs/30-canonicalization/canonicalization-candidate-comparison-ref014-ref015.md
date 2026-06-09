@@ -30,7 +30,7 @@ This comparison is evidence review only. It does not:
 | --- | --- |
 | REF-014 | `docs/30-canonicalization/canonicalization-evaluation-results-ref014-rfc8785-0.1.4.md` |
 | REF-015 | `docs/30-canonicalization/canonicalization-evaluation-results-ref015-jcs-0.2.1.md` |
-| REF-016 | Staged `cyberphone/json-canonicalization` vectors under `/tmp` |
+| REF-016 | Staged `cyberphone/json-canonicalization` vectors in an isolated temporary workspace outside the repository source tree |
 
 ## Summary comparison
 
@@ -42,7 +42,7 @@ This comparison is evidence review only. It does not:
 | Implementation relationship | Independent candidate | Port of cyberphone lineage |
 | Runtime dependency surface observed | No third-party runtime dependencies | No third-party runtime dependencies |
 | Source/license signal | Source identity and declared license checked | Source identity and declared license checked |
-| License concern | Apache-2.0 signals checked | Apache-2.0 declared, but no standalone source license file found |
+| License file completeness | Root LICENSE file evidence recorded | Root LICENSE file missing from the checked source tree; Apache-2.0 declared in package metadata |
 | Broader inline result | 19 PASS / 7 NEEDS_RESEARCH | 25 PASS / 6 NEEDS_RESEARCH |
 | REF-016 staged vectors | 6 PASS | 6 PASS |
 | Independence from REF-016 | Stronger | Weaker because of shared cyberphone lineage |
@@ -67,9 +67,9 @@ comparison evidence and as a cyberphone-lineage behavior reference.
 
 However, its agreement with REF-016 is not fully independent corroboration
 because REF-015 is a port of cyberphone/json-canonicalization. The pinned source
-tree also did not contain a standalone root license file, so the Apache-2.0
-license signal remains declared metadata rather than a checked standalone source
-license file.
+tree also did not contain a standalone root license file. The Apache-2.0
+license remains a package metadata declaration for REF-015, not a checked
+standalone source license file.
 
 ## Shared open items
 
@@ -87,8 +87,9 @@ Both candidates still require separate review for:
 ## Current interpretation
 
 The current evidence supports keeping both candidates under review. REF-014 is
-the stronger adoption candidate on independence grounds, while REF-015 remains a
-useful comparison candidate and cyberphone-lineage cross-check.
+the stronger candidate for continued adoption review on independence grounds,
+while REF-015 remains a useful comparison candidate and cyberphone-lineage
+cross-check.
 
 This interpretation is not a selection decision. The repository should continue
 to treat both candidates as Pending review until the remaining gates are
@@ -103,7 +104,7 @@ small decimal forms, large exponent forms, and oversized integer-domain behavior
 
 If that gate is run, it should follow the existing discipline:
 
-- Use `/tmp` only.
+- Use an isolated temporary workspace outside the repository source tree.
 - Pin source/vector provenance.
 - Avoid repository dependency adoption.
 - Use explicit PASS / FAIL / BLOCKED / NEEDS_RESEARCH result categories.

@@ -19,25 +19,26 @@ This is bounded candidate evidence only. It does not:
 - Adopt REF-014 or REF-015.
 - Select a canonicalization dependency.
 - Replace the repository canonicalizer.
-- Claim full RFC 8785/JCS conformance.
-- Claim legal compatibility, safety, or production readiness.
+- State full RFC 8785/JCS conformance.
+- State legal compatibility, safety, or production readiness.
 - Unblock real signature verification.
 
 ## Oracle and execution record
 
 | Field | Value |
 | --- | --- |
-| Oracle path | `/tmp/aaid-canonicalization-eval-numbers/number-oracle.json` |
+| Oracle path | `$AAID_NUMERIC_GATE_SANDBOX/number-oracle.json` |
 | Oracle SHA-256 | `c0b08f3e3a6c5004cb302228938382973e8606abc5d1bc7d9b698ce8a08e95eb` |
-| Output path | `/tmp/aaid-canonicalization-eval-numbers/observed-output-number-oracle-ref014-ref015.txt` |
+| Output path | `$AAID_NUMERIC_GATE_SANDBOX/observed-output-number-oracle-ref014-ref015.txt` |
 | Output SHA-256 | `7d478f0ab8fcca491c68167ef3d1f8fb8459f2166c301840f549135a81b4cde5` |
 | Vectors | 14 |
 | Candidates | 2 |
 | Candidate results | 28 |
 | Repository files changed by execution | None |
 
-The oracle table was staged under `/tmp` only and validated as strict JSON before
-execution. The cyberphone 100M ES6 number test file was excluded from this gate.
+The oracle table was staged in a temporary virtual environment outside the
+repository and validated as strict JSON before execution. The cyberphone 100M
+ES6 number test file was excluded from this gate.
 
 ## Result summary
 
@@ -61,8 +62,8 @@ Both candidates matched the expected token for these asserted rows:
 - `1e30` -> `1e+30`
 - `333333333.33333329` -> `333333333.3333333`
 - `4.50` -> `4.5`
-- `1e16` -> `10000000000000000`
-- `2**53 - 1` -> `9007199254740991`
+- `10^16` -> `10000000000000000`
+- `9,007,199,254,740,991 (2^53 - 1)` -> `9007199254740991`
 - `1e20` -> `100000000000000000000`
 - `1e21` -> `1e+21`
 - `1e-6` -> `0.000001`
@@ -70,24 +71,26 @@ Both candidates matched the expected token for these asserted rows:
 
 ## Integer-domain observations
 
-The `2**53` row produced different candidate behavior:
+The `9,007,199,254,740,992 (2^53)` row produced different candidate behavior:
 
 | Candidate | Input | Result | Observation |
 | --- | --- | --- | --- |
-| REF-014 | `2**53` | BLOCKED | Raised `IntegerDomainError` for exceeding the safe integer domain |
-| REF-015 | `2**53` | PASS | Emitted `9007199254740992` |
+| REF-014 | `9,007,199,254,740,992 (2^53)` | BLOCKED | Raised `IntegerDomainError` for exceeding the safe integer domain |
+| REF-015 | `9,007,199,254,740,992 (2^53)` | PASS | Emitted `9007199254740992` |
 
-The `2**53 + 1` observe row also produced different candidate behavior:
+The `9,007,199,254,740,993 (2^53 + 1)` observe row also produced different
+candidate behavior:
 
 | Candidate | Input | Result | Observation |
 | --- | --- | --- | --- |
-| REF-014 | `2**53 + 1` | BLOCKED | Raised `IntegerDomainError` for exceeding the safe integer domain |
-| REF-015 | `2**53 + 1` | NEEDS_RESEARCH | Emitted `9007199254740992` |
+| REF-014 | `9,007,199,254,740,993 (2^53 + 1)` | BLOCKED | Raised `IntegerDomainError` for exceeding the safe integer domain |
+| REF-015 | `9,007,199,254,740,993 (2^53 + 1)` | NEEDS_RESEARCH | Emitted `9007199254740992`; this records a silent precision-loss concern for unconstrained numeric payloads |
 
 These results should be interpreted as input-domain behavior, not as a simple
 byte mismatch. REF-014 enforces a stricter safe-integer boundary. REF-015 accepts
-the Python input and emits the ECMAScript-number interpretation observed in this
-bounded run.
+the Python input and, for the `2^53 + 1` observe row, emits the same token as
+`2^53`. This is a silent precision-loss concern for any future unconstrained
+numeric payload field.
 
 ## Current interpretation
 
@@ -97,7 +100,8 @@ small decimal forms, large exponent forms, and common threshold rows.
 REF-014 remains stronger on independence grounds and demonstrates stricter
 integer-domain enforcement. REF-015 remains useful as differential comparison
 evidence and matched the asserted number tokens in this bounded gate, while its
-unsafe-integer behavior remains `NEEDS_RESEARCH`.
+unsafe-integer behavior remains `NEEDS_RESEARCH` and requires an explicit
+numeric-domain policy before any adoption discussion.
 
 This document does not select a candidate. Both candidates remain Pending review.
 
