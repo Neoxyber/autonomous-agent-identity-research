@@ -100,7 +100,7 @@ The preferred temporary location is:
 
 `$AAID_SIGNATURE_SANDBOX/mldsa-vector-eval`
 
-The repository virtual environment must not receive package installs, generated
+The repository environment must not receive package installs, generated
 keys, generated signatures, downloaded vectors, scripts, logs, or copied
 artifacts unless a sanitized result is explicitly approved for documentation.
 

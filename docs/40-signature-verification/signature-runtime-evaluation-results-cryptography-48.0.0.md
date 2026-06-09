@@ -20,9 +20,9 @@ Repository state before the isolated test:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `03a6d09`
-- repository virtual environment: `.venv`
+- repository environment: not modified
 - isolated experiment workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
-- isolated virtual environment: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval/.venv`
+- isolated environment: `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
 - Python version: `3.12.3`
 - pip version after upgrade: `26.1.2`
 

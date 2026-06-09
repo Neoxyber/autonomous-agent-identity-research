@@ -20,16 +20,16 @@ Repository state before the isolated test:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `0d0712a`
-- repository virtual environment: `.venv`
+- repository environment: not modified
 - isolated test workspace: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
-- isolated virtual environment: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat/.venv`
+- isolated environment: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
 - Python version: `3.12.3`
 - candidate package: `cryptography==48.0.0`
 
 The package was installed and executed only in the isolated signature test-vector
 workspace.
 
-No package was installed into the repository virtual environment.
+No package was installed into the repository environment.
 
 ## Source files
 
@@ -56,7 +56,7 @@ Observed installed package metadata:
 - version: `48.0.0`
 - runtime dependency: `cffi==2.0.0`
 - transitive dependency: `pycparser==3.0`
-- isolated installation path: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat/.venv`
+- isolated installation environment: `$AAID_SIGNATURE_SANDBOX/mldsa-sigver-compat`
 
 ## Test scope
 

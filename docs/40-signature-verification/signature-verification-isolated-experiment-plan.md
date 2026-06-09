@@ -33,7 +33,7 @@ The preferred temporary location is:
 
 `$AAID_SIGNATURE_SANDBOX/mldsa-runtime-eval`
 
-The experiment must not install packages into the repository virtual environment.
+The experiment must not install packages into the repository environment.
 
 The experiment must not write generated keys, signatures, downloaded packages,
 logs, or scripts into the repository unless sanitized documentation output is
@@ -69,7 +69,7 @@ A future isolated experiment may:
 
 A future isolated experiment must not:
 
-1. install packages into the repository virtual environment;
+1. install packages into the repository environment;
 2. modify repository requirements or lockfiles;
 3. import candidate libraries from repository source code;
 4. copy candidate source into the repository;

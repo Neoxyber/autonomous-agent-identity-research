@@ -19,9 +19,9 @@ Repository state before the artifact evidence run:
 
 - repository path: `$AAID_PROJECT_ROOT`
 - repository commit: `91418e0`
-- repository virtual environment: `.venv`
+- repository environment: not modified
 - isolated artifact workspace: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts`
-- isolated virtual environment: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts/.venv`
+- isolated environment: `$AAID_SIGNATURE_SANDBOX/cryptography-48-artifacts`
 - Python version: `3.12.3`
 - pip version after upgrade: `26.1.2`
 
@@ -98,7 +98,7 @@ Result: PASS for source-distribution metadata and license-file presence capture.
 
 ## Repository environment check
 
-After the artifact evidence run, the repository virtual environment did not have
+After the artifact evidence run, the repository environment did not have
 `cryptography` installed.
 
 Observed result:
