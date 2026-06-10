@@ -64,3 +64,12 @@ safety guard.
 This is an early layer. It will improve over time as the research continues,
 and additional safety layers will be reviewed and added through small,
 careful changes.
+
+## Isolated research testing
+
+An isolated research VM is used for repository testing and controlled
+experiments where practical.
+
+This supports separation between routine development and experimental
+research checks.
+

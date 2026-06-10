@@ -75,3 +75,51 @@ external secret-scanning dependency adoption, CI configuration, network scanning
 
 Next step:
 Review and commit the local scanner milestone, then continue improving privacy and secret-safety layers through small reviewed changes.
+
+## Entry 116
+
+Date: 2026-06-10
+
+Type: Research environment safety milestone
+
+Summary: Established an isolated research VM for repository testing.
+
+Files:
+Updated `SECURITY.md` and `evidence/research-log.md`.
+
+Result:
+Previous research checks were already run outside the main repository where
+practical. This milestone strengthens that separation by preparing a dedicated
+isolated research VM for repository testing and controlled experiments.
+
+The VM is used for read-only repository checks and controlled research
+experiments outside the main development environment.
+
+A clean baseline snapshot was taken before cloning the repository. This gives
+the research process a restore point before future testing.
+
+`SECURITY.md` now records the short public testing rule for the isolated
+research VM.
+
+This milestone records testing discipline only. It does not change source
+code, tests, specs, dependencies, verifier behavior, real signature
+verification, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed after this edit.
+
+`python -m pytest -q` passed with 602 tests after this edit.
+
+Not implemented:
+source changes, test changes, spec changes, dependency adoption, CI
+configuration, network scanning, GitHub settings changes, verifier behavior
+changes, real signature verification, gateway integration, MCP integration,
+Civo, Supabase, cloud deployment, production readiness, legal compliance,
+certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Clone the repository read-only in the isolated research VM, install
+development requirements, run the full test suite, run the local secret and
+public-risk scanner, inspect repository status, and take a second
+repository-baseline snapshot if checks pass.
+
