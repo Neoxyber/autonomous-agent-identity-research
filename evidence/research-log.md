@@ -231,3 +231,47 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Push the cleanup and continue the next review step separately.
+
+## Entry 120
+
+Date: 2026-06-10
+
+Type: Test configuration baseline
+
+Summary: Tightened the pytest configuration.
+
+Files:
+Updated `pytest.ini`.
+
+Result:
+The test configuration now records the expected pytest baseline, limits default
+test discovery to `tests`, keeps the explicit `src` and `tests` import paths,
+and enables stricter pytest behavior for configuration, markers,
+parametrization IDs, and xfail handling.
+
+This improves the testing baseline before deeper file-by-file test and source
+review. The change affects test execution configuration only. It does not
+change source behavior, schema behavior, dependency versions, canonicalization,
+verifier behavior, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` behavior.
+
+Runtime baseline:
+A full test run passed with 602 tests in about 1.3 seconds in the official
+development environment. A duration run also passed and showed the slowest
+tests were small local scanner and verifier-boundary tests.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest -q` passed with 602 tests.
+
+`python -m pytest -q --durations=20 --durations-min=0.001` passed with 602 tests.
+
+Not implemented:
+source changes, test logic changes, package installation, editable install,
+dependency changes, verifier behavior changes, real signature verification,
+runtime optimization, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue file-by-file test and source review with security, readability,
+runtime, and maintainability in mind.
