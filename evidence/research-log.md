@@ -194,3 +194,40 @@ passport-verifier `ALLOW` path.
 
 Next step:
 Continue read-only repository review and classify remaining findings.
+
+## Entry 119
+
+Date: 2026-06-10
+
+Type: Test import cleanup
+
+Summary: Cleaned up repeated test import path setup.
+
+Files:
+Added `pytest.ini`.
+
+Updated test files to remove repeated `sys.path.insert(...)` setup.
+
+Result:
+Pytest now uses one committed test import configuration for `src` and `tests`.
+
+This cleanup affects test import setup only. It does not change source behavior,
+schema, canonicalization, verifier behavior, dependency versions, real signature
+verification, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_composition.py -q` passed with 20 tests.
+
+`python -m pytest tests/test_passport_verifier_signature_input.py -q` passed with 15 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+package installation, `pyproject.toml`, editable install, source changes,
+dependency changes, verifier behavior changes, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Push the cleanup and continue the next review step separately.
