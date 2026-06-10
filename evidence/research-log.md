@@ -161,3 +161,36 @@ certification, or passport-verifier `ALLOW` path.
 Next step:
 Begin read-only repository review from the isolated VM baseline.
 
+
+## Entry 118
+
+Date: 2026-06-10
+
+Type: Dependency safety update
+
+Summary: Updated the pinned pytest development dependency.
+
+Files:
+Updated `requirements-dev.txt`.
+
+Result:
+A CVE was found for `pytest==8.3.4`. The pinned development dependency was
+updated to `pytest==9.0.3`, which includes the fix.
+
+The update was tested first in the isolated VM, then applied in the official
+development repository in commit `9510f77`.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest -q` passed with 602 tests.
+
+`python -m pytest --version` reported `pytest 9.0.3`.
+
+Not implemented:
+source changes, test changes, spec changes, runtime dependency adoption,
+verifier behavior changes, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` path.
+
+Next step:
+Continue read-only repository review and classify remaining findings.
