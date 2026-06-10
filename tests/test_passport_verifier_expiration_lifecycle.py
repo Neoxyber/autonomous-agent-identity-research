@@ -1,13 +1,10 @@
 import json
-import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 TESTS = Path(__file__).resolve().parent
-sys.path.insert(0, str(SRC))
-sys.path.insert(0, str(TESTS))
 
 import pytest
 

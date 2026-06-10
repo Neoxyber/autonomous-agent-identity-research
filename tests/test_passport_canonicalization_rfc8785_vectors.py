@@ -8,14 +8,12 @@ match an RFC 8785 known-answer example. Broader I-JSON, duplicate-key,
 UTF-16 sorting, and number-serialization boundary tests remain future work.
 """
 
-import sys
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
 
 from aaid.canonicalization import canonicalize_passport_payload
 

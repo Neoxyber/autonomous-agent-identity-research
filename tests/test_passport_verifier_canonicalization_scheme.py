@@ -1,10 +1,8 @@
 import json
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
 
 import aaid.passport_verifier as passport_verifier_module
 from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW

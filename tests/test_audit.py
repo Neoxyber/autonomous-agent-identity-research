@@ -2,7 +2,6 @@ import ast
 import copy
 import dataclasses
 import json
-import sys
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -10,7 +9,6 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
 
 from aaid import audit, authorization, composition, verification
 from aaid.audit import ERROR, prepare_audit_event

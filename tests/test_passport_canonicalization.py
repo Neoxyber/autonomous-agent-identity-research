@@ -2,14 +2,12 @@ import copy
 import hashlib
 import json
 import re
-import sys
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
 
 from aaid.canonicalization import (
     canonicalize_passport_payload,

@@ -13,14 +13,12 @@ pin the duplicate-key rejection behaviour of this parsing helper.
 """
 
 import json
-import sys
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-sys.path.insert(0, str(SRC))
 
 from aaid.json_parsing import parse_json_no_duplicate_keys
 
