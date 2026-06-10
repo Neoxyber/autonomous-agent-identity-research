@@ -123,3 +123,41 @@ development requirements, run the full test suite, run the local secret and
 public-risk scanner, inspect repository status, and take a second
 repository-baseline snapshot if checks pass.
 
+
+## Entry 117
+
+Date: 2026-06-10
+
+Type: Isolated VM repository baseline
+
+Summary: Verified the repository baseline in the isolated VM.
+
+Files:
+Updated `evidence/research-log.md`.
+
+Result:
+The repository was cloned in the isolated VM from the public HTTPS remote.
+
+The lab clone was kept fetch-only by disabling its push URL.
+
+The local scanner passed, the full test suite passed with 602 tests, and a
+second VM snapshot was taken after the passing baseline.
+
+This milestone records isolated baseline testing only. It does not change
+source code, tests, specs, dependencies, verifier behavior, real signature
+verification, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed in the isolated VM.
+
+`python -m pytest -q` passed with 602 tests in the isolated VM.
+
+Not implemented:
+source changes, test changes, spec changes, dependency adoption, network
+scanning, GitHub settings changes, verifier behavior changes, real signature
+verification, cloud deployment, production readiness, legal compliance,
+certification, or passport-verifier `ALLOW` path.
+
+Next step:
+Begin read-only repository review from the isolated VM baseline.
+
