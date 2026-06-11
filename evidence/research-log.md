@@ -275,3 +275,43 @@ runtime optimization, cloud deployment, or passport-verifier `ALLOW` path.
 Next step:
 Continue file-by-file test and source review with security, readability,
 runtime, and maintainability in mind.
+
+## Entry 121
+
+Date: 2026-06-11
+
+Type: Test review
+
+Summary: Reviewed the composition tests.
+
+Files:
+Updated `tests/test_composition.py`.
+
+Result:
+The composition tests were reviewed as the first file-by-file test review.
+
+All tests were kept. Unused test setup lines were removed. Short helper names
+were renamed to clearer test-support builder names:
+
+`verif` became `make_verification_result`.
+
+`authz` became `make_authorization_decision`.
+
+The tests still check composition order, fail-closed behavior, explainable
+results, input immutability, forbidden imports, and the current boundary where
+verifier denial overrides authorization allowance.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_composition.py -q --durations=20 --durations-min=0.001` passed with 20 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source changes, test removal, verifier behavior changes, authorization behavior
+changes, real signature verification, cloud deployment, or passport-verifier
+`ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
