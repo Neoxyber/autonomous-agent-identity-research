@@ -6,8 +6,6 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-TESTS = ROOT / "tests"
 
 from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import composition
@@ -26,27 +24,59 @@ from aaid.verification import (
 EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
 
 
-def verif(decision, *, valid=None, reason="verification"):
+def make_verification_result(decision, *, valid=None, reason="verification"):
     if valid is None:
         valid = decision == ALLOW
     return VerificationResult(valid=valid, decision=decision, reason=reason)
 
 
-def authz(decision, reason="authorization"):
+def make_authorization_decision(decision, reason="authorization"):
     return AuthorizationDecision(decision, reason)
 
 
 @pytest.mark.parametrize(
     "verification, authorization, expected",
     [
-        (verif(ALLOW), authz(ALLOW), ALLOW),
-        (verif(ALLOW), authz(DENY), DENY),
-        (verif(ALLOW), authz(REQUIRE_HUMAN_APPROVAL), REQUIRE_HUMAN_APPROVAL),
-        (verif(ALLOW), authz(REQUIRE_HUMAN_REVIEW), REQUIRE_HUMAN_REVIEW),
-        (verif(DENY), authz(ALLOW), DENY),
-        (verif(REQUIRE_HUMAN_REVIEW), authz(ALLOW), REQUIRE_HUMAN_REVIEW),
-        (verif(REQUIRE_HUMAN_APPROVAL), authz(ALLOW), REQUIRE_HUMAN_APPROVAL),
-        (verif(DENY), authz(REQUIRE_HUMAN_APPROVAL), DENY),
+        (
+            make_verification_result(ALLOW),
+            make_authorization_decision(ALLOW),
+            ALLOW,
+        ),
+        (
+            make_verification_result(ALLOW),
+            make_authorization_decision(DENY),
+            DENY,
+        ),
+        (
+            make_verification_result(ALLOW),
+            make_authorization_decision(REQUIRE_HUMAN_APPROVAL),
+            REQUIRE_HUMAN_APPROVAL,
+        ),
+        (
+            make_verification_result(ALLOW),
+            make_authorization_decision(REQUIRE_HUMAN_REVIEW),
+            REQUIRE_HUMAN_REVIEW,
+        ),
+        (
+            make_verification_result(DENY),
+            make_authorization_decision(ALLOW),
+            DENY,
+        ),
+        (
+            make_verification_result(REQUIRE_HUMAN_REVIEW),
+            make_authorization_decision(ALLOW),
+            REQUIRE_HUMAN_REVIEW,
+        ),
+        (
+            make_verification_result(REQUIRE_HUMAN_APPROVAL),
+            make_authorization_decision(ALLOW),
+            REQUIRE_HUMAN_APPROVAL,
+        ),
+        (
+            make_verification_result(DENY),
+            make_authorization_decision(REQUIRE_HUMAN_APPROVAL),
+            DENY,
+        ),
     ],
 )
 def test_composition_precedence(verification, authorization, expected):
@@ -54,7 +84,13 @@ def test_composition_precedence(verification, authorization, expected):
 
 
 def test_defensive_clamp_invalid_allow():
-    assert compose_decision(verif(ALLOW, valid=False), authz(ALLOW)).decision == DENY
+    assert (
+        compose_decision(
+            make_verification_result(ALLOW, valid=False),
+            make_authorization_decision(ALLOW),
+        ).decision
+        == DENY
+    )
 
 
 def test_real_integration_boundary():
@@ -78,10 +114,10 @@ def test_real_integration_boundary():
 @pytest.mark.parametrize(
     "verification, authorization",
     [
-        (None, authz(ALLOW)),
-        (verif(ALLOW), None),
-        ("x", authz(ALLOW)),
-        (verif(ALLOW), "x"),
+        (None, make_authorization_decision(ALLOW)),
+        (make_verification_result(ALLOW), None),
+        ("x", make_authorization_decision(ALLOW)),
+        (make_verification_result(ALLOW), "x"),
         (123, 456),
         (object(), object()),
     ],
@@ -96,15 +132,15 @@ def test_composed_decision_rejects_unknown_value():
 
 
 def test_result_is_explainable():
-    result = compose_decision(verif(ALLOW), authz(ALLOW))
+    result = compose_decision(make_verification_result(ALLOW), make_authorization_decision(ALLOW))
     assert result.reason
     assert result.checks
     assert all(isinstance(check, VerificationCheck) for check in result.checks)
 
 
 def test_inputs_not_mutated():
-    verification = verif(ALLOW)
-    authorization = authz(ALLOW)
+    verification = make_verification_result(ALLOW)
+    authorization = make_authorization_decision(ALLOW)
     verification_snapshot = copy.deepcopy(verification)
     authorization_snapshot = copy.deepcopy(authorization)
     compose_decision(verification, authorization)
