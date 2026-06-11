@@ -472,3 +472,59 @@ passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 125
+
+Date: 2026-06-11
+
+Type: Test review
+
+Summary: Reviewed the approval tests.
+
+Files:
+Updated `tests/test_approval.py`.
+
+Result:
+The approval tests were reviewed as part of the file-by-file test review.
+
+All tests were kept. Unused test setup lines were removed. Short test-support
+names were replaced with clearer names:
+
+`load_passport` became `load_example_passport`.
+
+`make_audit` became `make_audit_event`.
+
+`build` became `make_approval_evidence`.
+
+`strings` became `iter_strings`.
+
+`evidence_text` became `approval_evidence_text`.
+
+Readable parametrized case IDs were added. The tests still check approval
+context binding, approval metadata capture, malformed approval value handling,
+occurred-at scalar handling, inert decision binding, malformed audit-event
+handling, malformed approval handling, no-leak behavior, input immutability,
+frozen approval evidence, determinism, forbidden imports, forbidden engines, and
+no I/O, clock, or randomness in the approval source.
+
+The approval evidence boundary remains inert. The tests continue to check that
+approval evidence does not grant execution and that `grants_execution` remains
+false.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_approval.py -q --durations=20 --durations-min=0.001` passed with 30 tests.
+
+`python -m pytest tests/test_approval_validation.py tests/test_enforcement.py -q` passed with 71 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source behavior changes, test removal, verifier behavior changes, authorization
+behavior changes, audit behavior changes, approval behavior changes, approval
+validation behavior changes, enforcement behavior changes, real signature
+verification, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
