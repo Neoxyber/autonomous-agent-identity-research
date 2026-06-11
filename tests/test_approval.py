@@ -7,9 +7,14 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-
+from _support import (
+    APPROVAL,
+    EXAMPLE_PATH,
+    PLANTED_SECRETS,
+    REQUEST,
+    SECRET_APPROVAL,
+    SENSITIVE_VALUES,
+)
 from aaid import approval, authorization, composition, verification
 from aaid.approval import prepare_approval_evidence
 from aaid.audit import ERROR, prepare_audit_event
@@ -22,35 +27,65 @@ VerificationResult = verification.VerificationResult
 AuthorizationDecision = authorization.AuthorizationDecision
 ComposedDecision = composition.ComposedDecision
 
-from _support import (
-    APPROVAL,
-    EXAMPLE_PATH,
-    PLANTED_SECRETS,
-    REQUEST,
-    SECRET_APPROVAL,
-    SENSITIVE_VALUES,
-)
+OCCURRED_AT_CASES = [
+    pytest.param(
+        "2026-06-03T02:00:00Z",
+        "2026-06-03T02:00:00Z",
+        id="timestamp",
+    ),
+    pytest.param(None, None, id="none"),
+    pytest.param(123, None, id="integer"),
+    pytest.param({"t": 1}, None, id="mapping"),
+    pytest.param(object(), None, id="object"),
+]
+
+DECISION_BINDING_CASES = [
+    pytest.param(REQUIRE_HUMAN_APPROVAL, True, id="approval-required"),
+    pytest.param(DENY, False, id="deny"),
+    pytest.param(ALLOW, False, id="synthetic-allow"),
+    pytest.param(ERROR, False, id="audit-error"),
+    pytest.param(REQUIRE_HUMAN_REVIEW, False, id="human-review"),
+]
+
+MALFORMED_AUDIT_EVENT_CASES = [
+    pytest.param(None, id="none"),
+    pytest.param("x", id="string"),
+    pytest.param(123, id="integer"),
+    pytest.param(object(), id="object"),
+    pytest.param({}, id="mapping"),
+]
+
+MALFORMED_APPROVAL_CASES = [
+    pytest.param(None, id="none"),
+    pytest.param("x", id="string"),
+    pytest.param(123, id="integer"),
+    pytest.param(object(), id="object"),
+    pytest.param([], id="list"),
+]
 
 
-def load_passport():
+def load_example_passport():
     with EXAMPLE_PATH.open(encoding="utf-8") as handle:
         return json.load(handle)["passport"]
 
 
-def make_audit(decision=REQUIRE_HUMAN_APPROVAL, *, passport=None):
-    comp = None if decision == ERROR else ComposedDecision(decision, "composed")
+def make_audit_event(decision=REQUIRE_HUMAN_APPROVAL, *, passport=None):
+    composed_decision = None
+    if decision != ERROR:
+        composed_decision = ComposedDecision(decision, "composed")
+
     return prepare_audit_event(
-        passport=load_passport() if passport is None else passport,
+        passport=load_example_passport() if passport is None else passport,
         request=REQUEST,
         verification=VerificationResult(valid=False, decision=DENY, reason="v"),
         authorization=AuthorizationDecision(REQUIRE_HUMAN_APPROVAL, "a"),
-        composition=comp,
+        composition=composed_decision,
         event_type="action_decision",
         occurred_at="2026-06-03T00:00:00Z",
     )
 
 
-def build(
+def make_approval_evidence(
     decision=REQUIRE_HUMAN_APPROVAL,
     *,
     approval=APPROVAL,
@@ -58,30 +93,30 @@ def build(
     passport=None,
 ):
     return prepare_approval_evidence(
-        audit_event=make_audit(decision, passport=passport),
+        audit_event=make_audit_event(decision, passport=passport),
         approval=approval,
         occurred_at=occurred_at,
     )
 
 
-def strings(obj):
+def iter_strings(obj):
     if isinstance(obj, str):
         yield obj
     elif isinstance(obj, Mapping):
         for value in obj.values():
-            yield from strings(value)
+            yield from iter_strings(value)
     elif isinstance(obj, (list, tuple)):
         for value in obj:
-            yield from strings(value)
+            yield from iter_strings(value)
 
 
-def evidence_text(evidence):
-    return "\n".join(strings(dataclasses.asdict(evidence)))
+def approval_evidence_text(evidence):
+    return "\n".join(iter_strings(dataclasses.asdict(evidence)))
 
 
 def test_bound_context_copied_from_audit_event():
-    passport = load_passport()
-    evidence = build(passport=passport)
+    passport = load_example_passport()
+    evidence = make_approval_evidence(passport=passport)
     assert evidence.passport_id == passport["passport_id"]
     assert evidence.agent_id == passport["agent_id"]
     assert evidence.operator_id == passport["operator"]["operator_id"]
@@ -95,7 +130,7 @@ def test_bound_context_copied_from_audit_event():
 
 
 def test_approval_metadata_copied():
-    evidence = build()
+    evidence = make_approval_evidence()
     assert evidence.approver_id == "urn:aaid:approver:reviewer-1"
     assert evidence.approver_role == "operator_admin"
     assert evidence.approval_outcome == "approved"
@@ -113,7 +148,7 @@ def test_non_scalar_approval_values_recorded_none():
         "approval_scope": None,
         "approval_expires_at": 5.0,
     }
-    evidence = build(approval=approval_mapping)
+    evidence = make_approval_evidence(approval=approval_mapping)
     fields = (
         evidence.approver_id,
         evidence.approver_role,
@@ -125,41 +160,32 @@ def test_non_scalar_approval_values_recorded_none():
     assert fields == (None,) * 6
 
 
-@pytest.mark.parametrize(
-    "value, expected",
-    [
-        ("2026-06-03T02:00:00Z", "2026-06-03T02:00:00Z"),
-        (None, None),
-        (123, None),
-        ({"t": 1}, None),
-        (object(), None),
-    ],
-)
+@pytest.mark.parametrize("value, expected", OCCURRED_AT_CASES)
 def test_occurred_at_scalar_handling(value, expected):
-    assert build(occurred_at=value).occurred_at == expected
+    assert make_approval_evidence(occurred_at=value).occurred_at == expected
 
 
 def test_occurred_at_omitted_default_none():
-    assert build().occurred_at is None
+    assert make_approval_evidence().occurred_at is None
 
 
-@pytest.mark.parametrize("decision, applicable", [
-    (REQUIRE_HUMAN_APPROVAL, True),
-    (DENY, False),
-    (ALLOW, False),
-    (ERROR, False),
-    (REQUIRE_HUMAN_REVIEW, False),
-])
+@pytest.mark.parametrize("decision, applicable", DECISION_BINDING_CASES)
 def test_decision_binding_is_inert(decision, applicable):
-    evidence = build(decision, approval={**APPROVAL, "approval_outcome": "approved"})
+    evidence = make_approval_evidence(
+        decision,
+        approval={**APPROVAL, "approval_outcome": "approved"},
+    )
     assert evidence.composed_decision == decision
     assert evidence.approval_applicable is applicable
     assert evidence.grants_execution is False
 
 
-@pytest.mark.parametrize("bad", [None, "x", 123, object(), {}])
-def test_malformed_audit_event_records_none(bad):
-    evidence = prepare_approval_evidence(audit_event=bad, approval=APPROVAL)
+@pytest.mark.parametrize("bad_audit_event", MALFORMED_AUDIT_EVENT_CASES)
+def test_malformed_audit_event_records_none(bad_audit_event):
+    evidence = prepare_approval_evidence(
+        audit_event=bad_audit_event,
+        approval=APPROVAL,
+    )
     bound = (
         evidence.passport_id,
         evidence.agent_id,
@@ -175,16 +201,24 @@ def test_malformed_audit_event_records_none(bad):
     assert evidence.grants_execution is False
 
 
-@pytest.mark.parametrize("bad", [None, "x", 123, object(), []])
-def test_malformed_approval_records_none(bad):
-    evidence = prepare_approval_evidence(audit_event=make_audit(), approval=bad)
-    assert (evidence.approver_id, evidence.approval_outcome, evidence.approval_scope) == (None, None, None)
+@pytest.mark.parametrize("bad_approval", MALFORMED_APPROVAL_CASES)
+def test_malformed_approval_records_none(bad_approval):
+    evidence = prepare_approval_evidence(
+        audit_event=make_audit_event(),
+        approval=bad_approval,
+    )
+    fields = (
+        evidence.approver_id,
+        evidence.approval_outcome,
+        evidence.approval_scope,
+    )
+    assert fields == (None, None, None)
 
 
 def test_no_leak_scan():
-    text = evidence_text(
+    text = approval_evidence_text(
         prepare_approval_evidence(
-            audit_event=make_audit(),
+            audit_event=make_audit_event(),
             approval=SECRET_APPROVAL,
         )
     )
@@ -193,7 +227,8 @@ def test_no_leak_scan():
 
 
 def test_inputs_not_mutated():
-    audit_event, approval_mapping = make_audit(), dict(APPROVAL)
+    audit_event = make_audit_event()
+    approval_mapping = dict(APPROVAL)
     snapshots = copy.deepcopy((audit_event, approval_mapping))
     prepare_approval_evidence(
         audit_event=audit_event,
@@ -205,32 +240,73 @@ def test_inputs_not_mutated():
 
 def test_approval_evidence_is_frozen():
     with pytest.raises(dataclasses.FrozenInstanceError):
-        build().grants_execution = True
+        make_approval_evidence().grants_execution = True
 
 
 def test_deterministic():
-    audit_event = make_audit()
-    args = dict(audit_event=audit_event, approval=APPROVAL, occurred_at="t")
+    audit_event = make_audit_event()
+    args = {
+        "audit_event": audit_event,
+        "approval": APPROVAL,
+        "occurred_at": "t",
+    }
     assert prepare_approval_evidence(**args) == prepare_approval_evidence(**args)
 
 
 FORBIDDEN_IMPORTS = {
-    "hashlib", "hmac", "secrets", "cryptography", "ssl", "socket", "urllib",
-    "http", "requests", "httpx", "subprocess", "sqlite3", "shelve", "pickle",
-    "logging", "rfc8785", "jcs", "sigstore", "cosign", "rekor", "fulcio",
-    "boto3", "google", "azure", "passport_verifier",
+    "azure",
+    "boto3",
+    "cosign",
+    "cryptography",
+    "fulcio",
+    "google",
+    "hashlib",
+    "hmac",
+    "http",
+    "httpx",
+    "jcs",
+    "logging",
+    "passport_verifier",
+    "pickle",
+    "requests",
+    "rekor",
+    "rfc8785",
+    "secrets",
+    "shelve",
+    "sigstore",
+    "socket",
+    "sqlite3",
+    "ssl",
+    "subprocess",
+    "urllib",
 }
 FORBIDDEN_ENGINES = (
-    "verify_passport_envelope",
     "authorize_action",
     "compose_decision",
-    "prepare_audit_event",
     "passport_verifier",
+    "prepare_audit_event",
+    "verify_passport_envelope",
 )
 FORBIDDEN_SINKS = (
-    "open(", ".write(", "print(", "logging", "socket", "requests", "httpx",
-    "subprocess", "hashlib", ".hexdigest", "sha256", "sqlite", "pickle",
-    "previous_event", "chain(", "sign(", "time", "datetime", "random", "uuid",
+    ".hexdigest",
+    ".write(",
+    "chain(",
+    "datetime",
+    "hashlib",
+    "logging",
+    "open(",
+    "pickle",
+    "previous_event",
+    "print(",
+    "random",
+    "requests",
+    "sha256",
+    "sign(",
+    "socket",
+    "sqlite",
+    "subprocess",
+    "time",
+    "uuid",
 )
 
 
