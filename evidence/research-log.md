@@ -528,3 +528,65 @@ verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 126
+
+Date: 2026-06-11
+
+Type: Test review
+
+Summary: Reviewed the approval validation tests.
+
+Files:
+Updated `tests/test_approval_validation.py`.
+
+Result:
+The approval validation tests were reviewed as part of the file-by-file test
+review.
+
+All tests were kept. Unused test setup and import lines were removed. Short
+test-support names were replaced with clearer names:
+
+`load_passport` became `load_example_passport`.
+
+`make_audit` became `make_audit_event`.
+
+`pair` became `make_audit_and_approval_evidence`.
+
+`strings` became `iter_strings`.
+
+`validation_text` became `approval_validation_text`.
+
+`booleans` became `validation_booleans`.
+
+Short result names were replaced with clearer result names.
+
+Readable parametrized case IDs were added. The tests still check valid approval
+context matching, non-executing validation, context mismatch failure,
+non-approval decision handling, synthetic `ALLOW` non-execution, malformed
+audit-event handling, malformed approval-evidence handling, ignored expiry,
+non-empty reasons, ordered checks, input immutability, frozen validation results,
+determinism, no-leak behavior, forbidden imports, forbidden engines, and no I/O,
+clock, or randomness in the approval-validation source.
+
+The approval validation boundary remains inert. The tests continue to check that
+approval validation does not grant execution and that `grants_execution` remains
+false.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_approval_validation.py -q --durations=20 --durations-min=0.001` passed with 35 tests.
+
+`python -m pytest tests/test_approval.py tests/test_enforcement.py -q` passed with 66 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source behavior changes, test removal, verifier behavior changes, authorization
+behavior changes, audit behavior changes, approval behavior changes, approval
+validation behavior changes, enforcement behavior changes, real signature
+verification, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
