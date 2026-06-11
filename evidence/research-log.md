@@ -315,3 +315,52 @@ changes, real signature verification, cloud deployment, or passport-verifier
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 122
+
+Date: 2026-06-11
+
+Type: Test review
+
+Summary: Reviewed the authorization tests.
+
+Files:
+Updated `tests/test_authorization.py`.
+
+Result:
+The authorization tests were reviewed as part of the file-by-file test review.
+
+All tests were kept. Unused test setup lines were removed. Short test-support
+names were replaced with clearer names:
+
+`ACT` became `ACTION_ENTRY`.
+
+`scope` became `make_action_entry`.
+
+`passport_with` became `make_passport_with_permissions`.
+
+`verifier` became `verification_result`.
+
+`authz` became `authorization_decision`.
+
+Readable parametrized case IDs were added for the decision-precedence and exact
+action/scope matching tests. The tests still check decision precedence,
+unknown-action review behavior, exact action and scope matching, malformed
+request handling, malformed permission handling, explainable decisions, input
+immutability, forbidden imports, and the current boundary where authorization
+can allow while passport verification still denies.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_authorization.py -q --durations=20 --durations-min=0.001` passed with 28 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source behavior changes, test removal, verifier behavior changes, authorization
+behavior changes, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
