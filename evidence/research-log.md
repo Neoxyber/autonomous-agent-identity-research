@@ -364,3 +364,53 @@ passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 123
+
+Date: 2026-06-11
+
+Type: Test review
+
+Summary: Reviewed the enforcement tests.
+
+Files:
+Updated `tests/test_enforcement.py`.
+
+Result:
+The enforcement tests were reviewed as part of the file-by-file test review.
+
+All tests were kept. Unused test setup/import lines were removed. Short
+test-support names were replaced with clearer names:
+
+`load_passport` became `load_example_passport`.
+
+`make_audit` became `make_audit_event`.
+
+`make_validation` became `make_approval_validation`.
+
+`strings` became `iter_strings`.
+
+`result_text` became `enforcement_result_text`.
+
+`a` and `b` became `first_result` and `second_result`.
+
+Readable parametrized case IDs were added. The tests still check decision
+pass-through, execution withheld behavior, approval satisfaction, malformed
+input handling, explainable checks, input immutability, frozen result behavior,
+determinism, no-leak behavior, forbidden imports, forbidden engines, and no
+I/O, clock, or randomness in the enforcement source.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_enforcement.py -q --durations=20 --durations-min=0.001` passed with 36 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source behavior changes, test removal, verifier behavior changes, authorization
+behavior changes, enforcement behavior changes, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
