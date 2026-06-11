@@ -590,3 +590,50 @@ verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 127
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the schema tests.
+
+Files:
+Updated `tests/test_agent_passport_schema.py`.
+
+Result:
+The schema tests were reviewed as part of the file-by-file test review.
+
+All tests were kept. Short test-support names were replaced with clearer names:
+
+`base_envelope` became `load_valid_envelope`.
+
+`has_violation` became `has_schema_violation`.
+
+`env` became `envelope`.
+
+The tests still check that the schema is valid, the minimal example matches the
+schema, missing required fields are rejected, invalid risk class values are
+rejected, invalid lifecycle status values are rejected, unexpected passport
+fields are rejected, and invalid payload hash length is rejected.
+
+The cleanup affects schema test readability only. It does not change source
+behavior, schema behavior, examples, verifier behavior, dependency versions,
+real signature verification, cloud deployment, or passport-verifier `ALLOW`
+behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_agent_passport_schema.py -q --durations=20 --durations-min=0.001` passed with 8 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source behavior changes, schema changes, example changes, test removal, verifier
+behavior changes, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
