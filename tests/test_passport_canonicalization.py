@@ -6,29 +6,28 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-
 from aaid.canonicalization import (
     canonicalize_passport_payload,
     hash_passport_payload,
 )
 
+ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
 
 
-def load_envelope():
-    with EXAMPLE_PATH.open(encoding="utf-8") as handle:
-        return json.load(handle)
+def load_example_envelope() -> dict:
+    with EXAMPLE_PATH.open(encoding="utf-8") as file:
+        return json.load(file)
 
 
-def test_returns_bytes():
-    envelope = load_envelope()
+def test_returns_bytes() -> None:
+    envelope = load_example_envelope()
     result = canonicalize_passport_payload(envelope["passport"])
+
     assert isinstance(result, bytes)
 
 
-def test_key_order_does_not_change_output():
+def test_key_order_does_not_change_output() -> None:
     ordered = {
         "agent_id": "urn:aaid:agent:demo",
         "subject": "Demo",
@@ -39,20 +38,22 @@ def test_key_order_does_not_change_output():
         "subject": "Demo",
         "agent_id": "urn:aaid:agent:demo",
     }
+
     assert canonicalize_passport_payload(ordered) == canonicalize_passport_payload(
         reordered
     )
 
 
-def test_proofs_excluded_from_payload():
-    envelope = load_envelope()
+def test_proofs_excluded_from_payload() -> None:
+    envelope = load_example_envelope()
     result = canonicalize_passport_payload(envelope["passport"])
+
     assert b"proofs" not in result
     assert b"signature_b64u" not in result
 
 
-def test_changing_a_proof_does_not_change_payload():
-    envelope = load_envelope()
+def test_changing_a_proof_does_not_change_payload() -> None:
+    envelope = load_example_envelope()
     before = canonicalize_passport_payload(envelope["passport"])
 
     mutated = copy.deepcopy(envelope)
@@ -62,8 +63,8 @@ def test_changing_a_proof_does_not_change_payload():
     assert before == after
 
 
-def test_changing_the_passport_changes_output():
-    envelope = load_envelope()
+def test_changing_the_passport_changes_output() -> None:
+    envelope = load_example_envelope()
     before = canonicalize_passport_payload(envelope["passport"])
 
     mutated = copy.deepcopy(envelope)
@@ -73,8 +74,8 @@ def test_changing_the_passport_changes_output():
     assert before != after
 
 
-def test_sha256_hash_from_canonical_bytes():
-    envelope = load_envelope()
+def test_sha256_hash_from_canonical_bytes() -> None:
+    envelope = load_example_envelope()
     canonical = canonicalize_passport_payload(envelope["passport"])
 
     digest = hashlib.sha256(canonical).hexdigest()
@@ -86,33 +87,35 @@ def test_sha256_hash_from_canonical_bytes():
     assert digest == again
 
 
-def test_hash_passport_payload_sha256_is_64_lowercase_hex():
-    envelope = load_envelope()
-    digest = hash_passport_payload(envelope["passport"], "SHA-256")
-    assert re.fullmatch(r"[0-9a-f]{64}", digest)
+@pytest.mark.parametrize(
+    ("hash_algorithm", "expected_length"),
+    [
+        pytest.param("SHA-256", 64, id="sha-256"),
+        pytest.param("SHA-384", 96, id="sha-384"),
+        pytest.param("SHA-512", 128, id="sha-512"),
+    ],
+)
+def test_hash_passport_payload_returns_lowercase_hex(
+    hash_algorithm: str,
+    expected_length: int,
+) -> None:
+    envelope = load_example_envelope()
+    digest = hash_passport_payload(envelope["passport"], hash_algorithm)
+
+    assert re.fullmatch(rf"[0-9a-f]{{{expected_length}}}", digest)
 
 
-def test_hash_passport_payload_sha384_is_96_lowercase_hex():
-    envelope = load_envelope()
-    digest = hash_passport_payload(envelope["passport"], "SHA-384")
-    assert re.fullmatch(r"[0-9a-f]{96}", digest)
+def test_hash_passport_payload_is_deterministic() -> None:
+    envelope = load_example_envelope()
 
-
-def test_hash_passport_payload_sha512_is_128_lowercase_hex():
-    envelope = load_envelope()
-    digest = hash_passport_payload(envelope["passport"], "SHA-512")
-    assert re.fullmatch(r"[0-9a-f]{128}", digest)
-
-
-def test_hash_passport_payload_is_deterministic():
-    envelope = load_envelope()
     first = hash_passport_payload(envelope["passport"])
     second = hash_passport_payload(envelope["passport"])
+
     assert first == second
 
 
-def test_changing_a_proof_does_not_change_hash():
-    envelope = load_envelope()
+def test_changing_a_proof_does_not_change_hash() -> None:
+    envelope = load_example_envelope()
     before = hash_passport_payload(envelope["passport"])
 
     mutated = copy.deepcopy(envelope)
@@ -122,8 +125,8 @@ def test_changing_a_proof_does_not_change_hash():
     assert before == after
 
 
-def test_changing_the_passport_changes_hash():
-    envelope = load_envelope()
+def test_changing_the_passport_changes_hash() -> None:
+    envelope = load_example_envelope()
     before = hash_passport_payload(envelope["passport"])
 
     mutated = copy.deepcopy(envelope)
@@ -133,17 +136,38 @@ def test_changing_the_passport_changes_hash():
     assert before != after
 
 
-def test_hash_passport_payload_rejects_unsupported_algorithm():
-    envelope = load_envelope()
-    for unsupported in ("MD5", "sha256", "SHA3-256"):
-        with pytest.raises(ValueError):
-            hash_passport_payload(envelope["passport"], unsupported)
+@pytest.mark.parametrize(
+    "unsupported_algorithm",
+    [
+        pytest.param("MD5", id="md5"),
+        pytest.param("sha256", id="lowercase-sha256"),
+        pytest.param("SHA3-256", id="sha3-256"),
+    ],
+)
+def test_hash_passport_payload_rejects_unsupported_algorithm(
+    unsupported_algorithm: str,
+) -> None:
+    envelope = load_example_envelope()
+
+    with pytest.raises(ValueError):
+        hash_passport_payload(envelope["passport"], unsupported_algorithm)
 
 
-def test_hash_passport_payload_matches_hashlib_on_canonical_bytes():
-    envelope = load_envelope()
+@pytest.mark.parametrize(
+    ("hash_algorithm", "hashlib_name"),
+    [
+        pytest.param("SHA-256", "sha256", id="sha-256"),
+        pytest.param("SHA-384", "sha384", id="sha-384"),
+        pytest.param("SHA-512", "sha512", id="sha-512"),
+    ],
+)
+def test_hash_passport_payload_matches_hashlib_on_canonical_bytes(
+    hash_algorithm: str,
+    hashlib_name: str,
+) -> None:
+    envelope = load_example_envelope()
     canonical = canonicalize_passport_payload(envelope["passport"])
-    cases = {"SHA-256": "sha256", "SHA-384": "sha384", "SHA-512": "sha512"}
-    for hash_alg, hashlib_name in cases.items():
-        expected = hashlib.new(hashlib_name, canonical).hexdigest()
-        assert hash_passport_payload(envelope["passport"], hash_alg) == expected
+
+    expected = hashlib.new(hashlib_name, canonical).hexdigest()
+
+    assert hash_passport_payload(envelope["passport"], hash_algorithm) == expected
