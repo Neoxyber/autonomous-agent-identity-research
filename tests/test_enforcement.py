@@ -7,14 +7,19 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-
+from _support import (
+    APPROVAL,
+    EXAMPLE_PATH,
+    PLANTED_SECRETS,
+    REQUEST,
+    SECRET_APPROVAL,
+    SENSITIVE_VALUES,
+)
 from aaid import authorization, composition, enforcement, verification
 from aaid.approval import prepare_approval_evidence
 from aaid.approval_validation import validate_approval
 from aaid.audit import ERROR, prepare_audit_event
-from aaid.enforcement import EnforcementDecision, compose_enforcement
+from aaid.enforcement import compose_enforcement
 from aaid.verification import VerificationCheck
 
 ALLOW = verification.ALLOW
@@ -25,75 +30,105 @@ VerificationResult = verification.VerificationResult
 AuthorizationDecision = authorization.AuthorizationDecision
 ComposedDecision = composition.ComposedDecision
 
-from _support import (
-    APPROVAL,
-    EXAMPLE_PATH,
-    PLANTED_SECRETS,
-    REQUEST,
-    SECRET_APPROVAL,
-    SENSITIVE_VALUES,
-)
+DECISION_CASES = [
+    pytest.param(DENY, id="deny"),
+    pytest.param(ALLOW, id="synthetic-allow"),
+    pytest.param(REQUIRE_HUMAN_APPROVAL, id="approval-required"),
+    pytest.param(REQUIRE_HUMAN_REVIEW, id="human-review"),
+    pytest.param(ERROR, id="error"),
+]
 
-DECISIONS = [DENY, ALLOW, REQUIRE_HUMAN_APPROVAL, REQUIRE_HUMAN_REVIEW, ERROR]
+NON_APPROVAL_DECISION_CASES = [
+    pytest.param(DENY, id="deny"),
+    pytest.param(ERROR, id="error"),
+    pytest.param(ALLOW, id="synthetic-allow"),
+    pytest.param(REQUIRE_HUMAN_REVIEW, id="human-review"),
+]
+
+MALFORMED_APPROVAL_VALIDATION_CASES = [
+    pytest.param(None, id="none"),
+    pytest.param("x", id="string"),
+    pytest.param(123, id="integer"),
+    pytest.param(object(), id="object"),
+]
+
+MALFORMED_AUDIT_EVENT_CASES = [
+    pytest.param(None, id="none"),
+    pytest.param("x", id="string"),
+    pytest.param(123, id="integer"),
+    pytest.param(object(), id="object"),
+    pytest.param({}, id="mapping"),
+]
 
 
-def load_passport():
+def load_example_passport():
     with EXAMPLE_PATH.open(encoding="utf-8") as handle:
         return json.load(handle)["passport"]
 
 
-def make_audit(decision=REQUIRE_HUMAN_APPROVAL):
-    comp = None if decision == ERROR else ComposedDecision(decision, "composed")
+def make_audit_event(decision=REQUIRE_HUMAN_APPROVAL):
+    composed_decision = None
+    if decision != ERROR:
+        composed_decision = ComposedDecision(decision, "composed")
+
     return prepare_audit_event(
-        passport=load_passport(),
+        passport=load_example_passport(),
         request=REQUEST,
         verification=VerificationResult(valid=False, decision=DENY, reason="v"),
         authorization=AuthorizationDecision(REQUIRE_HUMAN_APPROVAL, "a"),
-        composition=comp,
+        composition=composed_decision,
         event_type="action_decision",
         occurred_at="2026-06-03T00:00:00Z",
     )
 
 
-def make_validation(decision=REQUIRE_HUMAN_APPROVAL, *, approval=APPROVAL):
-    audit_event = make_audit(decision)
-    evidence = prepare_approval_evidence(audit_event=audit_event, approval=approval)
-    return validate_approval(audit_event=audit_event, approval_evidence=evidence)
+def make_approval_validation(decision=REQUIRE_HUMAN_APPROVAL, *, approval=APPROVAL):
+    audit_event = make_audit_event(decision)
+    approval_evidence = prepare_approval_evidence(
+        audit_event=audit_event,
+        approval=approval,
+    )
+    return validate_approval(
+        audit_event=audit_event,
+        approval_evidence=approval_evidence,
+    )
 
 
-def strings(obj):
+def iter_strings(obj):
     if isinstance(obj, str):
         yield obj
     elif isinstance(obj, Mapping):
         for value in obj.values():
-            yield from strings(value)
+            yield from iter_strings(value)
     elif isinstance(obj, (list, tuple)):
         for value in obj:
-            yield from strings(value)
+            yield from iter_strings(value)
 
 
-def result_text(result):
-    return "\n".join(strings(dataclasses.asdict(result)))
+def enforcement_result_text(result):
+    return "\n".join(iter_strings(dataclasses.asdict(result)))
 
 
-@pytest.mark.parametrize("decision", DECISIONS)
+@pytest.mark.parametrize("decision", DECISION_CASES)
 def test_decision_passes_through(decision):
-    assert compose_enforcement(audit_event=make_audit(decision)).decision == decision
+    assert compose_enforcement(audit_event=make_audit_event(decision)).decision == decision
 
 
-@pytest.mark.parametrize("decision", DECISIONS)
+@pytest.mark.parametrize("decision", DECISION_CASES)
 def test_execution_allowed_always_false(decision):
-    assert compose_enforcement(audit_event=make_audit(decision)).execution_allowed is False
+    result = compose_enforcement(audit_event=make_audit_event(decision))
+    assert result.execution_allowed is False
 
 
 def test_execution_allowed_false_for_synthetic_allow():
-    assert compose_enforcement(audit_event=make_audit(ALLOW)).execution_allowed is False
+    result = compose_enforcement(audit_event=make_audit_event(ALLOW))
+    assert result.execution_allowed is False
 
 
 def test_require_human_approval_with_valid_approval():
     result = compose_enforcement(
-        audit_event=make_audit(REQUIRE_HUMAN_APPROVAL),
-        approval_validation=make_validation(REQUIRE_HUMAN_APPROVAL),
+        audit_event=make_audit_event(REQUIRE_HUMAN_APPROVAL),
+        approval_validation=make_approval_validation(REQUIRE_HUMAN_APPROVAL),
     )
     assert result.approval_satisfied is True
     assert result.decision == REQUIRE_HUMAN_APPROVAL
@@ -101,41 +136,41 @@ def test_require_human_approval_with_valid_approval():
 
 
 def test_require_human_approval_without_approval():
-    result = compose_enforcement(audit_event=make_audit(REQUIRE_HUMAN_APPROVAL))
+    result = compose_enforcement(audit_event=make_audit_event(REQUIRE_HUMAN_APPROVAL))
     assert result.approval_satisfied is False
 
 
-@pytest.mark.parametrize("bad", [None, "x", 123, object()])
-def test_require_human_approval_with_malformed_approval(bad):
+@pytest.mark.parametrize("bad_approval_validation", MALFORMED_APPROVAL_VALIDATION_CASES)
+def test_require_human_approval_with_malformed_approval(bad_approval_validation):
     result = compose_enforcement(
-        audit_event=make_audit(REQUIRE_HUMAN_APPROVAL),
-        approval_validation=bad,
+        audit_event=make_audit_event(REQUIRE_HUMAN_APPROVAL),
+        approval_validation=bad_approval_validation,
     )
     assert result.approval_satisfied is False
 
 
 def test_require_human_approval_with_inapplicable_validation():
     result = compose_enforcement(
-        audit_event=make_audit(REQUIRE_HUMAN_APPROVAL),
-        approval_validation=make_validation(DENY),
+        audit_event=make_audit_event(REQUIRE_HUMAN_APPROVAL),
+        approval_validation=make_approval_validation(DENY),
     )
     assert result.approval_satisfied is False
 
 
-@pytest.mark.parametrize("decision", [DENY, ERROR, ALLOW, REQUIRE_HUMAN_REVIEW])
+@pytest.mark.parametrize("decision", NON_APPROVAL_DECISION_CASES)
 def test_valid_approval_does_not_affect_non_approval_decisions(decision):
     result = compose_enforcement(
-        audit_event=make_audit(decision),
-        approval_validation=make_validation(REQUIRE_HUMAN_APPROVAL),
+        audit_event=make_audit_event(decision),
+        approval_validation=make_approval_validation(REQUIRE_HUMAN_APPROVAL),
     )
     assert result.decision == decision
     assert result.approval_satisfied is False
     assert result.execution_allowed is False
 
 
-@pytest.mark.parametrize("bad", [None, "x", 123, object(), {}])
-def test_malformed_audit_event(bad):
-    result = compose_enforcement(audit_event=bad)
+@pytest.mark.parametrize("bad_audit_event", MALFORMED_AUDIT_EVENT_CASES)
+def test_malformed_audit_event(bad_audit_event):
+    result = compose_enforcement(audit_event=bad_audit_event)
     assert result.decision == "ERROR"
     assert result.approval_satisfied is False
     assert result.execution_allowed is False
@@ -143,57 +178,76 @@ def test_malformed_audit_event(bad):
 
 def test_malformed_approval_validation_does_not_raise():
     result = compose_enforcement(
-        audit_event=make_audit(REQUIRE_HUMAN_APPROVAL),
+        audit_event=make_audit_event(REQUIRE_HUMAN_APPROVAL),
         approval_validation="x",
     )
     assert result.approval_satisfied is False
 
 
 def test_reason_non_empty():
-    assert compose_enforcement(audit_event=make_audit(DENY)).reason
+    assert compose_enforcement(audit_event=make_audit_event(DENY)).reason
 
 
 def test_checks_ordered_and_typed():
-    checks = compose_enforcement(audit_event=make_audit(REQUIRE_HUMAN_APPROVAL)).checks
-    assert [c.name for c in checks] == [
+    checks = compose_enforcement(
+        audit_event=make_audit_event(REQUIRE_HUMAN_APPROVAL)
+    ).checks
+    assert [check.name for check in checks] == [
         "inputs_well_formed",
         "decision_recorded",
         "approval_gate",
         "execution_withheld",
     ]
-    assert all(isinstance(c, VerificationCheck) for c in checks)
+    assert all(isinstance(check, VerificationCheck) for check in checks)
 
 
 def test_inputs_not_mutated():
-    audit_event = make_audit(REQUIRE_HUMAN_APPROVAL)
-    validation = make_validation(REQUIRE_HUMAN_APPROVAL)
-    snapshots = copy.deepcopy((audit_event, validation))
-    compose_enforcement(audit_event=audit_event, approval_validation=validation)
-    assert (audit_event, validation) == snapshots
+    audit_event = make_audit_event(REQUIRE_HUMAN_APPROVAL)
+    approval_validation = make_approval_validation(REQUIRE_HUMAN_APPROVAL)
+    snapshots = copy.deepcopy((audit_event, approval_validation))
+    compose_enforcement(
+        audit_event=audit_event,
+        approval_validation=approval_validation,
+    )
+    assert (audit_event, approval_validation) == snapshots
 
 
 def test_enforcement_decision_is_frozen():
-    result = compose_enforcement(audit_event=make_audit(DENY))
+    result = compose_enforcement(audit_event=make_audit_event(DENY))
     with pytest.raises(dataclasses.FrozenInstanceError):
         result.execution_allowed = True
 
 
 def test_deterministic():
-    audit_event = make_audit(REQUIRE_HUMAN_APPROVAL)
-    validation = make_validation(REQUIRE_HUMAN_APPROVAL)
-    a = compose_enforcement(audit_event=audit_event, approval_validation=validation)
-    b = compose_enforcement(audit_event=audit_event, approval_validation=validation)
-    assert a == b
+    audit_event = make_audit_event(REQUIRE_HUMAN_APPROVAL)
+    approval_validation = make_approval_validation(REQUIRE_HUMAN_APPROVAL)
+
+    first_result = compose_enforcement(
+        audit_event=audit_event,
+        approval_validation=approval_validation,
+    )
+    second_result = compose_enforcement(
+        audit_event=audit_event,
+        approval_validation=approval_validation,
+    )
+
+    assert first_result == second_result
 
 
 def test_no_leak_scan():
-    audit_event = make_audit(REQUIRE_HUMAN_APPROVAL)
-    evidence = prepare_approval_evidence(audit_event=audit_event, approval=SECRET_APPROVAL)
-    validation = validate_approval(audit_event=audit_event, approval_evidence=evidence)
-    text = result_text(
+    audit_event = make_audit_event(REQUIRE_HUMAN_APPROVAL)
+    approval_evidence = prepare_approval_evidence(
+        audit_event=audit_event,
+        approval=SECRET_APPROVAL,
+    )
+    approval_validation = validate_approval(
+        audit_event=audit_event,
+        approval_evidence=approval_evidence,
+    )
+    text = enforcement_result_text(
         compose_enforcement(
             audit_event=audit_event,
-            approval_validation=validation,
+            approval_validation=approval_validation,
         )
     )
     for value in SENSITIVE_VALUES + PLANTED_SECRETS:
@@ -201,24 +255,61 @@ def test_no_leak_scan():
 
 
 FORBIDDEN_IMPORTS = {
-    "hashlib", "hmac", "secrets", "cryptography", "ssl", "socket", "urllib",
-    "http", "requests", "httpx", "subprocess", "sqlite3", "shelve", "pickle",
-    "logging", "rfc8785", "jcs", "sigstore", "cosign", "rekor", "fulcio",
-    "boto3", "google", "azure", "passport_verifier",
+    "azure",
+    "boto3",
+    "cosign",
+    "cryptography",
+    "fulcio",
+    "google",
+    "hashlib",
+    "hmac",
+    "http",
+    "httpx",
+    "jcs",
+    "logging",
+    "passport_verifier",
+    "pickle",
+    "requests",
+    "rekor",
+    "rfc8785",
+    "secrets",
+    "shelve",
+    "sigstore",
+    "socket",
+    "sqlite3",
+    "ssl",
+    "subprocess",
+    "urllib",
 }
 FORBIDDEN_ENGINES = (
-    "verify_passport_envelope",
     "authorize_action",
     "compose_decision",
-    "prepare_audit_event",
-    "prepare_approval_evidence",
-    "validate_approval",
     "passport_verifier",
+    "prepare_approval_evidence",
+    "prepare_audit_event",
+    "validate_approval",
+    "verify_passport_envelope",
 )
 FORBIDDEN_SINKS = (
-    "open(", ".write(", "print(", "logging", "socket", "requests", "httpx",
-    "subprocess", "hashlib", ".hexdigest", "sha256", "sqlite", "pickle",
-    "previous_event", "chain(", "sign(", "time", "datetime", "random", "uuid",
+    ".hexdigest",
+    ".write(",
+    "chain(",
+    "datetime",
+    "hashlib",
+    "logging",
+    "open(",
+    "pickle",
+    "previous_event",
+    "print(",
+    "random",
+    "requests",
+    "sha256",
+    "sign(",
+    "socket",
+    "sqlite",
+    "subprocess",
+    "time",
+    "uuid",
 )
 
 
