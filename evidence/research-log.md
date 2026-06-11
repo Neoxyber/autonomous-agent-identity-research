@@ -414,3 +414,61 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 124
+
+Date: 2026-06-11
+
+Type: Test review
+
+Summary: Reviewed the audit tests.
+
+Files:
+Updated `tests/test_audit.py`.
+
+Result:
+The audit tests were reviewed as part of the file-by-file test review.
+
+All tests were kept. Unused test setup lines were removed. Short test-support
+names were replaced with clearer names:
+
+`verif` became `make_verification_result`.
+
+`authz` became `make_authorization_decision`.
+
+`comp` became `make_composed_decision`.
+
+`load_passport` became `load_example_passport`.
+
+`strings` became `iter_strings`.
+
+`event_text` became `audit_event_text`.
+
+`build` became `make_test_audit_event`.
+
+`v`, `a`, and `c` became `verification_result`,
+`authorization_decision`, and `composed_decision`.
+
+Readable parametrized case IDs were added. The tests still check safe audit
+field capture, malformed input handling, error recording, input immutability,
+frozen audit events, sensitive-value exclusion, request-field minimization,
+permission-list exclusion, audit-only ERROR handling, forbidden imports,
+forbidden engines, and no I/O sinks in the audit source.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_audit.py -q --durations=20 --durations-min=0.001` passed with 26 tests.
+
+`python -m pytest tests/test_authorization.py tests/test_composition.py tests/test_enforcement.py -q` passed with 84 tests.
+
+`python -m pytest -q` passed with 602 tests.
+
+Not implemented:
+source behavior changes, test removal, verifier behavior changes, authorization
+behavior changes, composition behavior changes, audit behavior changes,
+enforcement behavior changes, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
