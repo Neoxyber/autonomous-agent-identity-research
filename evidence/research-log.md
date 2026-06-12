@@ -751,3 +751,65 @@ signature verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 130
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the RFC 8785 vector tests.
+
+Files:
+Updated `tests/test_passport_canonicalization_rfc8785_vectors.py`.
+
+Result:
+The RFC 8785 vector tests were reviewed as part of the file-by-file test
+review.
+
+All tests were kept. Unused setup was removed:
+
+`Path`.
+
+`ROOT`.
+
+`SRC`.
+
+`CANON_SOURCE_PATH`.
+
+Named constants were added for the selected RFC 8785 sample output, the current
+Python code-point ordering output, the JCS UTF-16 ordering output, and the
+large-float number-serialization outputs.
+
+The non-finite number cases now use readable parametrized case IDs. Function
+return annotations were added for readability.
+
+The file records current canonicalization observations against selected
+RFC 8785/JCS examples and edge cases. It keeps the boundary that the current
+helper is not presented as a complete RFC 8785/JCS implementation. Broader
+I-JSON, duplicate-key, UTF-16 sorting, number-serialization, and payload-domain
+questions remain research work.
+
+The tests still check the RFC 8785 section 3.2.3 sample object known answer,
+non-finite number rejection, the current UTF-16 key-ordering boundary, and the
+current number-serialization boundary.
+
+The cleanup affects RFC 8785 vector test readability only. It does not change
+source behavior, canonicalization behavior, schema behavior, examples, verifier
+behavior, dependency versions, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_canonicalization_rfc8785_vectors.py -q --durations=20 --durations-min=0.001` passed with 6 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, canonicalization behavior changes, schema changes,
+example changes, test coverage removal, verifier behavior changes, real
+signature verification, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
