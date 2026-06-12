@@ -637,3 +637,56 @@ passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 128
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the canonicalization tests.
+
+Files:
+Updated `tests/test_passport_canonicalization.py`.
+
+Result:
+The canonicalization tests were reviewed as part of the file-by-file test
+review.
+
+The coverage was kept and made easier to inspect. An unused test setup constant
+was removed. Short test-support names were replaced with clearer names:
+
+`load_envelope` became `load_example_envelope`.
+
+Function return annotations were added for readability.
+
+Loop-based hash checks were changed into explicit parametrized test cases with
+readable case IDs. This increased the visible test count for this file while
+keeping the same intended coverage.
+
+The tests still check canonical byte output, deterministic key ordering, proof
+exclusion from canonical payloads, proof changes not changing canonical payloads
+or payload hashes, passport changes changing canonical payloads and hashes,
+lowercase hexadecimal hash output for supported algorithms, unsupported
+algorithm rejection, deterministic hashing, and agreement with `hashlib` over the
+same canonical bytes.
+
+The cleanup affects canonicalization test readability only. It does not change
+source behavior, canonicalization behavior, schema behavior, examples, verifier
+behavior, dependency versions, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_canonicalization.py -q --durations=20 --durations-min=0.001` passed with 18 tests.
+
+`python -m pytest -q` passed with 606 tests.
+
+Not implemented:
+source behavior changes, canonicalization behavior changes, schema changes,
+example changes, test coverage removal, verifier behavior changes, real
+signature verification, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
