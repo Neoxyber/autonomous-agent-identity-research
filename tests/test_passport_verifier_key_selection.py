@@ -1,215 +1,282 @@
+"""Key-selection verifier-boundary tests.
+
+These tests record current verifier behavior around proof key selection,
+proof/key mismatch, duplicate key identifiers, key status, key purpose,
+ordering, short-circuit behavior, and the never-ALLOW boundary.
+
+They do not add real signature verification, cryptographic key validation, or
+make the passport verifier return `ALLOW`. More tests and
+research are still needed around key-selection and signature-verification
+boundaries.
+"""
+
 import copy
 import json
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
+from typing import Any
 
 import aaid.passport_verifier as passport_verifier_module
 from _support import FRESH_STATUS, TRUSTED_ISSUERS, VALID_NOW
 from aaid import ALLOW, DENY, verify_passport_envelope
 from aaid.canonicalization import hash_passport_payload
-from aaid.verification import VerificationResult
+from aaid.verification import VerificationCheck, VerificationResult
 
+ROOT = Path(__file__).resolve().parents[1]
 EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
-PV_SOURCE_PATH = SRC / "aaid" / "passport_verifier.py"
+PASSPORT_VERIFIER_SOURCE_PATH = ROOT / "src" / "aaid" / "passport_verifier.py"
 
+SCHEMA_CHECK = "schema_valid"
+ENVELOPE_MAPPING_CHECK = "envelope_is_mapping"
 KEY_CHECK = "verification_key_selected"
 PAYLOAD_CHECK = "payload_hash_valid"
 SIGNATURE_CHECK = "signature_verification_not_implemented"
 
+ACCEPTED_KEY_PURPOSES = ("sig", "verify", "hybrid-sig")
 
-def load_envelope():
-    with EXAMPLE_PATH.open(encoding="utf-8") as handle:
-        return json.load(handle)
+FORBIDDEN_VERIFIER_IMPORTS = (
+    "hashlib",
+    "hmac",
+    "base64",
+    "ssl",
+    "secrets",
+    "cryptography",
+    "pqcrypto",
+    "oqs",
+    "requests",
+    "httpx",
+    "socket",
+    "urllib",
+)
 
 
-def check_named(result, name):
+def load_example_envelope() -> dict[str, Any]:
+    return json.loads(EXAMPLE_PATH.read_text(encoding="utf-8"))
+
+
+def find_check(
+    result: VerificationResult,
+    name: str,
+) -> VerificationCheck | None:
     for check in result.checks:
         if check.name == name:
             return check
     return None
 
 
-def check_index(result, name):
+def check_index(result: VerificationResult, name: str) -> int:
     for index, check in enumerate(result.checks):
         if check.name == name:
             return index
     return -1
 
 
-def rehash(envelope):
-    # Any change to the passport changes its canonical payload hash, so the
-    # selected proof's recorded payload_hash must be recomputed for the
-    # envelope to still pass payload_hash_valid and reach key selection.
+def verify_trusted_envelope(envelope: Any) -> VerificationResult:
+    return verify_passport_envelope(
+        envelope,
+        now=VALID_NOW,
+        trusted_issuers=TRUSTED_ISSUERS,
+        revocation_status=FRESH_STATUS,
+    )
+
+
+def update_payload_hash(envelope: dict[str, Any]) -> dict[str, Any]:
     proof = envelope["proofs"][0]
     proof["payload_hash"] = hash_passport_payload(
-        envelope["passport"], proof["hash_alg"]
+        envelope["passport"],
+        proof["hash_alg"],
     )
     return envelope
 
 
-def envelope_with_key_field(field, value):
-    envelope = load_envelope()
+def envelope_with_key_field(field: str, value: Any) -> dict[str, Any]:
+    envelope = load_example_envelope()
     envelope["passport"]["public_keys"][0][field] = value
-    return rehash(envelope)
+    return update_payload_hash(envelope)
 
 
-def envelope_with_proof_field(field, value):
-    # Proof-only change: the payload hash is computed over the passport, so it
-    # stays valid without rehashing.
-    envelope = load_envelope()
+def envelope_with_proof_field(field: str, value: Any) -> dict[str, Any]:
+    envelope = load_example_envelope()
     envelope["proofs"][0][field] = value
     return envelope
 
 
-def envelope_with_duplicate_key_kid():
-    envelope = load_envelope()
+def envelope_with_duplicate_key_kid() -> dict[str, Any]:
+    envelope = load_example_envelope()
     keys = envelope["passport"]["public_keys"]
     proof_kid = envelope["proofs"][0]["kid"]
+
     duplicate = copy.deepcopy(keys[0])
     duplicate["kid"] = proof_kid
     duplicate["created_at"] = "2026-05-30T00:00:00Z"
     keys.append(duplicate)
-    return rehash(envelope)
+
+    return update_payload_hash(envelope)
 
 
-# 1. Minimal example reaches verification_key_selected passed=True.
-def test_minimal_example_reaches_verification_key_selected_passed():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    assert check_named(result, PAYLOAD_CHECK).passed is True
-    key_check = check_named(result, KEY_CHECK)
+def test_minimal_example_reaches_verification_key_selected_passed() -> None:
+    result = verify_trusted_envelope(load_example_envelope())
+
+    payload = find_check(result, PAYLOAD_CHECK)
+    key_check = find_check(result, KEY_CHECK)
+
+    assert payload is not None
     assert key_check is not None
+    assert payload.passed is True
     assert key_check.passed is True
 
 
-# 2. verification_key_selected sits between payload_hash_valid and signature.
-def test_verification_key_selected_between_payload_hash_and_signature():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
+def test_verification_key_selected_between_payload_hash_and_signature() -> None:
+    result = verify_trusted_envelope(load_example_envelope())
+
     payload_index = check_index(result, PAYLOAD_CHECK)
     key_index = check_index(result, KEY_CHECK)
     signature_index = check_index(result, SIGNATURE_CHECK)
+
     assert payload_index != -1
     assert key_index != -1
     assert signature_index != -1
     assert payload_index < key_index < signature_index
 
 
-# 3. Missing public key for the selected proof kid fails closed.
-def test_missing_public_key_for_proof_kid_fails_closed():
+def test_missing_public_key_for_proof_kid_fails_closed() -> None:
     envelope = envelope_with_proof_field("kid", "urn:aaid:key:no-such-key-0001")
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    key_check = check_named(result, KEY_CHECK)
+
+    result = verify_trusted_envelope(envelope)
+
+    key_check = find_check(result, KEY_CHECK)
     assert key_check is not None
     assert key_check.passed is False
+
     assert result.decision == DENY
     assert result.valid is False
-    assert check_named(result, SIGNATURE_CHECK) is None
+    assert find_check(result, SIGNATURE_CHECK) is None
 
 
-# 4. Duplicate public key kid fails closed.
-def test_duplicate_public_key_kid_fails_closed():
-    result = verify_passport_envelope(
-        envelope_with_duplicate_key_kid(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
-    )
-    # Confirm the fixture reached key selection (schema + payload hash passed).
-    assert check_named(result, PAYLOAD_CHECK).passed is True
-    key_check = check_named(result, KEY_CHECK)
+def test_duplicate_public_key_kid_fails_closed() -> None:
+    result = verify_trusted_envelope(envelope_with_duplicate_key_kid())
+
+    payload = find_check(result, PAYLOAD_CHECK)
+    key_check = find_check(result, KEY_CHECK)
+
+    assert payload is not None
     assert key_check is not None
+    assert payload.passed is True
     assert key_check.passed is False
+
     assert result.decision == DENY
-    assert check_named(result, SIGNATURE_CHECK) is None
+    assert find_check(result, SIGNATURE_CHECK) is None
 
 
-# 5. proof.alg mismatch with the selected public key alg fails closed.
-def test_proof_alg_mismatch_with_key_fails_closed():
-    result = verify_passport_envelope(
-        envelope_with_proof_field("alg", "ML-DSA-87"), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
+def test_proof_alg_mismatch_with_key_fails_closed() -> None:
+    result = verify_trusted_envelope(
+        envelope_with_proof_field("alg", "ML-DSA-87"),
     )
-    assert check_named(result, PAYLOAD_CHECK).passed is True
-    key_check = check_named(result, KEY_CHECK)
+
+    payload = find_check(result, PAYLOAD_CHECK)
+    key_check = find_check(result, KEY_CHECK)
+
+    assert payload is not None
     assert key_check is not None
+    assert payload.passed is True
     assert key_check.passed is False
+
     assert result.decision == DENY
-    assert check_named(result, SIGNATURE_CHECK) is None
+    assert find_check(result, SIGNATURE_CHECK) is None
 
 
-# 6. Selected public key status retired fails closed.
-def test_retired_key_status_fails_closed():
-    result = verify_passport_envelope(
-        envelope_with_key_field("status", "retired"), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
+def test_retired_key_status_fails_closed() -> None:
+    result = verify_trusted_envelope(envelope_with_key_field("status", "retired"))
+
+    payload = find_check(result, PAYLOAD_CHECK)
+    key_check = find_check(result, KEY_CHECK)
+
+    assert payload is not None
+    assert key_check is not None
+    assert payload.passed is True
+    assert key_check.passed is False
+
+    assert result.decision == DENY
+    assert find_check(result, SIGNATURE_CHECK) is None
+
+
+def test_compromised_key_status_fails_closed() -> None:
+    result = verify_trusted_envelope(
+        envelope_with_key_field("status", "compromised"),
     )
-    assert check_named(result, PAYLOAD_CHECK).passed is True
-    key_check = check_named(result, KEY_CHECK)
+
+    payload = find_check(result, PAYLOAD_CHECK)
+    key_check = find_check(result, KEY_CHECK)
+
+    assert payload is not None
     assert key_check is not None
+    assert payload.passed is True
     assert key_check.passed is False
+
     assert result.decision == DENY
-    assert check_named(result, SIGNATURE_CHECK) is None
+    assert find_check(result, SIGNATURE_CHECK) is None
 
 
-# 7. Selected public key status compromised fails closed.
-def test_compromised_key_status_fails_closed():
-    result = verify_passport_envelope(
-        envelope_with_key_field("status", "compromised"), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
-    )
-    assert check_named(result, PAYLOAD_CHECK).passed is True
-    key_check = check_named(result, KEY_CHECK)
-    assert key_check is not None
-    assert key_check.passed is False
-    assert result.decision == DENY
-    assert check_named(result, SIGNATURE_CHECK) is None
+def test_accepted_key_purposes_pass_key_selection() -> None:
+    for purpose in ACCEPTED_KEY_PURPOSES:
+        result = verify_trusted_envelope(envelope_with_key_field("purpose", purpose))
 
+        payload = find_check(result, PAYLOAD_CHECK)
+        key_check = find_check(result, KEY_CHECK)
 
-# 8. Accepted key purposes sig, verify, hybrid-sig all pass key selection.
-def test_accepted_key_purposes_pass_key_selection():
-    for purpose in ("sig", "verify", "hybrid-sig"):
-        result = verify_passport_envelope(
-            envelope_with_key_field("purpose", purpose), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
-        )
-        assert check_named(result, PAYLOAD_CHECK).passed is True, purpose
-        key_check = check_named(result, KEY_CHECK)
+        assert payload is not None, purpose
         assert key_check is not None, purpose
+        assert payload.passed is True, purpose
         assert key_check.passed is True, purpose
 
 
-# 9. Key-selection failure short-circuits before signature verification.
-def test_key_selection_failure_short_circuits_before_signature():
+def test_key_selection_failure_short_circuits_before_signature() -> None:
     envelope = envelope_with_proof_field("kid", "urn:aaid:key:no-such-key-0002")
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    assert check_named(result, KEY_CHECK).passed is False
-    assert check_named(result, SIGNATURE_CHECK) is None
+
+    result = verify_trusted_envelope(envelope)
+
+    key_check = find_check(result, KEY_CHECK)
+    assert key_check is not None
+    assert key_check.passed is False
+    assert find_check(result, SIGNATURE_CHECK) is None
 
 
-# 10. payload_hash failure short-circuits before verification_key_selected.
-def test_payload_hash_failure_short_circuits_before_key_selection():
-    envelope = load_envelope()
+def test_payload_hash_failure_short_circuits_before_key_selection() -> None:
+    envelope = load_example_envelope()
     envelope["proofs"][0]["payload_hash"] = "0" * 64
-    result = verify_passport_envelope(envelope, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    assert check_named(result, PAYLOAD_CHECK).passed is False
-    assert check_named(result, KEY_CHECK) is None
-    assert check_named(result, SIGNATURE_CHECK) is None
+
+    result = verify_trusted_envelope(envelope)
+
+    payload = find_check(result, PAYLOAD_CHECK)
+    assert payload is not None
+    assert payload.passed is False
+    assert find_check(result, KEY_CHECK) is None
+    assert find_check(result, SIGNATURE_CHECK) is None
 
 
-# 11. schema failure short-circuits before verification_key_selected.
-def test_schema_failure_short_circuits_before_key_selection():
-    envelope = load_envelope()
+def test_schema_failure_short_circuits_before_key_selection() -> None:
+    envelope = load_example_envelope()
     envelope["proofs"][0]["unexpected_field"] = "x"
+
     result = verify_passport_envelope(envelope)
-    assert check_named(result, "schema_valid").passed is False
-    assert check_named(result, KEY_CHECK) is None
+
+    schema = find_check(result, SCHEMA_CHECK)
+    assert schema is not None
+    assert schema.passed is False
+    assert find_check(result, KEY_CHECK) is None
 
 
-# 12. structural failure short-circuits before verification_key_selected.
-def test_structural_failure_short_circuits_before_key_selection():
+def test_structural_failure_short_circuits_before_key_selection() -> None:
     result = verify_passport_envelope(["passport", "proofs"])
-    assert check_named(result, "envelope_is_mapping").passed is False
-    assert check_named(result, KEY_CHECK) is None
+
+    envelope_mapping = find_check(result, ENVELOPE_MAPPING_CHECK)
+    assert envelope_mapping is not None
+    assert envelope_mapping.passed is False
+    assert find_check(result, KEY_CHECK) is None
 
 
-# 13. No input reaches ALLOW through the key-selection step.
-def test_key_selection_step_never_returns_allow():
+def test_key_selection_step_never_returns_allow() -> None:
     cases = [
-        load_envelope(),
+        load_example_envelope(),
         envelope_with_proof_field("kid", "urn:aaid:key:no-such-key-0003"),
         envelope_with_duplicate_key_kid(),
         envelope_with_proof_field("alg", "ML-DSA-87"),
@@ -218,41 +285,33 @@ def test_key_selection_step_never_returns_allow():
         envelope_with_key_field("purpose", "verify"),
         envelope_with_key_field("purpose", "hybrid-sig"),
     ]
-    # Reach the named step for the valid, trusted example so this sweep actually
-    # exercises verification_key_selected rather than stopping at issuer_trusted.
-    reached = verify_passport_envelope(
-        load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
-    )
-    assert check_named(reached, KEY_CHECK) is not None
 
-    for case in cases:
-        result = verify_passport_envelope(
-            case, now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS
-        )
+    reached = verify_trusted_envelope(load_example_envelope())
+    assert find_check(reached, KEY_CHECK) is not None
+
+    for envelope in cases:
+        result = verify_trusted_envelope(envelope)
+
         assert isinstance(result, VerificationResult)
         assert result.decision != ALLOW
         assert result.valid is False
 
 
-# 14. Signature verification is still not implemented.
-def test_signature_verification_still_not_implemented():
-    result = verify_passport_envelope(load_envelope(), now=VALID_NOW, trusted_issuers=TRUSTED_ISSUERS, revocation_status=FRESH_STATUS)
-    signature = check_named(result, SIGNATURE_CHECK)
+def test_signature_verification_still_not_implemented() -> None:
+    result = verify_trusted_envelope(load_example_envelope())
+
+    signature = find_check(result, SIGNATURE_CHECK)
     assert signature is not None
     assert signature.passed is False
 
 
-# 15. passport_verifier.py imports no crypto or network modules.
-def test_passport_verifier_imports_no_crypto_or_network_modules():
-    forbidden = (
-        "hashlib", "hmac", "base64", "ssl", "secrets", "cryptography",
-        "pqcrypto", "oqs", "requests", "httpx", "socket", "urllib",
-    )
-    for module_name in forbidden:
+def test_passport_verifier_imports_no_crypto_or_network_modules() -> None:
+    for module_name in FORBIDDEN_VERIFIER_IMPORTS:
         assert not hasattr(passport_verifier_module, module_name), (
             f"passport_verifier must not import {module_name}"
         )
-    source = PV_SOURCE_PATH.read_text(encoding="utf-8")
-    for module_name in forbidden:
+
+    source = PASSPORT_VERIFIER_SOURCE_PATH.read_text(encoding="utf-8")
+    for module_name in FORBIDDEN_VERIFIER_IMPORTS:
         assert f"import {module_name}" not in source
         assert f"from {module_name}" not in source
