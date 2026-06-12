@@ -983,3 +983,57 @@ verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 134
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the canonicalization scheme verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_canonicalization_scheme.py`.
+
+Result:
+The canonicalization scheme verifier tests were reviewed as part of the
+file-by-file test review.
+
+All tests were kept. Unused setup was removed:
+
+`SRC`.
+
+A short research-stage module docstring was added. Helper names, check-name
+constants, forbidden-import constants, and function return annotations were
+updated for readability. Unsupported-canonicalization short-circuit cases were
+grouped into readable parametrized cases.
+
+The file records current verifier behavior around the
+`signature_canonicalization_supported` check. It does not adopt an external
+canonicalizer, add real signature verification, or make the passport verifier
+return `ALLOW`. More tests and research are still needed around
+canonicalization-scheme and signature-verification boundaries.
+
+The cleanup affects canonicalization scheme verifier test readability only. It
+does not change source behavior, verifier behavior, schema behavior,
+canonicalization behavior, example data, dependency versions, external
+canonicalizer adoption, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_canonicalization_scheme.py -q --durations=20 --durations-min=0.001` passed with 14 tests.
+
+`python -m pytest tests/test_passport_verifier_canonical_payload.py tests/test_passport_verifier_signature_input.py -q --durations=20 --durations-min=0.001` passed with 25 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+dependency changes, external canonicalizer adoption, real signature
+verification, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
