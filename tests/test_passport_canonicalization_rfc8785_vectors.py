@@ -1,29 +1,43 @@
-"""External RFC 8785/JCS known-answer tests.
+"""External RFC 8785/JCS known-answer and boundary tests.
 
-These tests begin the external canonicalization conformance work.
+These tests record current canonicalization observations against selected
+RFC 8785/JCS examples and edge cases.
 
-They do not claim that the current helper is a complete RFC 8785/JCS
-implementation. They only pin behaviour where the current helper is expected to
-match an RFC 8785 known-answer example. Broader I-JSON, duplicate-key,
-UTF-16 sorting, and number-serialization boundary tests remain future work.
+They do not present the current helper as a complete RFC 8785/JCS
+implementation. Broader I-JSON, duplicate-key, UTF-16 sorting,
+number-serialization, and payload-domain questions remain research work.
 """
-
-from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-
 from aaid.canonicalization import canonicalize_passport_payload
 
+RFC8785_SECTION_3_2_3_EXPECTED = (
+    b'{"literals":[null,true,false],'
+    b'"numbers":[333333333.3333333,1e+30,4.5,0.002,1e-27],'
+    b'"string":"\xe2\x82\xac$\\u000f\\nA\'B\\"\\\\\\\\\\"/"}'
+)
 
-def test_rfc8785_section_3_2_3_sample_object_known_answer():
+PYTHON_CODE_POINT_ORDER_OUTPUT = (
+    b'{"\xee\x80\x80":"bmp-private-use",'
+    b'"\xf0\x90\x80\x80":"non-bmp"}'
+)
+
+JCS_UTF16_ORDER_OUTPUT = (
+    b'{"\xf0\x90\x80\x80":"non-bmp",'
+    b'"\xee\x80\x80":"bmp-private-use"}'
+)
+
+JCS_1E16_EXPECTED_OUTPUT = b'{"n":10000000000000000}'
+PYTHON_1E16_OUTPUT = b'{"n":1e+16}'
+
+
+def test_rfc8785_section_3_2_3_sample_object_known_answer() -> None:
     """Match the RFC 8785 sample object canonical form.
 
-    This vector covers recursive object sorting, compact JSON, array order
-    preservation, booleans, null, selected number serialization, non-ASCII
-    string output, and control-character escaping.
+    This vector covers recursive object sorting, compact JSON, array order,
+    booleans, null, selected number serialization, non-ASCII string output, and
+    control-character escaping.
 
     Passing this vector does not establish full RFC 8785/JCS conformance.
     """
@@ -40,88 +54,71 @@ def test_rfc8785_section_3_2_3_sample_object_known_answer():
         "literals": [None, True, False],
     }
 
-    expected = (
-        b'{"literals":[null,true,false],'
-        b'"numbers":[333333333.3333333,1e+30,4.5,0.002,1e-27],'
-        b'"string":"\xe2\x82\xac$\\u000f\\nA\'B\\"\\\\\\\\\\"/"}'
-    )
-
-    assert canonicalize_passport_payload(sample) == expected
+    assert canonicalize_passport_payload(sample) == RFC8785_SECTION_3_2_3_EXPECTED
 
 
-@pytest.mark.parametrize("non_finite", [float("nan"), float("inf"), float("-inf")])
-def test_canonicalize_rejects_non_finite_numbers(non_finite):
+@pytest.mark.parametrize(
+    "non_finite_value",
+    [
+        pytest.param(float("nan"), id="nan"),
+        pytest.param(float("inf"), id="positive-infinity"),
+        pytest.param(float("-inf"), id="negative-infinity"),
+    ],
+)
+def test_canonicalize_rejects_non_finite_numbers(
+    non_finite_value: float,
+) -> None:
     """Reject non-finite numbers so canonicalization fails closed.
 
     Python's json module emits ``NaN``, ``Infinity``, and ``-Infinity`` tokens
-    by default, which are not valid JSON and not RFC 8785/JCS conformant. The
-    helper must reject them rather than produce signing input that no conformant
-    verifier can parse.
+    by default. Those tokens are not valid JSON and are not RFC 8785/JCS
+    conformant. The helper rejects them rather than producing signing input that
+    a conformant verifier cannot parse.
     """
 
     with pytest.raises(ValueError):
-        canonicalize_passport_payload({"value": non_finite})
+        canonicalize_passport_payload({"value": non_finite_value})
 
 
-def test_current_helper_documents_utf16_key_ordering_boundary():
-    """Document a JCS key-ordering boundary for non-BMP object names.
+def test_current_helper_records_utf16_key_ordering_boundary() -> None:
+    """Record a JCS key-ordering boundary for non-BMP object names.
 
     JCS sorts object member names by UTF-16 code units. Python sort_keys=True
     sorts strings by code point. Those orders can diverge for non-BMP keys.
 
-    For U+E000 (a BMP code point) and U+10000 (a non-BMP code point encoded in
-    UTF-16 as the surrogate pair D800 DC00):
-    - Python code-point order places U+E000 first, because 0xE000 < 0x10000.
-    - JCS UTF-16 code-unit order places U+10000 first, because its leading code
-      unit D800 sorts before E000.
+    For U+E000 and U+10000:
+    - Python code-point order places U+E000 first.
+    - JCS UTF-16 code-unit order places U+10000 first.
 
-    This test records the current helper's behaviour and the JCS expected order
-    for one edge case. It does not claim JCS compatibility and does not change
-    canonicalization behaviour.
+    This test records the current helper behavior and the JCS expected order for
+    one edge case. It does not change canonicalization behavior.
     """
 
     data = {
-        chr(0xE000): "bmp-private-use",  # U+E000, a BMP private-use code point
-        chr(0x10000): "non-bmp",  # U+10000, non-BMP (UTF-16 surrogate pair D800 DC00)
+        chr(0xE000): "bmp-private-use",
+        chr(0x10000): "non-bmp",
     }
 
     current_output = canonicalize_passport_payload(data)
-    jcs_utf16_order_output = (
-        b'{"\xf0\x90\x80\x80":"non-bmp",'
-        b'"\xee\x80\x80":"bmp-private-use"}'
-    )
 
-    # The current helper does not match JCS UTF-16 ordering for this edge case.
-    assert current_output != jcs_utf16_order_output
-    # The current helper sorts by Python code point: the BMP key comes first.
-    assert current_output == (
-        b'{"\xee\x80\x80":"bmp-private-use",'
-        b'"\xf0\x90\x80\x80":"non-bmp"}'
-    )
+    assert current_output != JCS_UTF16_ORDER_OUTPUT
+    assert current_output == PYTHON_CODE_POINT_ORDER_OUTPUT
 
 
-def test_current_helper_documents_number_serialization_boundary():
-    """Document a JCS number-serialization boundary for a large integer-valued float.
+def test_current_helper_records_number_serialization_boundary() -> None:
+    """Record a JCS number-serialization boundary for a large float.
 
-    JCS (RFC 8785) serializes numbers with the ECMAScript Number::toString
-    algorithm, which writes a finite value below 1e21 in positional form. Python
-    json.dumps serializes floats with repr(), which switches to exponential
-    notation at 1e16. The value 1e16 is exactly representable as an IEEE-754
-    double, so both produce the same digits; only the notation differs.
+    JCS serializes numbers with the ECMAScript Number::toString algorithm.
+    Python json.dumps serializes floats with repr(), which switches to
+    exponential notation earlier. The value 1e16 is exactly representable as an
+    IEEE-754 double, so both forms carry the same digits while the notation
+    differs.
 
-    The float 1e16 is used deliberately: the integer 10000000000000000 would be
-    emitted as positional digits by Python too and would hide the boundary, while
-    JCS treats every JSON number as a double.
-
-    This test records the current helper's behaviour and the JCS expected form for
-    one edge case. It does not claim JCS compatibility and does not change
-    canonicalization behaviour.
+    This test records the current helper behavior and the JCS expected form for
+    one edge case. It does not change canonicalization behavior.
     """
 
     current_output = canonicalize_passport_payload({"n": 1e16})
-    jcs_expected_output = b'{"n":10000000000000000}'
 
-    # The current helper does not match JCS number serialization for this edge case.
-    assert current_output != jcs_expected_output
-    # The current helper emits exponential notation via Python float repr.
-    assert current_output == b'{"n":1e+16}'
+    assert current_output != JCS_1E16_EXPECTED_OUTPUT
+    assert current_output == PYTHON_1E16_OUTPUT
