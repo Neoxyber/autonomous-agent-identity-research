@@ -1037,3 +1037,58 @@ verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 135
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the expiration lifecycle verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_expiration_lifecycle.py`.
+
+Result:
+The expiration lifecycle verifier tests were reviewed as part of the
+file-by-file test review.
+
+All tests were kept. Unused setup was removed:
+
+`SRC`.
+
+`TESTS`.
+
+A short research-stage module docstring was added. Helper names, check-name
+constants, forbidden-import constants, timestamp case IDs, and function return
+annotations were updated for readability.
+
+The file records current verifier behavior around passport time-window checks,
+lifecycle status checks, raw JSON now handling, timezone handling, and
+fail-closed short-circuit behavior. It does not add wall-clock-dependent allow
+behavior, real signature verification, or make the passport verifier return
+`ALLOW`. More tests and research are still needed around time, lifecycle, and
+raw-JSON verifier boundaries.
+
+The cleanup affects expiration lifecycle verifier test readability only. It
+does not change source behavior, verifier behavior, schema behavior,
+canonicalization behavior, example data, dependency versions, real signature
+verification, cloud deployment, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_expiration_lifecycle.py -q --durations=20 --durations-min=0.001` passed with 44 tests.
+
+`python -m pytest tests/test_passport_verifier_raw_json.py tests/test_passport_verifier_schema_validation.py -q --durations=20 --durations-min=0.001` passed with 20 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+dependency changes, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
