@@ -1202,3 +1202,49 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 138
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the key validity verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_key_validity.py`.
+
+Result:
+The review kept all 44 tests and clarified the test structure around selected
+key validity.
+
+The file now uses clearer helper names, named check constants, direct verifier
+source-path inspection, readable timestamp case IDs, and readable
+verification-method binding case IDs.
+
+The reviewed tests continue to cover strict timestamp parsing, `created_at`
+lower-bound behavior, optional `not_after`, expired key material, inverted key
+validity windows, exact `verification_method` binding, ordering after key
+selection, short-circuit behavior before signature input, raw JSON parity,
+forbidden-import checks, and the never-`ALLOW` verifier boundary.
+
+More research is needed around key-validity policy and future signature
+verification boundaries.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_key_validity.py -q --durations=20 --durations-min=0.001` passed with 44 tests.
+
+`python -m pytest tests/test_passport_verifier_key_selection.py tests/test_passport_verifier_signature_input.py -q --durations=20 --durations-min=0.001` passed with 30 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+dependency changes, cryptographic key validation, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
