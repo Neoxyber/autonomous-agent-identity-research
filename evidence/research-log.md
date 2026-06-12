@@ -813,3 +813,62 @@ signature verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 131
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the raw JSON parsing tests.
+
+Files:
+Updated `tests/test_passport_json_parsing.py`.
+
+Result:
+The raw JSON parsing tests were reviewed as part of the file-by-file test
+review.
+
+All tests were kept. Unused setup was removed:
+
+`Path`.
+
+`ROOT`.
+
+`SRC`.
+
+Function return annotations were added for readability. Duplicate-key rejection
+cases were grouped into readable parametrized cases. The duplicate-key error text
+was moved into a named test constant.
+
+The file records the current raw JSON parsing boundary before schema validation
+or canonicalization. This is not full RFC 8785/JCS or I-JSON conformance work;
+it remains research-stage, and more tests and research are still needed around
+this boundary.
+
+The tests still check valid JSON parsing, duplicate-key rejection at different
+JSON object locations, same-key use in sibling objects, and malformed JSON
+handling through the `ValueError` family.
+
+The cleanup affects raw JSON parsing test readability only. It does not change
+source behavior, parser behavior, schema behavior, canonicalization behavior,
+examples, verifier behavior, dependency versions, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_json_parsing.py -q --durations=20 --durations-min=0.001` passed with 6 tests.
+
+`python -m pytest tests/test_passport_verifier_raw_json.py -q --durations=20 --durations-min=0.001` passed with 11 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, parser behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+verifier behavior changes, real signature verification, cloud deployment, or
+passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
