@@ -690,3 +690,64 @@ signature verification, cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 129
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the canonicalization conformance tests.
+
+Files:
+Updated `tests/test_passport_canonicalization_conformance.py`.
+
+Result:
+The canonicalization conformance tests were reviewed as part of the
+file-by-file test review.
+
+All tests were kept. Short test-support names were replaced with clearer names:
+
+`load_envelope` became `load_example_envelope`.
+
+`load_passport` became `load_example_passport`.
+
+`reverse_keys` became `reverse_mapping_keys`.
+
+Function return annotations were added for readability. Long nested literals and
+forbidden-import checks were made easier to inspect. The expected minimal
+passport SHA-256 value and forbidden verifier imports were moved into named test
+constants.
+
+The file records current observed helper behavior and avoids full RFC 8785/JCS
+conformance wording.
+
+Loop-based hash checks were changed into explicit parametrized test cases with
+readable case IDs. This increased the visible test count for this file while
+keeping the same intended coverage.
+
+The tests still check deterministic canonicalization, compact output, UTF-8
+bytes, exact hash input bytes, key-order independence, proof and signature
+exclusion, signature-input helper alignment, no RFC 8785/JCS overstatement, no
+crypto or network imports in the verifier, boolean serialization, array-order
+significance, and the frozen minimal example SHA-256 golden vector.
+
+The cleanup affects canonicalization conformance test readability only. It does
+not change source behavior, canonicalization behavior, schema behavior,
+examples, verifier behavior, dependency versions, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` behavior.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_canonicalization_conformance.py -q --durations=20 --durations-min=0.001` passed with 19 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, canonicalization behavior changes, schema changes,
+example changes, test coverage removal, verifier behavior changes, real
+signature verification, cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
