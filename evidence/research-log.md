@@ -1390,3 +1390,50 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 142
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the raw JSON verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_raw_json.py`.
+
+Result:
+The review kept all 11 tests and clarified the raw JSON verifier entry-point
+boundary.
+
+The tests now use named check constants and helpers for loading the example
+envelope, verifying trusted raw JSON input, verifying with injected time, finding
+checks, and asserting raw JSON parse failures.
+
+The reviewed coverage remains focused on package/module export availability,
+valid raw JSON reaching the existing verifier path, the raw JSON parsed check
+being first on successful parsing, malformed JSON and duplicate keys in different
+JSON object locations failing before schema validation, parse failures not
+recording `schema_valid`, non-envelope raw JSON inputs staying denied, parsed
+object verification remaining available, and the never-`ALLOW` verifier boundary.
+
+More research and testing are needed to improve raw JSON verifier boundaries over
+time.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_raw_json.py -q --durations=20 --durations-min=0.001` passed with 11 tests.
+
+`python -m pytest tests/test_passport_json_parsing.py tests/test_passport_verifier_proof_selection_hardening.py tests/test_passport_verifier_payload_hash.py -q --durations=20 --durations-min=0.001` passed with 35 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, raw JSON parser behavior
+changes, test coverage removal, dependency changes, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
