@@ -1248,3 +1248,50 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 139
+
+Date: 2026-06-12
+
+Type: Test review
+
+Summary: Reviewed the payload hash verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_payload_hash.py`.
+
+Result:
+The review kept all 15 tests and clarified the payload-hash verifier boundary.
+
+The tests now use named check constants and helpers for trusted verification,
+passport tampering, proof-hash tampering, proof-signature changes, and
+multi-proof envelopes.
+
+The reviewed coverage remains focused on recomputing the canonical passport
+payload hash, rejecting stale or mismatched proof hashes, schema and structural
+short-circuit behavior before payload-hash validation, proof-count hardening
+before payload-hash validation, hash algorithm and digest-length mismatches,
+proof metadata staying outside the hashed passport payload, no real signature
+verification in this step, explainable payload-hash failure reasons, and the
+never-`ALLOW` verifier boundary.
+
+More research and testing are needed to improve the payload-hash boundary over
+time.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_payload_hash.py -q --durations=20 --durations-min=0.001` passed with 15 tests.
+
+`python -m pytest tests/test_passport_verifier_key_selection.py tests/test_passport_verifier_key_validity.py tests/test_passport_verifier_signature_input.py -q --durations=20 --durations-min=0.001` passed with 74 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+dependency changes, cryptographic key validation, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
