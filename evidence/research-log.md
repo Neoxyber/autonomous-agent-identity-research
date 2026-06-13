@@ -1628,3 +1628,49 @@ deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 147
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the passport verifier skeleton tests.
+
+Files:
+Updated `tests/test_passport_verifier_skeleton.py`.
+
+Result:
+The review kept all 13 focused passport verifier skeleton tests and made the
+test file easier to read and maintain.
+
+The file now records the structural skeleton verifier boundary at the top of the
+test file, removes unused path setup, uses clearer structural check-name
+constants, adds typed helper functions, centralizes trusted-context
+verification, centralizes deny and check assertions, and updates public
+boundary wording around signing, crypto, and hash exposure.
+
+The reviewed coverage remains focused on structural fail-closed behavior for
+non-mapping envelopes, missing or malformed passport data, missing or malformed
+proof data, empty proofs, verification checks being stored as a tuple, package
+export behavior, no public signing-like verifier callable, and the never-`ALLOW`
+verifier boundary. The trusted minimal example still reaches the explicit
+signature-not-implemented boundary and remains denied.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_skeleton.py -q --durations=20 --durations-min=0.001` passed with 13 tests.
+
+`python -m pytest tests/test_passport_verifier_schema_validation.py tests/test_passport_verifier_raw_json.py tests/test_passport_verifier_expiration_lifecycle.py -q --durations=20 --durations-min=0.001` passed with 64 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, real signature verification,
+signature acceptance, dependency changes, crypto or network imports, cloud
+deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
