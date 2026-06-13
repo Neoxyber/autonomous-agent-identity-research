@@ -1674,3 +1674,56 @@ deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 148
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the local secret scan tests.
+
+Files:
+Updated `tests/test_secret_scan.py`.
+
+Result:
+The review kept the local secret/public-risk scanner behavior unchanged and made
+the test file easier to read and extend.
+
+The focused scanner tests now use clearer helper functions for writing temporary
+sample files and asserting pass/fail outcomes. The tests group clean or
+allowlisted inputs separately from risky fail-closed inputs. The focused scanner
+coverage now includes clean research text, dummy no-leak fixture values, public
+SHA-256 evidence, authorization wording that should not be treated as secret
+context, a public security contact email, private-key markers, known token-like
+patterns, secret-like assignments, private local paths, URL-embedded
+credentials, private remotes, private/internal IP addresses, email data context,
+phone data context, high-entropy secret context, and CLI help output.
+
+The test fixtures remain dummy and constructed in the test source so the
+repository-wide scanner can scan the tests themselves without treating the test
+file as a leak.
+
+Important note:
+The local scanner is an early research guard, not a complete secret-detection
+system. It needs continued improvement with time, more test cases, careful
+review of false positives and false negatives, and comparison with stronger
+external scanning tools before it is treated as mature. The scanner helps catch
+common mistakes locally, but it does not replace human review, GitHub-side
+secret scanning, push protection, or future deeper scanner research.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_secret_scan.py -q --durations=20 --durations-min=0.001` passed with 16 tests.
+
+`python -m pytest -q` passed with 616 tests.
+
+Not implemented:
+scanner source behavior changes, scanner rule changes, Git hook changes,
+GitHub-side setting changes, external scanner adoption, dependency changes,
+network scanning, verifier behavior changes, signature verification, cloud
+deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Complete final push and isolated VM verification for this test-review milestone.
