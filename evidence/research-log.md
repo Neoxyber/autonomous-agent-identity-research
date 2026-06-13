@@ -1437,3 +1437,48 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 143
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the revocation freshness verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_revocation_freshness.py`.
+
+Result:
+The review kept all 104 tests and made a conservative cleanup only.
+
+The file now records the revocation freshness verifier boundary at the top of
+the test file, removes unused path setup, and uses a direct named verifier source
+path for the forbidden-import guard.
+
+The reviewed coverage remains focused on caller-provided revocation status
+evidence, passport identity binding, status authority binding, trusted issuer
+checks, freshness-window checks, active status handling, ordering,
+short-circuit behavior, raw JSON forwarding, forbidden imports, and the
+never-`ALLOW` verifier boundary.
+
+More research and testing are needed to improve revocation freshness boundaries
+over time.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_revocation_freshness.py -q --durations=20 --durations-min=0.001` passed with 104 tests.
+
+`python -m pytest tests/test_passport_verifier_issuer_trust.py tests/test_passport_verifier_expiration_lifecycle.py tests/test_passport_verifier_raw_json.py -q --durations=20 --durations-min=0.001` passed with 77 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, revocation policy changes,
+test coverage removal, dependency changes, real signature verification, cloud
+deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
