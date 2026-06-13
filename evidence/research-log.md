@@ -1295,3 +1295,50 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 140
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the proof selection verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_proof_selection.py`.
+
+Result:
+The review kept all 10 tests and clarified the proof-selection verifier
+boundary.
+
+The tests now use named check constants and helpers for trusted verification,
+selected-proof payload-hash changes, second-proof envelopes, and schema-invalid
+input.
+
+The reviewed coverage remains focused on proof selection running after schema
+validation and before payload-hash validation, the recorded first-proof rule,
+selected first-proof payload-hash behavior, multi-proof envelopes failing closed
+before proof selection and payload-hash validation, schema and structural
+short-circuit behavior, no real signature verification in this step, and the
+never-`ALLOW` verifier boundary.
+
+More research and testing are needed to improve proof-selection handling and
+future multi-proof policy over time.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_proof_selection.py -q --durations=20 --durations-min=0.001` passed with 10 tests.
+
+`python -m pytest tests/test_passport_verifier_proof_selection_hardening.py tests/test_passport_verifier_payload_hash.py -q --durations=20 --durations-min=0.001` passed with 29 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+dependency changes, multi-proof trust policy, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
