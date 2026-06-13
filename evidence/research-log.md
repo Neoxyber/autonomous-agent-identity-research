@@ -1342,3 +1342,51 @@ cloud deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 141
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the proof selection hardening tests.
+
+Files:
+Updated `tests/test_passport_verifier_proof_selection_hardening.py`.
+
+Result:
+The review kept all 14 tests and clarified the proof-count hardening boundary
+before proof selection.
+
+The tests now use named check constants and helpers for trusted envelope
+verification, raw JSON verification, proof-count construction, check lookup, and
+check ordering.
+
+The reviewed coverage remains focused on single-proof envelopes passing the
+proof-count check while still denying, multi-proof envelopes failing closed at
+the count check, later proof-selection, payload-hash, key-selection, key-validity,
+canonicalization, signature-input, algorithm, and signature-stage checks staying
+unreached for multi-proof envelopes, structural proof checks running before the
+count check, raw JSON parity, the forbidden-import guard, and the never-`ALLOW`
+verifier boundary.
+
+More research and testing are needed to improve future multi-proof policy over
+time.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_proof_selection_hardening.py -q --durations=20 --durations-min=0.001` passed with 14 tests.
+
+`python -m pytest tests/test_passport_verifier_proof_selection.py tests/test_passport_verifier_payload_hash.py tests/test_passport_verifier_raw_json.py -q --durations=20 --durations-min=0.001` passed with 36 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, test coverage removal,
+dependency changes, multi-proof trust policy, real signature verification,
+cloud deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
