@@ -1482,3 +1482,50 @@ deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 144
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the schema validation verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_schema_validation.py`.
+
+Result:
+The review kept all 9 focused schema validation verifier tests and made the
+test file easier to read and maintain.
+
+The file now records the schema validation verifier boundary at the top of the
+test file, removes unused path setup, uses clearer schema and signature check
+constants, adds typed helper functions, keeps per-test envelope mutation
+isolated, and centralizes structural-check assertions.
+
+The reviewed coverage remains focused on structural checks before schema
+validation, schema failure before later signature-stage checks, clear schema
+failure reasons, malformed structural inputs, specific schema violations,
+signature verification remaining unimplemented, and the never-`ALLOW` verifier
+boundary.
+
+More research and testing are needed to improve schema-validation boundaries
+over time.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_schema_validation.py -q --durations=20 --durations-min=0.001` passed with 9 tests.
+
+`python -m pytest tests/test_agent_passport_schema.py tests/test_passport_verifier_raw_json.py tests/test_passport_verifier_expiration_lifecycle.py -q --durations=20 --durations-min=0.001` passed with 63 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, signature verification,
+test coverage removal, dependency changes, real signature verification, cloud
+deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
