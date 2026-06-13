@@ -35,7 +35,9 @@ Use:
 
 ## Note rules
 
-Each note must be written in the repository's own words.
+Notes are written in the repository's own words.
+
+They help record what we learn from each source, where the source may improve the research, and which questions remain open.
 
 Do not store full papers, full standards, PDFs, screenshots, datasets, or long copied passages in this repository.
 
@@ -65,24 +67,15 @@ New sources start as reference candidates with `Pending review` status.
 
 A source can be useful even when the repository does not adopt its approach.
 
-## Public review
+## Review
 
-Public review is welcome.
+These notes are part of ongoing research.
 
-Reviewers can help by checking:
+They may contain mistakes or incomplete understanding. The notes can improve over time as sources are checked, compared, and tested.
 
-1. whether a note accurately summarizes the source
-2. whether the source is official, draft, academic, industry, or background material
-3. whether the mapping to this research is too strong, too weak, or unclear
-4. whether adoption boundaries are clear
-5. whether important open questions are missing
-6. whether a source needs an entry in `docs/references.md`
-
-Review comments are most useful when they point to a specific source section, standard clause, paper section, or repository note.
+Corrections are most useful when they point to a specific source section, standard clause, paper section, or repository note.
 
 Reading notes do not replace source documents.
-
-Reading notes do not approve standards adoption, implementation, dependency changes, schema changes, signature verification, or verifier `ALLOW` behavior.
 
 ## Current boundary
 
