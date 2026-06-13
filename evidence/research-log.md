@@ -1727,3 +1727,56 @@ deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Complete final push and isolated VM verification for this test-review milestone.
+
+## Entry 149
+
+Date: 2026-06-13
+
+Type: Terminology review
+
+Summary: Added the Agent Identity Envelope terminology review.
+
+Files:
+Added `docs/00-foundation/passport-to-agent-identity-envelope-review.md`.
+
+Result:
+The review records why `agent passport` was useful as an early research
+metaphor and why `Agent Identity Envelope` is the stronger long-term research
+term for the active model.
+
+The document explains that the current model has grown beyond a simple identity
+record. It now carries identity, operator binding, issuer trust, lifecycle,
+expiration, revocation, permissions, prohibitions, approval, audit evidence,
+proof metadata, payload hashes, key references, canonicalization, future
+signature verification, post-quantum readiness, and fail-closed verifier
+behavior.
+
+The document records `Agent Identity Envelope` as a preferred future research
+term and `AIE` as a short form. It also records that this is a research working
+term, not a formal standard term, originality claim, or replacement for existing
+identity, credential, authorization, workload identity, or policy-envelope work.
+
+The review does not rename files, schemas, source code, tests, examples, or
+historical evidence. It records that older evidence can keep the `agent
+passport` wording used at the time, while newer research can explain the
+preferred future term.
+
+The review also records the migration boundary: any future migration must be a
+controlled technical step that preserves fail-closed verifier behavior,
+meaningful tests, historical evidence readability, and separation from unrelated
+feature work, dependency adoption, or real signature verification.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest -q` passed with 616 tests.
+
+Not implemented:
+repository-wide rename, schema rename, source rename, test rename, example
+rename, historical evidence rewrite, dependency changes, real signature
+verification, canonicalizer adoption, cloud deployment, or passport-verifier
+`ALLOW` path.
+
+Next step:
+Prepare a migration inventory that separates active model terminology from
+historical evidence before deciding whether to start a controlled migration.
