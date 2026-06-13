@@ -103,6 +103,17 @@ Files:
 
 1. [Standards Positioning](50-standards-positioning/standards-positioning.md)
 
+### 60 Reading Notes
+
+Research notes for standards, papers, and industry material used during source reading.
+
+Files:
+
+1. [Reading Notes](60-reading-notes/README.md)
+2. [Reading Note Template](60-reading-notes/_template.md)
+
+Current status: reading notes are research inputs only. They are not adoption decisions, implementation approvals, or standards-readiness statements.
+
 ## References
 
 The central reference register stays at:
