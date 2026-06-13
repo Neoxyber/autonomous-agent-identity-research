@@ -1,9 +1,16 @@
+"""Tests for the revocation freshness verifier boundary.
+
+These cases keep caller-provided revocation status evidence bound to the
+passport identity, trusted issuer, freshness window, and active status value.
+
+A fresh active revocation status does not grant `ALLOW`. More research and
+testing are needed to improve revocation freshness boundaries over time.
+"""
+
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SRC = ROOT / "src"
-TESTS = Path(__file__).resolve().parent
 
 import pytest
 
@@ -13,7 +20,7 @@ from aaid import ALLOW, DENY, verify_passport_envelope, verify_passport_json
 from aaid.verification import VerificationResult
 
 EXAMPLE_PATH = ROOT / "specs" / "examples" / "agent-passport.minimal.json"
-PV_SOURCE_PATH = SRC / "aaid" / "passport_verifier.py"
+PASSPORT_VERIFIER_SOURCE_PATH = ROOT / "src" / "aaid" / "passport_verifier.py"
 
 CHECKED = "revocation_status_checked"
 FRESH = "revocation_status_fresh"
@@ -649,7 +656,7 @@ def test_revocation_path_introduces_no_network_or_client_imports():
     for name in forbidden:
         top = name.split(".")[0]
         assert not hasattr(module, top), f"verifier must not import {name}"
-    source = PV_SOURCE_PATH.read_text(encoding="utf-8")
+    source = PASSPORT_VERIFIER_SOURCE_PATH.read_text(encoding="utf-8")
     for name in forbidden:
         assert f"import {name}" not in source
         assert f"from {name}" not in source
