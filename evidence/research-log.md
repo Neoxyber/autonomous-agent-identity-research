@@ -1529,3 +1529,52 @@ deployment, or passport-verifier `ALLOW` path.
 
 Next step:
 Continue reviewing tests one file at a time.
+
+## Entry 145
+
+Date: 2026-06-13
+
+Type: Test review
+
+Summary: Reviewed the signature abstraction verifier tests.
+
+Files:
+Updated `tests/test_passport_verifier_signature_abstraction.py`.
+
+Result:
+The review kept all 13 focused signature abstraction verifier tests and made the
+test file easier to read and maintain.
+
+The file now records the signature abstraction verifier boundary at the top of
+the test file, removes unused path setup, uses clearer check-name constants,
+uses a direct named verifier source path for the forbidden-import guard, adds
+typed helper functions, centralizes trusted-context verification, centralizes
+check assertions, and keeps envelope mutation isolated in helper builders.
+
+The reviewed coverage remains focused on the explicit
+signature-verification-not-implemented boundary, payload-hash-before-signature
+ordering, schema and structural short-circuit behavior, signature metadata not
+causing `ALLOW`, absence of public signing-like callables, absence of crypto or
+network imports, the internal failed signature-check helper, and the
+never-`ALLOW` verifier boundary.
+
+More research and testing are needed before real signature verification can be
+added.
+
+Tests:
+`python tools/secret_scan.py --all` passed.
+
+`python -m pytest tests/test_passport_verifier_signature_abstraction.py -q --durations=20 --durations-min=0.001` passed with 13 tests.
+
+`python -m pytest tests/test_passport_verifier_signature_input.py tests/test_passport_verifier_payload_hash.py tests/test_passport_verifier_key_selection.py -q --durations=20 --durations-min=0.001` passed with 45 tests.
+
+`python -m pytest -q` passed with 608 tests.
+
+Not implemented:
+source behavior changes, verifier behavior changes, schema changes,
+canonicalization behavior changes, example changes, real signature verification,
+signature acceptance, dependency changes, crypto or network imports, cloud
+deployment, or passport-verifier `ALLOW` path.
+
+Next step:
+Continue reviewing tests one file at a time.
